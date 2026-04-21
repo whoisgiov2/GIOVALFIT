@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>GiovaFit Aesthetic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { beige: { 50: '#fdfaf6', 100: '#f7f3ed' } } } }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="pb-44">
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div id="toast-container"></div>
+
+    <!-- Level Up Overlay -->
+    <div id="levelup-overlay"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[600] flex items-center justify-center opacity-0 pointer-events-none transition-opacity">
+        <div
+            class="bg-card border border-pink-500 rounded-3xl p-8 text-center max-w-sm w-[90%] shadow-2xl shadow-pink-500/20">
+            <div class="text-6xl mb-3" id="lu-icon">⭐</div>
+            <p class="text-xs font-bold uppercase tracking-widest text-pink-400 mb-1">¡Subiste de nivel!</p>
+            <h2 class="text-4xl font-black font-display" id="lu-level">LVL 2</h2>
+            <p class="text-sm text-muted mt-2 mb-6" id="lu-msg">Eres imparable, Valeria</p>
+            <button onclick="closeLevelUp()"
+                class="w-full bg-pink-500 text-white py-3 rounded-2xl font-bold ripple-btn">¡Seguir entrenando!
+                💪</button>
+        </div>
+    </div>
+    <!-- Menú Lateral -->
+    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+    <div id="sidebar-menu" class="sidebar">
+        <div class="mb-8 px-4">
+            <h2 class="text-xl font-black text-pink-500">Menú</h2>
+            <p class="text-[10px] text-muted font-bold uppercase tracking-tighter">Gestión de App</p>
+        </div>
+        <div class="flex-1">
+            <button onclick="navTo('home')" class="menu-item w-full" id="m-home"><span>🏠</span> Inicio</button>
+            <button onclick="navTo('workout')" class="menu-item w-full" id="m-workout"><span>🏋️‍♀️</span>
+                Entrenar</button>
+            <button onclick="navTo('achievements')" class="menu-item w-full" id="m-achievements"><span>🏆</span>
+                Logros</button>
+            <button onclick="navTo('history')" class="menu-item w-full" id="m-history"><span>📜</span>
+                Historial</button>
+            <button onclick="navTo('settings')" class="menu-item w-full" id="m-settings"><span>⚙️</span> Rutina</button>
+        </div>
+        <div class="border-t border-pink-border pt-6">
+            <button onclick="toggleDarkMode(); toggleSidebar(false)" class="menu-item w-full">
+                <span id="theme-icon">🌙</span> Modo Oscuro
+            </button>
+        </div>
+    </div>
+    <div class="swipe-sensor" id="swipe-sensor"></div>
+
+    <div id="app" class="max-w-md mx-auto px-5 pt-8">
+
+        <!-- ─── HEADER GLOBAL (Sin Botón) ─── -->
+        <div id="main-global-header" class="flex justify-between items-start mb-6">
+            <div>
+                <p class="text-[10px] font-bold uppercase tracking-widest text-pink-400">GiovaFit Aesthetic</p>
+                <div class="mt-2 flex items-center gap-2">
+                    <div class="xp-badge" id="xp-badge-header">
+                        <span class="level-num" id="hdr-level">1</span>
+                        <div>
+                            <div class="text-[9px] opacity-70">LVL</div>
+                            <div class="xp-bar-wrap w-16">
+                                <div id="hdr-xp-bar" class="xp-bar-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="streak-badge" id="streak-header">
+                        <span class="streak-fire text-base">🔥</span>
+                        <span id="hdr-streak">0</span>
+                        <span class="text-[9px] opacity-70">días</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="toggleGlobalUnit()" class="unit-pill ripple-btn" title="Cambiar Unidad">
+                    <span id="unit-disp">KG</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pink-dark)"
+                        stroke-width="3">
+                        <path d="M8 7h8M8 17h8M12 7v10" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ─── VISTA: INICIO ─── -->
+        <div id="view-home" class="view-panel">
+            <header class="mb-6">
+                <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight font-display">¡Hola,
+                    Valeria! ✨</h1>
+                <div class="quote-card mt-4" onclick="setRandomQuote()">
+                    <p id="motivational-quote" class="text-pink-600 dark:text-pink-300 font-medium">Cargando
+                        inspiración...</p>
+                    <div class="text-right mt-2 text-[10px] font-bold text-pink-400">↻ Toca para cambiar</div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-4 gap-3 mb-6">
+                <div class="stat-card col-span-1">
+                    <div class="stat-value text-pink-500" id="stat-workouts">0</div>
+                    <div class="stat-label">Sesiones</div>
+                </div>
+                <div class="stat-card col-span-1">
+                    <div class="stat-value text-amber-500" id="stat-streak">0</div>
+                    <div class="stat-label">Racha</div>
+                </div>
+                <div class="stat-card col-span-2">
+                    <div class="stat-value text-emerald-500 text-xl" id="stat-volume">0 kg</div>
+                    <div class="stat-label">Volumen total</div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 border border-pink-border rounded-2xl p-4 mb-6 shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Esta semana</p>
+                    <span id="week-summary" class="text-xs font-bold text-pink-500">0 / 7 días</span>
+                </div>
+                <div class="flex gap-2 justify-between" id="heatmap-container"></div>
+            </div>
+
+            <div id="active-session-banner" class="mb-6 hidden"></div>
+
+            <div
+                class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-4 rounded-2xl mb-6 flex items-start gap-3 shadow-sm">
+                <span class="text-2xl mt-0.5">🛌</span>
+                <div>
+                    <p class="text-[11px] font-extrabold text-blue-800 dark:text-blue-300 uppercase tracking-widest">
+                        Consejo de Recuperación</p>
+                    <p class="text-xs text-blue-600 dark:text-blue-200 mt-1 font-medium leading-relaxed">Recuerda tomar
+                        un descanso entre el Día 2 y el Día 3. ¡Tus músculos crecen mientras descansas!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── VISTA: ENTRENAMIENTO ─── -->
+        <div id="view-workout" class="hidden view-panel">
+            <header class="mb-6">
+                <h1 id="workout-title-disp" class="text-3xl font-extrabold tracking-tight">Entrenando</h1>
+                <div class="mt-4 progress-pill">
+                    <div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div id="total-progress-bar"
+                            class="h-full bg-gradient-to-r from-pink-400 to-pink-600 transition-all duration-700"
+                            style="width: 0%"></div>
+                    </div>
+                    <span id="total-progress-text" class="text-xs font-black text-pink-500 w-8 text-right">0%</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" fill="none" stroke="var(--slate-100)" stroke-width="3" />
+                        <circle id="mini-ring-circle" cx="12" cy="12" r="9" fill="none" stroke="var(--pink)"
+                            stroke-width="3" stroke-linecap="round" stroke-dasharray="56.5" stroke-dashoffset="56.5"
+                            transform="rotate(-90 12 12)" class="mini-ring" />
+                    </svg>
+                </div>
+            </header>
+
+            <div id="workout-selector-zone" class="fade-in">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Selecciona tu rutina de hoy
+                </h2>
+                <div id="workout-day-cards" class="grid grid-cols-2 gap-4 mb-8"></div>
+            </div>
+
+            <div id="active-workout-zone" class="hidden">
+                <div id="day-pills-container" class="flex gap-3 mb-8 overflow-x-auto pb-2"></div>
+                <div id="exercises-container" class="space-y-6"></div>
+
+                <div class="mt-10 space-y-4">
+                    <button
+                        class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold text-sm shadow-xl active:scale-95 transition-all ripple-btn"
+                        onclick="openSaveModal()">Finalizar Entrenamiento 🏆</button>
+                    <button class="w-full text-slate-400 font-semibold text-xs py-2 ripple-btn"
+                        onclick="confirmReset()">Reiniciar sesión</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── VISTA: LOGROS ─── -->
+        <div id="view-achievements" class="hidden view-panel">
+            <header class="mb-6">
+                <h1 class="text-3xl font-extrabold tracking-tight">Tus Logros</h1>
+                <p class="text-sm text-muted mt-1">Colecciona medallas y supera tus límites ✨</p>
+            </header>
+
+            <div class="bg-white dark:bg-slate-800 border border-pink-border rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Vitrina de Trofeos</p>
+                    <span id="trophy-count"
+                        class="text-xs font-black text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">0
+                        / 0</span>
+                </div>
+
+                <div id="trophy-showcase-container" class="trophy-showcase grid grid-cols-3 gap-4"></div>
+            </div>
+
+            <div class="mt-8 grid grid-cols-2 gap-4">
+                <div class="stat-card">
+                    <div class="stat-value text-blue-500" id="stat-ach-prs">0</div>
+                    <div class="stat-label">PRs Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value text-purple-500" id="stat-ach-workouts">0</div>
+                    <div class="stat-label">Sesiones</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── VISTA: HISTORIAL ─── -->
+        <div id="view-history" class="hidden view-panel">
+            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Historial</h1>
+            <p id="history-subtitle" class="text-sm text-muted mb-4">Tu progreso guardado</p>
+            <div id="progress-chart-wrap" class="progress-chart-wrap hidden">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Volumen por Sesión</p>
+                <div id="progress-chart-svg"></div>
+                <div id="progress-chart-labels" class="flex justify-between mt-1"></div>
+            </div>
+            <div id="history-container" class="space-y-3"></div>
+        </div>
+
+        <!-- ─── VISTA: EDITOR DE RUTINA ─── -->
+        <div id="view-settings" class="hidden view-panel">
+            <header class="mb-6">
+                <h1 class="text-3xl font-extrabold tracking-tight">Editor de Rutina</h1>
+                <p class="text-sm text-muted mt-1">Personaliza cada día y ejercicio ✨</p>
+                <p class="text-[10px] text-pink-400 font-bold mt-2 flex items-center gap-1">
+                    <span>⠿</span> Arrastra los días para reordenarlos
+                </p>
+            </header>
+            <div id="editor-days-container"></div>
+            <div class="reset-danger-zone mt-4 mb-8">
+                <h3 class="font-bold text-red-600 dark:text-red-400 mb-1 text-sm">⚠️ Restablecer Rutina</h3>
+                <p class="text-xs text-red-500 dark:text-red-300 mb-3 leading-relaxed">Esto borrará todos tus cambios y
+                    restaurará los ejercicios originales. Tu historial y PRs no se verán afectados.</p>
+                <button onclick="confirmResetRoutine()"
+                    class="w-full py-3 rounded-xl font-bold text-sm text-red-600 dark:text-red-400 border-2 border-red-200 dark:border-red-800 active:scale-95 transition-all ripple-btn">Restaurar
+                    Rutina Original 🔄</button>
+            </div>
+        </div>
+
+    </div> <!-- FIN DE #APP -->
+
+    <!-- MODAL RESUMEN -->
+    <div id="modal-summary" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <div class="text-center mb-4">
+                <div class="text-5xl mb-3">🎉</div>
+                <h2 class="text-2xl font-bold">¡Lo lograste, Valeria!</h2>
+                <p class="text-muted text-sm mt-1">Cada gota de sudor es progreso.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Series</p>
+                    <p id="summary-sets" class="text-xl font-black text-pink-500">0</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">Volumen</p>
+                    <p id="summary-vol" class="text-xl font-black text-emerald-500">0 kg</p>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-700 p-4 rounded-2xl text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase">XP</p>
+                    <p id="summary-xp" class="text-xl font-black text-amber-500">+100</p>
+                </div>
+            </div>
+            <button
+                class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold shadow-lg ripple-btn"
+                onclick="saveToHistory()">Guardar Entrenamiento ✨</button>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR EJERCICIO -->
+    <div id="modal-edit-ex" class="modal-overlay modal-edit-ex">
+        <div class="modal-content" style="max-height:88vh;overflow-y:auto">
+            <div class="modal-handle"></div>
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-xl font-black">Editar Ejercicio</h2>
+                <button onclick="closeEditExModal()"
+                    class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-lg">✕</button>
+            </div>
+            <div class="space-y-4">
+                <div><label class="editor-label">Nombre del Ejercicio</label><input id="ex-edit-name" type="text"
+                        class="editor-input" placeholder="ej. Press Inclinado Máquina"></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="editor-label">Series</label><input id="ex-edit-sets" type="number"
+                            inputmode="numeric" min="1" max="10" class="editor-input" placeholder="3"></div>
+                    <div><label class="editor-label">Repeticiones</label><input id="ex-edit-reps" type="text"
+                            class="editor-input" placeholder="6-8"></div>
+                </div>
+                <div><label class="editor-label">Tip Rápido</label><input id="ex-edit-tip" type="text"
+                        class="editor-input" placeholder="ej. Codos a 45°"></div>
+                <div><label class="editor-label">Detalles Técnicos</label><textarea id="ex-edit-details"
+                        class="editor-textarea"
+                        placeholder="ej. Imagina alejar la máquina usando el pecho. Baja en 3s."></textarea></div>
+                <div><label class="editor-label">URL Video Principal (MP4 / GIF)</label><input id="ex-edit-gif"
+                        type="url" class="editor-input" placeholder="https://..."></div>
+                <div><label class="editor-label">URL Video Variante (opcional)</label><input id="ex-edit-gifVar"
+                        type="url" class="editor-input" placeholder="https://..."></div>
+            </div>
+            <button onclick="saveEditExModal()" class="editor-save-btn mt-6 ripple-btn">Guardar Cambios ✨</button>
+        </div>
+    </div>
+
+    <!-- MODAL EMOJI -->
+    <div id="modal-emoji" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <h2 class="text-lg font-black mb-2">Elige un Emoji</h2>
+            <p class="text-sm text-muted mb-4">Toca uno para seleccionarlo</p>
+            <div class="emoji-grid" id="emoji-grid-container"></div>
+            <button onclick="saveEmojiModal()" class="editor-save-btn mt-5 ripple-btn">Confirmar ✨</button>
+        </div>
+    </div>
+
+    <!-- CALCULADORA VISUAL -->
+    <div id="modal-calc" class="calc-overlay">
+        <div class="calc-sheet">
+            <div class="modal-handle"></div>
+            <div class="text-center mb-5 relative">
+                <p id="calc-header-label" class="text-[10px] font-bold uppercase text-slate-400 tracking-widest">Peso
+                    Total (LBS)</p>
+                <div class="flex items-end justify-center gap-1 mt-1">
+                    <span id="calc-total-main"
+                        class="text-6xl font-black font-display text-slate-800 dark:text-white leading-none">0</span>
+                    <span id="calc-total-unit-label" class="text-xl font-bold text-pink-400 mb-1">lbs</span>
+                </div>
+                <p id="calc-total-sub"
+                    class="text-xs font-bold text-slate-400 mt-2 bg-slate-100 dark:bg-slate-800 inline-block px-3 py-1 rounded-full border border-slate-200 dark:border-slate-700">
+                    ≈ 0.0 KG</p>
+            </div>
+            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-6">
+                <button onclick="setCalcTab('barra')" id="ctab-barra"
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">🏋️‍♀️
+                    Barra</button>
+                <button onclick="setCalcTab('mancuernas')" id="ctab-mancuernas"
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">💪
+                    Mancuernas</button>
+                <button onclick="setCalcTab('maquina')" id="ctab-maquina"
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">⚙️ Máquina</button>
+            </div>
+            <div id="cview-barra">
+                <div class="flex gap-2 justify-center mb-5">
+                    <button onclick="setCalcBar(45)" id="cbar-45"
+                        class="px-4 py-2 text-[10px] font-bold rounded-full transition-all ripple-btn border">Olímpica
+                        (45)</button>
+                    <button onclick="setCalcBar(25)" id="cbar-25"
+                        class="px-4 py-2 text-[10px] font-bold rounded-full transition-all ripple-btn border">Corta
+                        (25)</button>
+                    <button onclick="setCalcBar(15)" id="cbar-15"
+                        class="px-4 py-2 text-[10px] font-bold rounded-full transition-all ripple-btn border">Smith
+                        (15)</button>
+                </div>
+                <div
+                    class="h-16 flex items-center justify-center bg-slate-50 dark:bg-slate-800/50 rounded-2xl mb-6 border border-pink-border relative overflow-hidden shadow-inner">
+                    <div class="w-full h-3 bg-slate-300 dark:bg-slate-600 rounded-full absolute left-0 right-0 z-0">
+                    </div>
+                    <div class="z-10 flex items-center gap-[2px]" id="calc-visual-plates"></div>
+                </div>
+                <div class="flex justify-center gap-3 mb-6 items-center flex-wrap">
+                    <button onclick="addCalcPlate(45)"
+                        class="plate-btn w-16 h-16 bg-pink-500 text-xl border-4 border-pink-600 shadow-pink-200 dark:shadow-none shadow-lg">45</button>
+                    <button onclick="addCalcPlate(25)"
+                        class="plate-btn w-14 h-14 bg-blue-500 text-lg border-4 border-blue-600 shadow-blue-200 dark:shadow-none shadow-lg">25</button>
+                    <button onclick="addCalcPlate(10)"
+                        class="plate-btn w-12 h-12 bg-emerald-500 text-base border-4 border-emerald-600 shadow-emerald-200 dark:shadow-none shadow-lg">10</button>
+                    <button onclick="addCalcPlate(5)"
+                        class="plate-btn w-10 h-10 bg-amber-500 text-sm border-4 border-amber-600 shadow-amber-200 dark:shadow-none shadow-lg">5</button>
+                    <button onclick="addCalcPlate(2.5)"
+                        class="plate-btn w-9 h-9 bg-purple-500 text-[11px] border-2 border-purple-600 shadow-purple-200 dark:shadow-none shadow-lg">2.5</button>
+                </div>
+                <div class="flex justify-between border-t border-slate-100 dark:border-slate-800 pt-3">
+                    <button onclick="clearCalcPlates()"
+                        class="text-xs font-bold text-slate-400 p-2 ripple-btn flex items-center gap-1">✕
+                        Limpiar</button>
+                    <button onclick="undoCalcPlate()"
+                        class="text-xs font-bold text-pink-500 p-2 ripple-btn flex items-center gap-1">↺
+                        Deshacer</button>
+                </div>
+            </div>
+            <div id="cview-mancuernas" class="hidden">
+                <p class="text-center text-[10px] text-muted mb-3 font-bold uppercase tracking-widest">Peso por
+                    mancuerna (<span id="dumb-unit-label">kg</span>)</p>
+                <div class="grid grid-cols-5 gap-2 max-h-56 overflow-y-auto p-1 pb-4" id="calc-dumb-grid"></div>
+            </div>
+            <div id="cview-maquina" class="hidden">
+                <p class="text-center text-[10px] text-muted mb-3 font-bold uppercase tracking-widest">Placas / Polea
+                    (<span id="mach-unit-label">kg</span>)</p>
+                <div
+                    class="flex items-center justify-center gap-6 py-6 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-pink-border">
+                    <button onclick="stepCalcMach(-5)"
+                        class="w-14 h-14 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-2xl font-black active:scale-90 transition-transform ripple-btn">-</button>
+                    <div class="text-6xl font-black font-display text-pink-500 w-24 text-center" id="cmach-val">0</div>
+                    <button onclick="stepCalcMach(5)"
+                        class="w-14 h-14 rounded-full bg-pink-100 dark:bg-pink-900/50 text-pink-600 dark:text-pink-300 border border-pink-200 dark:border-pink-800 text-2xl font-black active:scale-90 transition-transform ripple-btn">+</button>
+                </div>
+            </div>
+            <button onclick="submitCalc()"
+                class="w-full mt-6 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-pink-200 dark:shadow-none active:scale-95 transition-all ripple-btn">Confirmar
+                y Guardar ✨</button>
+        </div>
+    </div>
+
+    <div id="modal-reps" class="calc-overlay">
+        <div class="calc-sheet">
+            <div class="modal-handle"></div>
+            <h3 class="text-xs font-black text-pink-500 uppercase tracking-widest mb-4 text-center">Repeticiones</h3>
+            <div class="flex flex-col items-center mb-8">
+                <span id="reps-display-big" class="text-7xl font-black font-display text-white mb-6">8</span>
+                <input type="range" id="reps-slider" min="1" max="15" step="1" value="8"
+                    oninput="updateRepsDisplay(this.value)">
+                <div class="flex justify-between w-full mt-3 text-[10px] text-slate-500 font-bold px-1">
+                    <span>1</span><span>15</span>
+                </div>
+            </div>
+            <button onclick="submitReps()"
+                class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">Confirmar
+                Reps ✨</button>
+        </div>
+    </div>
+    <!-- TIMER BAR -->
+    <div id="bottom-timer-bar" class="bottom-bar hidden-bar"
+        onclick="if(!this.classList.contains('expanded')) expandTimer()">
+        <div class="timer-handle"></div>
+
+        <div class="timer-mini-wrap flex items-center justify-between gap-4 h-full">
+            <div class="flex items-center gap-3">
+                <div class="relative w-12 h-12">
+                    <svg viewBox="0 0 80 80" class="w-full h-full">
+                        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="8" />
+                        <circle id="timer-ring-mini" cx="40" cy="40" r="34" fill="none" stroke="var(--pink)"
+                            stroke-width="8" stroke-linecap="round" transform="rotate(-90 40 40)"
+                            style="stroke-dasharray: 213.6; stroke-dashoffset: 0;" />
+                    </svg>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span id="timer-display" class="text-[10px] font-black text-white tabular-nums">02:30</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-pink-500 uppercase tracking-widest leading-none mb-1">Descanso
+                    </p>
+                    <p class="text-[9px] text-muted font-bold">Toca para ajustar</p>
+                </div>
+            </div>
+            <button id="timer-btn" onclick="event.stopPropagation(); toggleTimer();"
+                class="bg-pink-500 text-white px-8 h-11 rounded-2xl font-bold text-xs shadow-lg shadow-pink-500/20 active:scale-95 transition-all flex-shrink-0">INICIAR</button>
+        </div>
+
+        <div class="timer-big-wrap pb-6">
+            <h3 class="text-xs font-black text-pink-500 uppercase tracking-widest mb-6 mt-4">Tiempo de Recuperación</h3>
+            <div class="relative mb-8" style="width:200px; height:200px;">
+                <svg viewBox="0 0 80 80" class="w-full h-full">
+                    <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4" />
+                    <circle id="timer-ring-big" cx="40" cy="40" r="36" fill="none" stroke="var(--pink)" stroke-width="4"
+                        stroke-linecap="round" transform="rotate(-90 40 40)"
+                        style="stroke-dasharray: 226; stroke-dashoffset: 0;" />
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div id="timer-edit-mode" class="wheel-picker-container">
+                        <div class="wheel-highlight"></div>
+                        <div class="wheel-col" id="wheel-min" onscroll="handleWheelScroll('min')"></div>
+                        <div class="wheel-colon">:</div>
+                        <div class="wheel-col" id="wheel-sec" onscroll="handleWheelScroll('sec')"></div>
+                    </div>
+                    <div id="timer-run-mode" class="hidden flex items-center justify-center w-full h-full">
+                        <span id="timer-display-big"
+                            class="text-6xl font-black text-white tabular-nums tracking-tighter">02:30</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col w-full gap-3 px-2">
+                <button id="timer-btn-big" onclick="event.stopPropagation(); toggleTimer();"
+                    class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">INICIAR
+                    DESCANSO</button>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="event.stopPropagation(); resetTimer();"
+                        class="bg-white/5 text-white py-3 rounded-2xl font-bold text-xs active:bg-white/10">REINICIAR</button>
+                    <button onclick="event.stopPropagation(); minimizeTimer();"
+                        class="bg-white/5 text-slate-400 py-3 rounded-2xl font-bold text-xs active:bg-white/10">CERRAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,2183 @@
+/* ════════════════════════════════════════════════════
+       FRASES MOTIVACIONALES
+    ════════════════════════════════════════════════════ */
+const MOTIVATIONAL_QUOTES = [
+    "Hoy es tu día para brillar, Valeria. ✨", "Cada repetición te acerca a tu mejor versión. 💪", "Tu disciplina es tu mayor superpoder. 🌸",
+    "Hazlo por ti y para ti. 💖", "El sudor de hoy es la fuerza de mañana. 🔥", "No te rindas, los resultados toman tiempo. ⏳",
+    "Eres más fuerte de lo que crees. 👑", "Convierte el esfuerzo en orgullo. 🌟", "Tu cuerpo es tu templo, cuídalo entrenando. 🤍",
+    "Un día a la vez, una serie a la vez. 🎯", "La constancia siempre le gana a la intensidad. 📈", "Tú eres tu única competencia. 🪞",
+    "Demuéstrate de qué estás hecha hoy. 💥", "El éxito se construye fuera de tu zona de confort. 🚀", "Hoy no hay excusas, solo progreso. 💯",
+    "Respira profundo y levanta ese peso. 🌬️", "La motivación te hace empezar, el hábito te mantiene. 🔁", "Eres pura magia en movimiento. ✨",
+    "Siente el músculo trabajar, conecta tu mente. 🧠", "Pequeños progresos diarios suman grandes resultados. 📊",
+    "Valeria, naciste para superar tus límites. 💫", "El dolor de hoy será tu poder mañana. 🦋", "Cree en ti misma y serás imparable. 🧗‍♀️",
+    "No busques perfección, busca evolución. 🌺", "Disfruta el proceso, tu cuerpo es asombroso. 🌻", "Transforma el cansancio en determinación. ⚡",
+    "Eres arquitecta de tu propia fuerza. 🏛️", "Dedícate esta hora a ti misma, te la mereces. 🎀", "Cada entrenamiento es una victoria. 🏅",
+    "Tu energía de hoy define tus logros de mañana. 🔋", "No importa si vas lento, lo importante es no parar. 🐢", "Fuerte, hermosa e imparable. 💅",
+    "Haz que hoy cuente, Valeria. 🗓️", "El peso se siente ligero cuando la mente está fuerte. 💭", "Agradece a tu cuerpo por lo que puede hacer. 🙏",
+    "Celebra cada pequeño logro en el gimnasio. 🎉", "Levántate, brilla y entrena. 🌅", "Tus excusas no queman calorías. 🔥",
+    "Estás esculpiendo tu mejor versión. 🪨", "Haz el trabajo, confía en el proceso. 🛠️", "El único mal entrenamiento es el que no se hace. 👟",
+    "Siente el orgullo después de la última serie. 😌", "La fuerza también es femenina. 👸", "Visualiza tu meta y ve por ella. 🔭",
+    "Hoy estás un paso más cerca de tu objetivo. 📍", "Mantén la cabeza alta y la postura firme. 🧍‍♀️", "Tu cuerpo escucha todo lo que tu mente dice. 🧘‍♀️",
+    "Rompe tus propios récords hoy. 🏆", "Eres la protagonista de tu propio progreso. 🎬", "Construye tu fuerza desde adentro hacia afuera. 🏗️",
+    "Valeria, este momento es tuyo. Úsalo bien. ⌚", "Un cuerpo fuerte construye una mente fuerte. 🛡️", "El esfuerzo que pones hoy es la recompensa de mañana. 🎁",
+    "Entrena porque amas a tu cuerpo. ❤️", "Que tu determinación sea más fuerte que tu cansancio. 🌪️", "Desafíate a ti misma un poco más hoy. 🧩",
+    "No te detengas cuando estés cansada, detente cuando termines. 🏁", "Deja que el progreso sea tu mayor motivación. 📈", "Brilla con luz propia en cada serie. 💫",
+    "Recuerda por qué empezaste. ¡Vamos, Valeria! 🚀", "No te compares con nadie, solo compárate con la Valeria de ayer. 🎯", "Cada repetición te acerca más a tu meta. 🎯",
+];
+function setRandomQuote() {
+    const el = document.getElementById('motivational-quote');
+    el.style.opacity = 0;
+    setTimeout(() => { el.innerText = MOTIVATIONAL_QUOTES[Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length)]; el.style.opacity = 1; }, 200);
+}
+
+/* ════════════════════════════════════════════════════
+   DEFAULT ROUTINE
+════════════════════════════════════════════════════ */
+const DEFAULT_ROUTINE = {
+    1: {
+        label: 'Push · Superior', icon: '💪',
+        exercises: [
+            {
+                name: 'Press Inclinado Máquina', sets: 3, reps: '6-8',
+                tip: 'Codos a 45°.',
+                details: '🎯 <b>Foco:</b> Pectoral Superior.<br><b>Coach:</b> Mantén las escápulas retraídas contra el banco. No bloquees los codos arriba para mantener tensión constante. Imagina que quieres "estirar" el pecho al bajar (3s) y "explotar" al subir.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-plate-loaded-incline-chest-press-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Smithmachine-incline-bench-press-side.mp4'
+            },
+            {
+                name: 'Press Militar DB', sets: 2, reps: '6-8',
+                tip: 'Core firme.',
+                details: '🎯 <b>Foco:</b> Deltoides Anterior.<br><b>Coach:</b> Mantén los codos ligeramente adelantados (plano escapular) para no estresar el manguito rotador. Evita arquear la espalda baja; aprieta el abdomen como si fueras a recibir un golpe.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-dumbbell-seated-overhead-press-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Barbell-barbell-overhead-press-side.mp4'
+            },
+            {
+                name: 'Elevaciones Laterales', sets: 3, reps: '12-15',
+                tip: 'Controla la bajada.',
+                details: '🎯 <b>Foco:</b> Deltoides Lateral.<br><b>Coach:</b> Lanza las mancuernas hacia las paredes, no hacia el techo. Imagina que tus manos son ganchos; no aprietes demasiado fuerte para no usar el antebrazo. El meñique debe liderar ligeramente la subida.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-lateral-raise-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-lateral-raise-front.mp4'
+            },
+            {
+                name: 'Jalón al Pecho', sets: 2, reps: '8-10',
+                tip: 'Jala hacia las caderas.',
+                details: '🎯 <b>Foco:</b> Dorsal Ancho.<br><b>Coach:</b> No jales con las manos, imagina que tus codos quieren tocar tus bolsillos traseros. Saca el pecho al bajar la barra y evita el balanceo excesivo del torso.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-machine-pulldown-front.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-assisted-pull-up-side.mp4'
+            },
+            {
+                name: 'Remo con Apoyo', sets: 2, reps: '8-10',
+                tip: 'Pecho pegado al banco.',
+                details: '🎯 <b>Foco:</b> Espalda media y Trapecio.<br><b>Coach:</b> Estira los brazos completamente abajo para sentir el estiramiento del dorsal. Al subir, aprieta las escápulas como si quisieras atrapar una moneda entre ellas. Cero impulso.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-machine-seated-cable-row-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-neutral-pulldown-side.mp4'
+            },
+            {
+                name: 'Pullover en Polea', sets: 2, reps: '12-15',
+                tip: 'Siente el estiramiento.',
+                details: '🎯 <b>Foco:</b> Dorsal (aislamiento).<br><b>Coach:</b> Mantén una ligera flexión de codo constante. La clave es el estiramiento arriba; aguanta 1s ahí. Baja la barra hasta tus muslos apretando fuerte los laterales de tu espalda.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-pullover-front.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-rope-pullover-side.mp4'
+            }
+        ]
+    },
+    2: {
+        label: 'Lower A · Glúteo', icon: '🍑',
+        exercises: [
+            {
+                name: 'Sentadilla Búlgara', sets: 3, reps: '8-10',
+                tip: 'Peso en el talón.',
+                details: '🎯 <b>Foco:</b> Glúteo Mayor.<br><b>Coach:</b> Inclina el torso hacia adelante para estirar más las fibras del glúteo. Imagina que el pie de atrás es solo un apoyo; el 90% del esfuerzo viene de la pierna de enfrente. Baja profundo.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-bulgarian-split-squat-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Smithmachine-split-squat-side.mp4'
+            },
+            {
+                name: 'Peso Muerto Rumano', sets: 3, reps: '6-8',
+                tip: 'Cadera atrás.',
+                details: '🎯 <b>Foco:</b> Isquiotibiales y Glúteo.<br><b>Coach:</b> La barra debe "pintar" tus piernas, no se aleje de ellas. Baja solo hasta donde tu cadera deje de ir hacia atrás. Mantén la espalda neutra y siente el estiramiento brutal en la parte trasera.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Barbell-barbell-romanian-deadlift-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-romanian-deadlift-side.mp4'
+            },
+            {
+                name: 'Patada de Glúteo', sets: 3, reps: '10-12',
+                tip: 'Aprieta el glúteo arriba.',
+                details: '🎯 <b>Foco:</b> Glúteo Mayor.<br><b>Coach:</b> Realiza una ligera rotación externa del pie (apuntando hacia afuera). Patea hacia atrás y un poco hacia afuera. Mantén el abdomen apretado para no arquear la zona lumbar.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-glute-kickback-side.mp4'
+            },
+            {
+                name: 'Curl Isquios Sentada', sets: 3, reps: '10-12',
+                tip: 'Bajada en 3s.',
+                details: '🎯 <b>Foco:</b> Isquiotibiales.<br><b>Coach:</b> Mantén los pies apuntando hacia arriba (flexión dorsal). Sujeta fuerte las agarraderas para clavar la cadera al asiento. El regreso a la posición inicial debe ser muy lento.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-seated-hamstring-curl-front.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-machine-hamstring-curl-front.mp4'
+            },
+            {
+                name: 'Extensión Cuádriceps', sets: 2, reps: '12-15',
+                tip: 'Punta arriba.',
+                details: '🎯 <b>Foco:</b> Cuádriceps.<br><b>Coach:</b> Pausa 1-2 segundos en la máxima contracción (arriba). Imagina que quieres "patear" el techo. No dejes que las pesas choquen al bajar para mantener la tensión mecánica.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-machine-leg-extension-side.mp4'
+            },
+            {
+                name: 'Silla Romana', sets: 3, reps: '10-12',
+                tip: 'Espalda redondeada.',
+                details: '🎯 <b>Foco:</b> Glúteo e Isquios.<br><b>Coach:</b> Para quitarle trabajo a la espalda baja, redondea ligeramente la parte alta y mantén el mentón pegado al pecho. Sube usando solo tus glúteos hasta estar alineada, no hiperextiendas.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-45-degree-back-extension-side.mp4'
+            }
+        ]
+    },
+    3: {
+        label: 'Lower B · Pierna', icon: '🔥',
+        exercises: [
+            {
+                name: 'Prensa Pies Altos', sets: 3, reps: '8-10',
+                tip: 'Glúteo stretch.',
+                details: '🎯 <b>Foco:</b> Glúteo y Cadena Posterior.<br><b>Coach:</b> Al poner los pies arriba, involucras más el glúteo. Baja la plataforma todo lo que puedas sin que tu cadera se despegue del respaldo. Empuja siempre con los talones.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-leg-press-front.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-pendulum-squat-side.mp4'
+            },
+            {
+                name: 'Sentadilla Talones', sets: 3, reps: '8-10',
+                tip: 'Torso erguido.',
+                details: '🎯 <b>Foco:</b> Cuádriceps.<br><b>Coach:</b> Eleva los talones con un disco o cuña. Esto permite que tus rodillas viajen más hacia adelante (seguro) y el torso se mantenga vertical, castigando directamente el cuádriceps.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-dumbbell-goblet-squat-front.mp4'
+            },
+            {
+                name: 'Máquina Aductores', sets: 3, reps: '12-15',
+                tip: 'Controlado.',
+                details: '🎯 <b>Foco:</b> Aductores (pierna interna).<br><b>Coach:</b> Abre hasta sentir un estiramiento cómodo pero intenso. Cierra con potencia y aguanta el apretón 1 segundo. Es el músculo que da la forma estética a la pierna.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/male-Machine-machine-hip-adduction-front.mp4'
+            },
+            {
+                name: 'Curl Isquios Sentada', sets: 2, reps: '10-12',
+                tip: 'Retorno lento.',
+                details: '🎯 <b>Foco:</b> Isquiotibiales.<br><b>Coach:</b> Concéntrate en la fase excéntrica (cuando las piernas suben). Cuenta "1, 2, 3" antes de volver a bajar. La conexión mente-músculo aquí es vital.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-seated-hamstring-curl-front.mp4'
+            },
+            {
+                name: 'Extensión Cuádriceps', sets: 2, reps: '12-15',
+                tip: 'Rango completo.',
+                details: '🎯 <b>Foco:</b> Cuádriceps.<br><b>Coach:</b> No uses impulso. Asegúrate de que el rodillo esté justo arriba de tus tobillos. Quema final: busca el fallo muscular seguro.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-machine-leg-extension-side.mp4'
+            }
+        ]
+    },
+    4: {
+        label: 'Pull · Brazos', icon: '✨',
+        exercises: [
+            {
+                name: 'Press Militar DB', sets: 3, reps: '8-10',
+                tip: 'Control de bajada.',
+                details: '🎯 <b>Foco:</b> Deltoides Anterior.<br><b>Coach:</b> Baja las mancuernas hasta que estén a la altura de tus orejas. No choques las pesas arriba; detente un poco antes para mantener la tensión en el hombro.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-dumbbell-seated-overhead-press-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Barbell-barbell-overhead-press-side.mp4'
+            },
+            {
+                name: 'Curl Martillo', sets: 3, reps: '10-12',
+                tip: 'Hombro quieto.',
+                details: '🎯 <b>Foco:</b> Braquial y Antebrazo.<br><b>Coach:</b> Agarre neutro (palmas enfrentadas). Imagina que tus codos están atornillados a tus costillas. Este ejercicio da grosor al brazo visto de lado.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-hammer-curl-front.mp4'
+            },
+            {
+                name: 'Curl Banco Inclinado', sets: 3, reps: '10-12',
+                tip: 'Estiramiento máximo.',
+                details: '🎯 <b>Foco:</b> Cabeza larga del Bíceps.<br><b>Coach:</b> Al estar inclinada, el bíceps empieza desde un estiramiento extremo. No muevas los hombros; solo mueve el antebrazo. Es brutal para el "pico" del bíceps.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-incline-curl-side.mp4'
+            },
+            {
+                name: 'Tríceps Polea', sets: 3, reps: '12-15',
+                tip: 'Separa manos.',
+                details: '🎯 <b>Foco:</b> Tríceps (cabeza lateral).<br><b>Coach:</b> Usa una cuerda. Al llegar abajo, intenta separar las manos hacia afuera. Mantén los hombros bajos, lejos de las orejas.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-bar-pushdown-front.mp4'
+            },
+            {
+                name: 'Vuelos Posteriores', sets: 3, reps: '12-15',
+                tip: 'Codos atrás.',
+                details: '🎯 <b>Foco:</b> Deltoides Posterior.<br><b>Coach:</b> Imagina que quieres "empujar" algo hacia atrás con tus codos. No aprietes las escápulas (no es un remo), el movimiento debe ser puramente del hombro.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Machine-machine-pec-fly-front.mp4'
+            },
+            {
+                name: 'Elevaciones Laterales', sets: 3, reps: '15-20',
+                tip: 'Rango de hipertrofia.',
+                details: '🎯 <b>Foco:</b> Hombro lateral.<br><b>Coach:</b> Repeticiones altas para bombear sangre. Controla el peso; si tienes que columpiarte, el peso es muy alto.',
+                gif: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Dumbbells-dumbbell-lateral-raise-side.mp4',
+                gifVar: 'https://media.musclewiki.com/media/uploads/videos/branded/female-Cables-cable-lateral-raise-front.mp4'
+            }
+        ]
+    }
+};
+
+/* ════════════════════════════════════════════════════
+   CONSTANTS & GLOBAL STATE
+════════════════════════════════════════════════════ */
+const ROUTINE_KEY = 'giovafit_routine_v1';
+const SESSION_KEY = 'giovafit_pro_v1';
+const HISTORY_KEY = 'giovafit_history_v1';
+const XP_KEY = 'giovafit_xp_v1';
+const PR_KEY = 'giovafit_pr_v1';
+const UNIT_KEY = 'giovafit_unit_v1';
+const ACH_KEY = 'giovafit_achievements_v1';
+
+let achState = {
+    unlocked: [],
+    stats: { prs: 0, workouts: 0, chest: 0, gluteLegs: 0, arms: 0, back: 0, level: 1, streak: 0 }
+};
+
+const MEDALS_DB = [
+    // --- CONSTANCIA Y ENTRENAMIENTOS ---
+    { id: 'workout_1', icon: '🔥', title: 'El Primer Paso', desc: 'Completaste tu primer entrenamiento. El viaje hacia tu mejor versión comienza con un solo paso.', req: { type: 'workouts', count: 1 } },
+    { id: 'workout_4', icon: '📅', title: 'Semana Perfecta', desc: 'Completaste 4 sesiones. ¡Tienes una constancia de hierro y se nota!', req: { type: 'workouts', count: 4 } },
+    { id: 'workout_10', icon: '🎯', title: 'Racha de Élite', desc: '10 entrenamientos. La disciplina se está convirtiendo en tu segunda naturaleza.', req: { type: 'workouts', count: 10 } },
+    { id: 'workout_20', icon: '🚀', title: 'Fuerza Imparable', desc: '20 entrenamientos. Llevas una inercia que absolutamente nada puede detener.', req: { type: 'workouts', count: 20 } },
+    { id: 'workout_30', icon: '🌌', title: 'Viajera Cósmica', desc: '30 entrenamientos. Has trascendido tus propias barreras y expectativas.', req: { type: 'workouts', count: 30 } },
+
+    // --- LOGROS POR RACHA (CONSTANCIA) ---
+    { id: 'streak_3', icon: '🕯️', title: 'Hábito en Marcha', desc: 'Mantuviste una racha de 3 días. El fuego interno se ha encendido.', req: { type: 'streak', count: 3 } },
+    { id: 'streak_7', icon: '🕯️', title: 'Semana de Fuego', desc: '7 días seguidos entrenando. ¡Eres la definición de disciplina!', req: { type: 'streak', count: 7 } },
+    { id: 'streak_15', icon: '☀️', title: 'Sol Invencible', desc: '15 días de racha. Nada puede apagar tu determinación.', req: { type: 'streak', count: 15 } },
+
+    // --- FUERZA Y RÉCORDS (PRs) ---
+    { id: 'pr_5', icon: '🥇', title: 'Fuerza Despierta', desc: 'Rompiste 5 Récords Personales. Tu cuerpo se está adaptando y fortaleciendo maravillosamente.', req: { type: 'prs', count: 5 } },
+    { id: 'pr_10', icon: '🏆', title: 'Maestra del Hierro', desc: '10 Récords Personales. Has superado tus límites una y otra vez con total elegancia.', req: { type: 'prs', count: 10 } },
+    { id: 'pr_20', icon: '💎', title: 'Leyenda del Gimnasio', desc: '20 Récords Personales. Eres una verdadera máquina de progreso.', req: { type: 'prs', count: 20 } },
+
+    // --- ANATOMÍA: PECHO ---
+    { id: 'chest_20', icon: '🛡️', title: 'Armadura Superior', desc: '20 series de empuje. Entrenar el pecho da estabilidad a todo el torso y realza tu postura.', req: { type: 'chest', count: 20 } },
+    { id: 'chest_50', icon: '👑', title: 'Reina de la Selva', desc: '50 series de pecho. Tu tren superior es una fortaleza impenetrable.', req: { type: 'chest', count: 50 } },
+
+    // --- ANATOMÍA: PIERNA Y GLÚTEO ---
+    { id: 'legs_20', icon: '🍑', title: 'Base de Titanio', desc: '20 series de tren inferior. Glúteos y piernas fuertes previenen lesiones y te dan un poder increíble.', req: { type: 'gluteLegs', count: 20 } },
+    { id: 'legs_50', icon: '🔥', title: 'Diosa Guerrera', desc: '50 series de piernas. Sostienes el peso de tus metas con unas piernas invencibles.', req: { type: 'gluteLegs', count: 50 } },
+
+    // --- ANATOMÍA: BRAZOS ---
+    { id: 'arms_20', icon: '💪', title: 'Brazos de Acero', desc: '20 series de brazo. Unos brazos fuertes y tonificados mejoran tu rendimiento en cualquier otro ejercicio.', req: { type: 'arms', count: 20 } },
+    { id: 'arms_50', icon: '⚔️', title: 'Amazona de Hierro', desc: '50 series de brazo. Esculpidos, fuertes y capaces de levantar cualquier desafío.', req: { type: 'arms', count: 50 } },
+
+    // --- ANATOMÍA: ESPALDA ---
+    { id: 'back_20', icon: '🦅', title: 'Postura Perfecta', desc: '20 series de espalda. Una espalda fuerte es la clave para una silueta estilizada y sin encorvamientos.', req: { type: 'back', count: 20 } },
+    { id: 'back_50', icon: '🪽', title: 'Alas de Valquiria', desc: '50 series de espalda. Eres tan fuerte y estética como tus propias ambiciones.', req: { type: 'back', count: 50 } },
+
+    // --- NIVELES GLOBALES ---
+    { id: 'level_5', icon: '🌱', title: 'Brote de Poder', desc: 'Alcanzaste el Nivel 5. Estás dejando atrás la versión que eras antes.', req: { type: 'level', count: 5 } },
+    { id: 'level_10', icon: '🌟', title: 'Maestra Ascendida', desc: 'Nivel 10 alcanzado. Has dominado los fundamentos de tu propio cuerpo.', req: { type: 'level', count: 10 } },
+    { id: 'level_15', icon: '🎭', title: 'Transformación Real', desc: 'Alcanzaste el Nivel 15. Tu cuerpo y mente están en sintonía total.', req: { type: 'level', count: 15 } },
+    { id: 'level_20', icon: '✨', title: 'Iluminada', desc: 'Nivel 20 alcanzado. La luz de la disciplina y el amor propio brilla en ti.', req: { type: 'level', count: 20 } },
+    { id: 'level_50', icon: '🔱', title: 'Diosa del Olimpo', desc: 'Nivel 50 alcanzado. Atenea y Afrodita estarían orgullosas de tu dedicación.', req: { type: 'level', count: 50 } }
+];
+
+function saveAchievements() { localStorage.setItem(ACH_KEY, JSON.stringify(achState)); }
+
+let ROUTINE = {};
+let currentDay = 1;
+let sessionState = {};
+let historyState = [];
+let xpState = { xp: 0, level: 1, streak: 0, lastDate: null };
+let prState = {};
+let currentCalcKey = null;
+let currentRepsKey = null;
+let activeCalcTab = 'barra';
+let globalUnit = localStorage.getItem(UNIT_KEY) || 'kg';
+
+let timerId = null, timeLeft = 150, timerDuration = 150, isRunning = false;
+const TIMER_CIRCUMFERENCE = 213.6;
+
+function saveRoutine() { localStorage.setItem(ROUTINE_KEY, JSON.stringify(ROUTINE)); }
+function saveXP() { localStorage.setItem(XP_KEY, JSON.stringify(xpState)); }
+function persistSession() { localStorage.setItem(SESSION_KEY, JSON.stringify(sessionState)); }
+
+function persistInput(k, field, rawValue) {
+    if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
+
+    if (field === 'w') {
+        const num = parseFloat(rawValue);
+        if (rawValue === '' || rawValue === null || rawValue === undefined) {
+            sessionState[k].w = '';
+        } else if (isNaN(num) || num < 0) {
+            showToast('⚠️ Peso inválido');
+            return;
+        } else {
+            sessionState[k].w = num;
+        }
+    } else if (field === 'r') {
+        const trimmed = String(rawValue).trim();
+        if (trimmed !== '' && !/^\d+(-\d+)?$/.test(trimmed)) {
+            showToast('⚠️ Reps inválidas (ej: 10 ó 8-12)');
+            return;
+        }
+        sessionState[k].r = trimmed;
+    } else {
+        sessionState[k][field] = rawValue;
+    }
+
+    persistSession();
+    checkActiveSession();
+}
+
+function updateInput(k, f, v) {
+    if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
+    sessionState[k][f] = v;
+
+    // ─── LÓGICA DE AUTO-CASCADA (Solo para el Peso 'w') ───
+    if (f === 'w' && v !== '') {
+        // k tiene el formato "dia_ejercicio_serie" (ej. "1_0_1")
+        const parts = k.split('_');
+        const d = parts[0];
+        const exI = parts[1];
+        const currentSet = parseInt(parts[2]);
+        const totalSets = ROUTINE[d].exercises[exI].sets;
+
+        // Revisamos las series que están por debajo de la actual
+        for (let nextSet = currentSet + 1; nextSet <= totalSets; nextSet++) {
+            const nextKey = `${d}_${exI}_${nextSet}`;
+            if (!sessionState[nextKey]) sessionState[nextKey] = { done: false, w: '', r: '' };
+
+            // Solo le pasamos el peso si la serie de abajo está vacía
+            if (sessionState[nextKey].w === '' || sessionState[nextKey].w === undefined) {
+                sessionState[nextKey].w = v; // Guardamos en la memoria
+
+                // Actualizamos visualmente el texto en la pantalla
+                const row = document.getElementById(`row-${nextKey}`);
+                if (row) {
+                    // El primer input es el del peso
+                    const weightInput = row.querySelectorAll('.gym-input')[0];
+                    if (weightInput) weightInput.value = v;
+                }
+            }
+        }
+    }
+    // ────────────────────────────────────────────────────────
+
+    localStorage.setItem(SESSION_KEY, JSON.stringify(sessionState));
+}
+
+function toggleGlobalUnit() {
+    globalUnit = globalUnit === 'kg' ? 'lbs' : 'kg';
+    localStorage.setItem(UNIT_KEY, globalUnit);
+    document.getElementById('unit-disp').innerText = globalUnit.toUpperCase();
+    if (navigator.vibrate) navigator.vibrate([20]);
+
+    buildDumbGrid();
+    updateCalcUnitLabels();
+    updateHomeStats();
+    renderHistory();
+    if (!document.getElementById('view-workout').classList.contains('hidden')) {
+        renderDay(currentDay);
+    }
+}
+
+function formatUnitDisplay(valBaseKg) {
+    if (valBaseKg === '' || valBaseKg === null || valBaseKg === undefined) return '';
+    const val = parseFloat(valBaseKg);
+    if (isNaN(val)) return '';
+    const converted = globalUnit === 'lbs' ? val * 2.20462 : val;
+    return (Number.isInteger(converted) || parseFloat(converted.toFixed(1)) === Math.round(converted))
+        ? Math.round(converted).toString()
+        : converted.toFixed(1);
+}
+
+function loadRoutine() {
+    const saved = localStorage.getItem(ROUTINE_KEY);
+    if (saved) {
+        try { ROUTINE = JSON.parse(saved); }
+        catch (e) { ROUTINE = JSON.parse(JSON.stringify(DEFAULT_ROUTINE)); }
+    } else {
+        ROUTINE = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
+        saveRoutine();
+    }
+}
+
+let audioCtx = null;
+function getAudioCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+}
+function playSound(type) {
+    try {
+        const ctx = getAudioCtx();
+        const sequences = {
+            check: [{ f: 600, t: 0 }, { f: 900, t: 0.08 }],
+            complete: [{ f: 523, t: 0 }, { f: 659, t: 0.1 }, { f: 784, t: 0.2 }, { f: 1046, t: 0.3 }],
+            timerEnd: [{ f: 440, t: 0 }, { f: 550, t: 0.18 }, { f: 660, t: 0.36 }],
+            pr: [{ f: 659, t: 0 }, { f: 784, t: 0.08 }, { f: 880, t: 0.16 }, { f: 1046, t: 0.24 }, { f: 880, t: 0.32 }, { f: 1046, t: 0.4 }],
+            save: [{ f: 784, t: 0 }, { f: 880, t: 0.09 }, { f: 1046, t: 0.18 }]
+        };
+        (sequences[type] || []).forEach(({ f, t }) => {
+            const o = ctx.createOscillator(), g = ctx.createGain();
+            o.connect(g); g.connect(ctx.destination);
+            o.type = type === 'pr' ? 'triangle' : 'sine';
+            o.frequency.value = f;
+            const at = ctx.currentTime + t;
+            g.gain.setValueAtTime(0.09, at);
+            g.gain.exponentialRampToValueAtTime(0.001, at + 0.3);
+            o.start(at); o.stop(at + 0.35);
+        });
+    } catch (e) { }
+}
+
+function addRipple(e) {
+    const btn = e.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+    const radius = diameter / 2;
+    const rect = btn.getBoundingClientRect();
+    circle.style.cssText = `width:${diameter}px;height:${diameter}px;left:${e.clientX - rect.left - radius}px;top:${e.clientY - rect.top - radius}px`;
+    circle.classList.add('ripple-circle');
+    btn.querySelector('.ripple-circle')?.remove();
+    btn.appendChild(circle);
+    setTimeout(() => circle.remove(), 600);
+}
+function initRipples() {
+    document.querySelectorAll('.ripple-btn').forEach(btn => {
+        btn.removeEventListener('click', addRipple);
+        btn.addEventListener('click', addRipple);
+    });
+}
+
+const XP_PER_SET = 10;
+const XP_PER_WORKOUT = 100;
+const XP_PER_LEVEL = 500;
+const LEVEL_ICONS = ['🌱', '💪', '🔥', '⭐', '💫', '👑', '🏆', '💎', '🌟', '🚀'];
+
+function addXP(amount) {
+    const prevLevel = xpState.level;
+    xpState.xp += amount;
+    xpState.level = 1 + Math.floor(xpState.xp / XP_PER_LEVEL);
+
+    achState.stats.level = xpState.level;
+
+    saveXP();
+    updateXPDisplay();
+    showXPPopup(`+${amount} XP`);
+    if (xpState.level > prevLevel) {
+        setTimeout(() => showLevelUp(xpState.level), 600);
+    }
+    checkAchievements();
+}
+function showXPPopup(text) {
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.innerText = text;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1500);
+}
+function updateXPDisplay() {
+    const pct = (xpState.xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100;
+    document.getElementById('hdr-level').innerText = xpState.level;
+    document.getElementById('hdr-xp-bar').style.width = pct + '%';
+    document.getElementById('hdr-streak').innerText = xpState.streak;
+    const elStreak = document.getElementById('stat-streak');
+    if (elStreak) elStreak.innerText = xpState.streak;
+}
+function showLevelUp(level) {
+    const overlay = document.getElementById('levelup-overlay');
+    document.getElementById('lu-icon').innerText = LEVEL_ICONS[Math.min(level - 1, LEVEL_ICONS.length - 1)];
+    document.getElementById('lu-level').innerText = `LVL ${level}`;
+    document.getElementById('lu-msg').innerText = getLevelMsg(level);
+    overlay.classList.add('show');
+    playSound('complete');
+    launchConfetti();
+}
+function closeLevelUp() { document.getElementById('levelup-overlay').classList.remove('show'); }
+function getLevelMsg(lvl) {
+    const msgs = ['', '¡Empezando fuerte!', 'Ya eres una máquina 💪', '¡Nadie te para ahora!', '¡Leyenda del gimnasio!', '¡Imparable, Valeria!', '¡Máquina absoluta! 🔥', '¡Élite del fitness! 👑', '¡Más allá del límite! 💎', '¡Mítica e irrepetible! 🌟'];
+    return msgs[Math.min(lvl, msgs.length - 1)] || '¡Sigue adelante!';
+}
+function updateStreak() {
+    const today = new Date().toDateString();
+    if (xpState.lastDate === today) return;
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    xpState.streak = (xpState.lastDate === yesterday) ? xpState.streak + 1 : 1;
+    if (!xpState.lastDate) xpState.streak = 1;
+    xpState.lastDate = today;
+
+    achState.stats.streak = xpState.streak;
+
+    saveXP();
+    checkAchievements();
+}
+
+function checkPR(exerciseName, weightKg) {
+    if (weightKg === '' || weightKg === null || weightKg === undefined) return false;
+    const w = parseFloat(weightKg);
+    if (isNaN(w) || w <= 0) return false;
+    if (!prState[exerciseName] || w > prState[exerciseName]) {
+        prState[exerciseName] = w;
+        localStorage.setItem(PR_KEY, JSON.stringify(prState));
+        return true;
+    }
+    return false;
+}
+
+function calcSessionVolume() {
+    return Object.values(sessionState).reduce((sum, v) => {
+        if (v.done) {
+            const w = parseFloat(v.w) || 0;
+            const r = parseFloat(v.r) || 0;
+            return sum + w * r;
+        }
+        return sum;
+    }, 0);
+}
+function calcTotalVolume() {
+    return historyState.reduce((sum, s) => sum + (parseFloat(s.volume) || 0), 0);
+}
+
+function renderHeatmap() {
+    const container = document.getElementById('heatmap-container');
+    if (!container) return;
+    const days = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+    const today = new Date();
+    const todayIdx = (today.getDay() + 6) % 7;
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - todayIdx);
+    const workedSet = new Set(historyState.map(s => s.dateRaw).filter(Boolean));
+    let workedCount = 0;
+    const html = days.map((d, i) => {
+        const date = new Date(weekStart);
+        date.setDate(weekStart.getDate() + i);
+        const dateStr = date.toDateString();
+        const isToday = i === todayIdx;
+        const worked = workedSet.has(dateStr);
+        if (worked) workedCount++;
+        const cls = worked ? 'worked' : isToday ? 'today' : 'rest';
+        return `<div class="heatmap-dot ${cls}"><span style="font-size:13px">${worked ? '✓' : isToday ? '●' : d}</span><span>${d}</span></div>`;
+    }).join('');
+    container.innerHTML = html;
+    document.getElementById('week-summary').innerText = `${workedCount} / 7 días`;
+}
+
+function updateHomeStats() {
+    if (!document.getElementById('stat-workouts')) return;
+    animateCount('stat-workouts', historyState.length);
+    animateCount('stat-streak', xpState.streak);
+    const volBase = calcTotalVolume();
+    const dispVol = globalUnit === 'lbs' ? volBase * 2.20462 : volBase;
+    const txt = dispVol > 9999 ? (dispVol / 1000).toFixed(1) + 'k' : Math.round(dispVol);
+    document.getElementById('stat-volume').innerText = `${txt} ${globalUnit.toUpperCase()}`;
+}
+function animateCount(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let start = 0, step = target / 20;
+    const t = setInterval(() => { start = Math.min(start + step, target); el.innerText = Math.round(start); if (start >= target) clearInterval(t); }, 30);
+}
+
+function renderProgressChart() {
+    const wrap = document.getElementById('progress-chart-wrap');
+    const svgCont = document.getElementById('progress-chart-svg');
+    const labelCont = document.getElementById('progress-chart-labels');
+
+    if (!wrap || historyState.length < 2) {
+        if (wrap) wrap.classList.add('hidden');
+        return;
+    }
+    wrap.classList.remove('hidden');
+
+    const data = [...historyState].reverse().slice(-8);
+    const maxVol = Math.max(...data.map(s => parseFloat(s.volume) || 0), 1);
+    const W = 300, H = 70, PX = 12, PY = 8;
+
+    const pts = data.map((s, i) => {
+        const x = PX + (i / (data.length - 1)) * (W - PX * 2);
+        const y = PY + (1 - ((parseFloat(s.volume) || 0) / maxVol)) * (H - PY * 2);
+        return { x, y, s };
+    });
+
+    const polyline = pts.map(p => `${p.x},${p.y}`).join(' ');
+    const areaClose = `${pts[pts.length - 1].x},${H} ${pts[0].x},${H}`;
+
+    const dots = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="var(--pink)" stroke="var(--card)" stroke-width="2"/>`).join('');
+
+    svgCont.innerHTML = `
+        <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible">
+            <defs>
+                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--pink)" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <polyline fill="url(#chartGrad)" stroke="none" points="${polyline} ${areaClose}"/>
+            <polyline fill="none" stroke="var(--pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${polyline}"/>
+            ${dots}
+        </svg>`;
+
+    labelCont.innerHTML = `
+        <span class="text-[9px] text-muted font-bold">${data[0].date}</span>
+        <span class="text-[9px] text-pink-500 font-bold">${formatUnitDisplay(maxVol)} ${globalUnit.toUpperCase()} máx</span>
+        <span class="text-[9px] text-muted font-bold">${data[data.length - 1].date}</span>`;
+}
+
+function launchConfetti() {
+    if (typeof confetti === 'undefined') return;
+    const colors = ['#f472b6', '#db2777', '#fdf2f8', '#ffffff', '#fbbf24', '#a78bfa'];
+    confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 }, colors });
+    setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors }), 200);
+    setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors }), 400);
+}
+
+/* ─── HOME CARDS / SELECTOR ─── */
+function renderWorkoutSelector() {
+    const cont = document.getElementById('workout-day-cards');
+    if (!cont) return;
+
+    const nextDaySuggestion = (historyState.length % Object.keys(ROUTINE).length) + 1;
+
+    cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => {
+        const isSuggested = parseInt(d) === nextDaySuggestion;
+        return `
+                <div class="home-card ripple-btn ${isSuggested ? 'border-pink-400 bg-pink-50/30 dark:bg-pink-900/20' : ''}" onclick="startDay(${d})">
+                    <div class="flex justify-between items-start w-full">
+                        <div class="text-2xl">${ROUTINE[d].icon}</div>
+                        ${isSuggested ? '<span class="text-[8px] font-black bg-pink-500 text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">Toca hoy</span>' : ''}
+                    </div>
+                    <h3 class="font-bold text-sm mt-1">Día ${d}</h3>
+                    <p class="text-[11px] text-muted">${ROUTINE[d].label}</p>
+                </div>`;
+    }).join('');
+    initRipples();
+}
+
+function renderDayPills() {
+    const cont = document.getElementById('day-pills-container');
+    if (!cont) return;
+    cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => `
+        <button onclick="changeDay(${d})" id="tab-${d}" class="day-pill ripple-btn ${parseInt(d) === currentDay ? 'active' : ''}">
+            ${ROUTINE[d].icon} D${d}
+        </button>`).join('');
+    initRipples();
+}
+
+/* ════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════ */
+window.onload = () => {
+    if (localStorage.getItem('dark') === 'true') {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').innerText = '☀️';
+    }
+    document.getElementById('unit-disp').innerText = globalUnit.toUpperCase();
+
+    loadRoutine();
+    sessionState = JSON.parse(localStorage.getItem(SESSION_KEY) || '{}');
+    achState = JSON.parse(localStorage.getItem(ACH_KEY) || '{"unlocked":[],"stats":{"prs":0,"workouts":0,"chest":0,"gluteLegs":0,"arms":0,"back":0,"level":1,"streak":0}}');
+    historyState = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    xpState = JSON.parse(localStorage.getItem(XP_KEY) || '{"xp":0,"level":1,"streak":0,"lastDate":null}');
+    prState = JSON.parse(localStorage.getItem(PR_KEY) || '{}');
+
+    setCalcBar(45);
+    buildDumbGrid();
+    updateCalcUnitLabels();
+
+    setRandomQuote();
+    updateXPDisplay();
+    updateHomeStats();
+    renderHeatmap();
+    initRipples();
+
+    setView('home');
+
+    const hasActive = Object.keys(sessionState).some(k => sessionState[k].done);
+    if (hasActive) {
+        navTo('workout');
+        showToast('Reanudando tu sesión... 💪');
+    }
+};
+
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('dark', isDark);
+    document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast-container');
+    toast.innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ─── SISTEMA DE LOGROS Y MEDALLAS ─── */
+function checkAchievements() {
+    let newlyUnlocked = [];
+    MEDALS_DB.forEach(medal => {
+        if (!achState.unlocked.includes(medal.id)) {
+            const currentStat = achState.stats[medal.req.type] || 0;
+            if (currentStat >= medal.req.count) {
+                achState.unlocked.push(medal.id);
+                newlyUnlocked.push(medal);
+            }
+        }
+    });
+
+    if (newlyUnlocked.length > 0) {
+        saveAchievements();
+        newlyUnlocked.forEach((medal, index) => {
+            setTimeout(() => showMedalPopup(medal), index * 3500);
+        });
+        if (typeof renderTrophyShowcase === 'function') renderTrophyShowcase();
+    }
+}
+
+function showMedalPopup(medal) {
+    playSound('pr');
+    launchConfetti();
+
+    const popup = document.createElement('div');
+    popup.className = 'medal-popup';
+    popup.innerHTML = `
+                <div class="medal-icon-wrap">${medal.icon}</div>
+                <div>
+                    <p class="text-[9px] font-black uppercase tracking-widest text-gold mb-0.5" style="color: var(--gold)">¡Nuevo Logro!</p>
+                    <h3 class="font-bold text-slate-800 dark:text-white leading-tight">${medal.title}</h3>
+                    <p class="text-[10px] text-muted mt-1 leading-snug">${medal.desc}</p>
+                </div>
+            `;
+    document.body.appendChild(popup);
+    popup.offsetHeight;
+    popup.classList.add('show');
+
+    setTimeout(() => {
+        popup.classList.remove('show');
+        setTimeout(() => popup.remove(), 500);
+    }, 4000);
+}
+
+function categorizeAndAddStats(exName, setsCompleted) {
+    const name = exName.toLowerCase();
+    if (name.includes('press') || name.includes('pecho') || name.includes('vuelos') || name.includes('militar')) {
+        achState.stats.chest += setsCompleted;
+    } else if (name.includes('sentadilla') || name.includes('prensa') || name.includes('glúteo') || name.includes('isquio') || name.includes('peso muerto') || name.includes('cuádriceps')) {
+        achState.stats.gluteLegs += setsCompleted;
+    } else if (name.includes('curl') || name.includes('tríceps') || name.includes('martillo') || name.includes('brazo')) {
+        achState.stats.arms += setsCompleted;
+    } else if (name.includes('remo') || name.includes('jalón') || name.includes('pullover') || name.includes('espalda')) {
+        achState.stats.back += setsCompleted;
+    }
+}
+
+function renderTrophyShowcase() {
+    const cont = document.getElementById('trophy-showcase-container');
+    const countEl = document.getElementById('trophy-count');
+    if (!cont) return;
+
+    cont.innerHTML = MEDALS_DB.map(m => {
+        const unlocked = achState.unlocked.includes(m.id);
+        return `
+                <div class="trophy-item ${unlocked ? 'unlocked' : ''}" onclick="alert('${m.title}\\n\\n${m.desc}')">
+                    <div class="text-3xl mb-2">${m.icon}</div>
+                    <p class="text-[9px] font-bold uppercase leading-tight ${unlocked ? 'text-slate-800 dark:text-white' : 'text-slate-400'}">${m.title}</p>
+                </div>`;
+    }).join('');
+
+    if (countEl) countEl.innerText = `${achState.unlocked.length} / ${MEDALS_DB.length}`;
+
+    if (document.getElementById('stat-ach-prs')) {
+        document.getElementById('stat-ach-prs').innerText = achState.stats.prs;
+        document.getElementById('stat-ach-workouts').innerText = achState.stats.workouts;
+    }
+}
+
+/* ─── NAVEGACIÓN ─── */
+const ALL_VIEWS = ['home', 'workout', 'history', 'settings', 'achievements'];
+
+function setView(v) {
+    ALL_VIEWS.forEach(x => {
+        const el = document.getElementById(`view-${x}`);
+        if (el) {
+            el.classList.toggle('hidden', x !== v);
+            if (x === v) { el.style.animation = 'none'; el.offsetHeight; el.style.animation = ''; }
+        }
+    });
+
+    ALL_VIEWS.forEach(x => {
+        const navEl = document.getElementById(`nav-${x}`);
+        if (navEl) navEl.classList.toggle('active', x === v);
+    });
+
+    document.getElementById('bottom-timer-bar').classList.toggle('hidden-bar', v !== 'workout');
+
+    if (v === 'home') {
+        updateHomeStats();
+        renderHeatmap();
+        checkActiveSession();
+    }
+
+    if (v === 'workout') {
+        const hasActive = Object.keys(sessionState).some(k => sessionState[k] && sessionState[k].done);
+        if (hasActive) {
+            showActiveWorkoutZone(true);
+            renderDay(currentDay);
+        } else {
+            showActiveWorkoutZone(false);
+            renderWorkoutSelector();
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    if (v === 'achievements') {
+        renderTrophyShowcase();
+    }
+
+    if (v === 'history') {
+        renderHistory();
+    }
+
+    if (v === 'settings') {
+        renderEditor();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function showActiveWorkoutZone(show) {
+    document.getElementById('workout-selector-zone').classList.toggle('hidden', show);
+    document.getElementById('active-workout-zone').classList.toggle('hidden', !show);
+
+    const globalHeader = document.getElementById('main-global-header');
+    if (globalHeader) globalHeader.style.display = show ? 'none' : 'flex';
+}
+
+/* ─── ACTIVE SESSION BANNER ─── */
+function checkActiveSession() {
+    const activeDays = new Set();
+    for (const key of Object.keys(sessionState)) {
+        const v = sessionState[key];
+        if (v && (v.done || (v.w !== '' && v.w !== null && v.w !== undefined) || (v.r !== '' && v.r !== null))) {
+            activeDays.add(parseInt(key.split('_')[0]));
+        }
+    }
+    const banner = document.getElementById('active-session-banner');
+    if (!banner) return;
+    const activeDay = activeDays.size > 0 ? [...activeDays][0] : null;
+    if (activeDay && ROUTINE[activeDay]) {
+        banner.innerHTML = `
+            <div class="home-card active-session ripple-btn" onclick="continueDay(${activeDay})">
+                <div class="flex items-center gap-3 mb-1">
+                    <span class="text-2xl">${ROUTINE[activeDay].icon}</span>
+                    <h3 class="font-bold text-white text-base">Continuar sesión</h3>
+                </div>
+                <p class="text-[12px] text-pink-100 font-medium">Día ${activeDay} · ${ROUTINE[activeDay].label}</p>
+                <div class="mt-2 text-xs font-bold bg-white/20 px-3 py-1.5 rounded-lg inline-block">REANUDAR ➔</div>
+            </div>`;
+        banner.classList.remove('hidden');
+    } else {
+        banner.classList.add('hidden');
+    }
+    initRipples();
+}
+
+function startDay(d) {
+    const activeDays = new Set();
+    for (const key of Object.keys(sessionState)) {
+        const v = sessionState[key];
+        if (v && (v.done || v.w || v.r)) activeDays.add(parseInt(key.split('_')[0]));
+    }
+    const activeDay = activeDays.size > 0 ? [...activeDays][0] : null;
+
+    if (activeDay && activeDay !== d) {
+        if (!confirm(`Tienes progreso en el Día ${activeDay}. ¿Borrar y empezar Día ${d}?`)) return;
+        sessionState = {};
+        persistSession();
+        checkActiveSession();
+    }
+
+    currentDay = d;
+    document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
+
+    showActiveWorkoutZone(true);
+    renderDay(d);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function continueDay(d) {
+    currentDay = d;
+    document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
+    showActiveWorkoutZone(true);
+    renderDay(d);
+}
+
+function changeDay(day) {
+    currentDay = day;
+    document.getElementById('workout-title-disp').innerText = ROUTINE[day].label;
+    renderDay(day);
+    document.querySelectorAll('.day-pill').forEach(btn => btn.classList.toggle('active', btn.id === `tab-${day}`));
+}
+
+/* ─── RENDER DÍA ─── */
+function getMediaHTML(src, id, mode) {
+    return src ? `<video id="${id}" src="${src}" class="gif-video" data-mode="${mode}" autoplay loop muted playsinline></video>` : '';
+}
+
+// ─── FUNCIONES DE TIPS Y CALENTAMIENTO ───
+function toggleTips(id) {
+    const panel = document.getElementById(`tips-${id}`);
+    if (panel) panel.classList.toggle('show');
+    if (navigator.vibrate) navigator.vibrate([10]);
+}
+
+function addWarmup(d, exI) {
+    const key = `warmups_${d}_${exI}`;
+    if (!sessionState[key]) sessionState[key] = 0;
+    sessionState[key] += 1; // Añadimos una serie de aprox
+    persistSession();
+    renderDay(d); // Recargamos la vista de ese día
+    if (navigator.vibrate) navigator.vibrate([20]);
+}
+
+// ─── RENDERIZADO DE LAS TARJETAS MEJORADO ───
+function renderDay(d) {
+    const cont = document.getElementById('exercises-container');
+    cont.innerHTML = ROUTINE[d].exercises.map((ex, i) => {
+        let rowsHtml = '';
+
+        // --- Generar filas de Warmup ---
+        const warmupsCount = sessionState[`warmups_${d}_${i}`] || 0;
+        for (let w = 1; w <= warmupsCount; w++) {
+            const k = `${d}_${i}_W${w}`;
+            const st = sessionState[k] || {};
+            rowsHtml += `<div class="set-row warmup-row ${st.done ? 'done' : ''}" id="row-${k}">
+                <span class="warmup-label">W</span>
+                <input type="text" readonly class="gym-input cursor-pointer" placeholder="0" value="${st.w || ''}" onclick="openCalc('${k}', '${ex.name}')">
+                <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps" value="${st.r || ''}" onclick="openReps('${k}', this.value)">
+                <button onclick="markSet('${k}',${i},${ex.sets}, '${ex.name}')" class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
+            </div>`;
+        }
+
+        // --- Generar filas normales ---
+        for (let s = 1; s <= ex.sets; s++) {
+            const k = `${d}_${i}_${s}`;
+            const st = sessionState[k] || {};
+            rowsHtml += `<div class="set-row ${st.done ? 'done' : ''}" id="row-${k}">
+                <span class="text-[10px] font-bold text-slate-400">${s}</span>
+                <input type="text" readonly class="gym-input cursor-pointer" placeholder="0" value="${st.w || ''}" onclick="openCalc('${k}', '${ex.name}')">
+                <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps" value="${st.r || ''}" onclick="openReps('${k}', this.value)">
+                <button onclick="markSet('${k}',${i},${ex.sets}, '${ex.name}')" class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
+            </div>`;
+        }
+
+        return `
+        <div class="card p-6 mb-4" id="card-${d}-${i}">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">${ex.name}</h3>
+                        <span class="text-[10px] font-bold text-pink-500 bg-pink-100 dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1">📌 ${ex.tip}</p>
+                </div>
+                
+                <div class="flex gap-2">
+                    <button onclick="showExerciseStats('${ex.name}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs opacity-70 active:scale-90 transition-all">📊</button>
+                    <button onclick="toggleTips('${d}_${i}')" class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-xs active:scale-90 transition-all">💡</button>
+                </div>
+            </div>
+
+            <div id="tips-${d}_${i}" class="coach-tips-panel">
+                ${ex.details}
+            </div>
+            
+            <div class="gif-container my-4">
+                <video src="${ex.gif}" class="gif-video" autoplay loop muted playsinline></video>
+            </div>
+
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Progreso</h4>
+                <button onclick="addWarmup('${d}', ${i})" class="text-[9px] font-bold text-amber-500 bg-amber-100/20 px-2 py-1 rounded">+ Aproximación</button>
+            </div>
+            
+            <div class="h-1 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
+                <div id="prog-bar-${d}-${i}" class="h-full bg-pink-500 transition-all" style="width:0%"></div>
+            </div>
+
+            <div class="space-y-2">${rowsHtml}</div>
+        </div>`;
+    }).join('');
+
+    // Asegurarse de actualizar los pills de días
+    updateDayPills(d);
+}
+
+function toggleEx(d, i) { document.getElementById(`details-${d}-${i}`).classList.toggle('expanded'); }
+
+function toggleGif(d, i) {
+    const wrap = document.getElementById(`media-wrap-${d}-${i}`);
+    const media = document.getElementById(`media-${d}-${i}`);
+    const ex = ROUTINE[d].exercises[i];
+    const isMain = media.getAttribute('data-mode') === 'main';
+    media.style.opacity = '0';
+    setTimeout(() => {
+        media.remove();
+        wrap.insertAdjacentHTML('afterbegin', getMediaHTML(isMain ? ex.gifVar : ex.gif, `media-${d}-${i}`, isMain ? 'var' : 'main'));
+        const nm = document.getElementById(`media-${d}-${i}`);
+        nm.style.opacity = '0';
+        setTimeout(() => nm.style.opacity = '1', 50);
+    }, 300);
+}
+
+function markSet(k, exI, totalSets, exName) {
+    if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
+    const newState = !sessionState[k].done;
+    sessionState[k].done = newState;
+    persistSession();
+
+    const row = document.getElementById(`row-${k}`);
+    const btn = row?.querySelector('.check-btn');
+    if (row) row.classList.toggle('done', newState);
+    if (btn) { btn.classList.toggle('done', newState); btn.innerText = newState ? '✓' : ''; }
+
+    if (newState) {
+        playSound('check');
+        addXP(XP_PER_SET);
+        const weightKg = sessionState[k].w;
+        const isNewPR = checkPR(exName, weightKg);
+        if (isNewPR) {
+            const card = document.getElementById(`card-${currentDay}-${exI}`);
+            if (card) { card.classList.add('pr-card', 'animate-gold'); setTimeout(() => card.classList.remove('animate-gold'), 800); }
+            playSound('pr');
+            showToast(`🥇 ¡Nuevo PR en ${exName}! ${formatUnitDisplay(weightKg)} ${globalUnit.toUpperCase()}`);
+            achState.stats.prs++;
+        }
+    }
+
+    let doneCount = 0;
+    for (let s = 1; s <= totalSets; s++) {
+        if (sessionState[`${currentDay}_${exI}_${s}`]?.done) doneCount++;
+    }
+    const card = document.getElementById(`card-${currentDay}-${exI}`);
+    const bar = document.getElementById(`prog-bar-${currentDay}-${exI}`);
+    if (bar) bar.style.width = (doneCount / totalSets * 100) + '%';
+    if (card) {
+        if (doneCount === totalSets) {
+            card.classList.add('complete', 'animate-splash');
+            setTimeout(() => card.classList.remove('animate-splash'), 800);
+            if (navigator.vibrate) navigator.vibrate([30, 50, 30]);
+            playSound('complete');
+            showToast('¡Ejercicio completado! 🎉');
+        } else {
+            card.classList.remove('complete');
+        }
+    }
+
+    updateOverallProgress();
+
+    // 👇 AQUÍ ESTÁ EL CAMBIO CLAVE PARA EL DESPLIEGUE 👇
+    if (newState) {
+        expandTimer();
+        startTimer();
+    }
+}
+
+function updateOverallProgress() {
+    let total = 0, comp = 0;
+    ROUTINE[currentDay].exercises.forEach((ex, i) => {
+        total += ex.sets;
+        for (let s = 1; s <= ex.sets; s++) {
+            if (sessionState[`${currentDay}_${i}_${s}`]?.done) comp++;
+        }
+    });
+    const pct = total > 0 ? Math.round((comp / total) * 100) : 0;
+    document.getElementById('total-progress-bar').style.width = pct + '%';
+    document.getElementById('total-progress-text').innerText = pct + '%';
+    const ring = document.getElementById('mini-ring-circle');
+    if (ring) ring.style.strokeDashoffset = 56.5 * (1 - pct / 100);
+}
+
+/* ─── CALCULADORA DE PESO ─── */
+let calcState = { activeKey: null, tab: 'barra', barW: 45, plates: [], dumbW: 0, machW: 0 };
+
+function updateCalcUnitLabels() {
+    const u = globalUnit.toUpperCase();
+    const dumbLbl = document.getElementById('dumb-unit-label');
+    const machLbl = document.getElementById('mach-unit-label');
+    if (dumbLbl) dumbLbl.innerText = u;
+    if (machLbl) machLbl.innerText = u;
+}
+
+function buildDumbGrid() {
+    const grid = document.getElementById('calc-dumb-grid');
+    if (!grid) return;
+    calcState.dumbW = 0;
+    let html = '';
+    if (globalUnit === 'kg') {
+        [5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 30, 35, 40, 45, 50].forEach(w => {
+            const id = `db-btn-${String(w).replace('.', '_')}`;
+            html += `<button onclick="setCalcDumb(${w})" id="${id}" class="dumb-btn p-3 rounded-2xl font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 border-2 border-transparent active:scale-90 transition-transform text-xs ripple-btn">${w}</button>`;
+        });
+    } else {
+        for (let w = 5; w <= 100; w += 5) {
+            html += `<button onclick="setCalcDumb(${w})" id="db-btn-${w}" class="dumb-btn p-3 rounded-2xl font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 border-2 border-transparent active:scale-90 transition-transform text-xs ripple-btn">${w}</button>`;
+        }
+    }
+    grid.innerHTML = html;
+    updateCalcUnitLabels();
+    setTimeout(initRipples, 50);
+}
+
+function openCalc(k, exName, currentStoredKg) {
+    calcState.activeKey = k;
+
+    // ─── LÓGICA DE MEMORIA VISUAL ───
+    const savedData = sessionState[k] || {};
+    // Si hay discos/pesos guardados, los clonamos. Si no, iniciamos en blanco.
+    calcState.plates = savedData.plates ? [...savedData.plates] : [];
+    calcState.dumbW = savedData.dumbW || 0;
+    calcState.machW = savedData.machW || 0;
+    calcState.barW = savedData.barW || 45; // Barra olímpica por defecto
+
+    const nameLow = exName.toLowerCase();
+    let initTab = 'barra';
+
+    if (savedData.equip) {
+        initTab = savedData.equip;
+    } else if (nameLow.includes('db') || nameLow.includes('mancuerna') || nameLow.includes('lateral') || nameLow.includes('curl') || nameLow.includes('martillo') || nameLow.includes('inclinado')) {
+        initTab = 'mancuernas';
+    } else if (nameLow.includes('máquina') || nameLow.includes('maquina') || nameLow.includes('polea') || nameLow.includes('jalón') || nameLow.includes('prensa') || nameLow.includes('aductor')) {
+        initTab = 'maquina';
+    }
+
+    buildDumbGrid();
+    setCalcTab(initTab);
+
+    // ─── RESTAURAR LA INTERFAZ ───
+    setCalcBar(calcState.barW); // Selecciona la barra correcta
+    if (calcState.dumbW > 0) setCalcDumb(calcState.dumbW); // Ilumina la mancuerna
+
+    const machEl = document.getElementById('cmach-val');
+    if (machEl) machEl.innerText = calcState.machW; // Restaura el número de la máquina
+
+    document.getElementById('modal-calc').classList.add('show');
+    setTimeout(initRipples, 100);
+    updateCalcVisuals(); // Dibuja los discos guardados
+}
+
+function setCalcTab(t) {
+    if (navigator.vibrate) navigator.vibrate([20]);
+    calcState.tab = t;
+    ['barra', 'mancuernas', 'maquina'].forEach(id => {
+        const btn = document.getElementById(`ctab-${id}`);
+        const view = document.getElementById(`cview-${id}`);
+        if (!btn || !view) return;
+        if (id === t) {
+            btn.className = "flex-1 py-2.5 text-[11px] font-bold rounded-lg bg-white dark:bg-slate-700 shadow-sm transition-all ripple-btn text-slate-800 dark:text-white";
+            view.classList.remove('hidden');
+        } else {
+            btn.className = "flex-1 py-2.5 text-[11px] font-bold rounded-lg text-slate-500 transition-all ripple-btn";
+            view.classList.add('hidden');
+        }
+    });
+    updateCalcVisuals();
+}
+
+function setCalcBar(w) {
+    if (navigator.vibrate) navigator.vibrate([20]);
+    calcState.barW = w;
+    [45, 25, 15].forEach(id => {
+        const btn = document.getElementById(`cbar-${id}`);
+        if (!btn) return;
+        if (id === w) {
+            btn.classList.add('bg-pink-100', 'text-pink-600', 'border-pink-300', 'dark:bg-pink-900/40', 'dark:border-pink-500');
+            btn.classList.remove('bg-slate-100', 'text-slate-500', 'border-transparent', 'dark:bg-slate-700', 'border-slate-200');
+        } else {
+            btn.classList.remove('bg-pink-100', 'text-pink-600', 'border-pink-300', 'dark:bg-pink-900/40', 'dark:border-pink-500');
+            btn.classList.add('bg-slate-100', 'text-slate-500', 'border-slate-200', 'dark:bg-slate-700', 'dark:border-transparent');
+        }
+    });
+    updateCalcVisuals();
+}
+
+function addCalcPlate(w) { if (navigator.vibrate) navigator.vibrate([30]); calcState.plates.push(w); updateCalcVisuals(); }
+function clearCalcPlates() { if (navigator.vibrate) navigator.vibrate([30]); calcState.plates = []; updateCalcVisuals(); }
+function undoCalcPlate() { if (navigator.vibrate) navigator.vibrate([30]); calcState.plates.pop(); updateCalcVisuals(); }
+
+function setCalcDumb(w) {
+    if (navigator.vibrate) navigator.vibrate([20]);
+    calcState.dumbW = w;
+    document.querySelectorAll('.dumb-btn').forEach(btn => btn.classList.remove('border-pink-500', 'bg-pink-100', 'text-pink-600', 'dark:bg-pink-900/40', 'dark:text-pink-300'));
+    const btnId = 'db-btn-' + String(w).replace('.', '_');
+    const btn = document.getElementById(btnId);
+    if (btn) btn.classList.add('border-pink-500', 'bg-pink-100', 'text-pink-600', 'dark:bg-pink-900/40', 'dark:text-pink-300');
+    updateCalcVisuals();
+}
+
+function stepCalcMach(step) {
+    if (navigator.vibrate) navigator.vibrate([20]);
+    calcState.machW = Math.max(0, calcState.machW + step);
+    const el = document.getElementById('cmach-val');
+    if (el) el.innerText = calcState.machW;
+    updateCalcVisuals();
+}
+
+function updateCalcVisuals() {
+    const cont = document.getElementById('calc-visual-plates');
+    if (cont) {
+        cont.innerHTML = calcState.plates.map(p => {
+            let h = 'h-10', color = 'bg-slate-500';
+            if (p === 45) { h = 'h-12'; color = 'bg-pink-500'; }
+            else if (p === 25) { h = 'h-10'; color = 'bg-blue-500'; }
+            else if (p === 10) { h = 'h-8'; color = 'bg-emerald-500'; }
+            else if (p === 5) { h = 'h-6'; color = 'bg-amber-500'; }
+            else if (p === 2.5) { h = 'h-5'; color = 'bg-purple-500'; }
+            return `<div class="w-2.5 rounded-sm ${h} ${color} border border-black/20 shadow-sm"></div>`;
+        }).join('');
+    }
+
+    let displayValue = 0;
+    let kgEquivalent = 0;
+    let unitLabel = 'lbs';
+
+    if (calcState.tab === 'barra') {
+        const totalLbs = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
+        displayValue = totalLbs;
+        kgEquivalent = totalLbs / 2.20462;
+        unitLabel = 'lbs';
+        document.getElementById('calc-header-label').innerText = 'Peso Total (LBS)';
+    } else if (calcState.tab === 'mancuernas') {
+        displayValue = calcState.dumbW;
+        kgEquivalent = globalUnit === 'lbs' ? calcState.dumbW / 2.20462 : calcState.dumbW;
+        unitLabel = globalUnit;
+        document.getElementById('calc-header-label').innerText = `Peso por Mancuerna (${globalUnit.toUpperCase()})`;
+    } else if (calcState.tab === 'maquina') {
+        displayValue = calcState.machW;
+        kgEquivalent = globalUnit === 'lbs' ? calcState.machW / 2.20462 : calcState.machW;
+        unitLabel = globalUnit;
+        document.getElementById('calc-header-label').innerText = `Peso Máquina (${globalUnit.toUpperCase()})`;
+    }
+
+    const mainEl = document.getElementById('calc-total-main');
+    const subEl = document.getElementById('calc-total-sub');
+    const unitEl = document.getElementById('calc-total-unit-label');
+    if (mainEl) mainEl.innerText = Number.isInteger(displayValue) ? displayValue : displayValue.toFixed(1);
+    if (subEl) subEl.innerText = `≈ ${kgEquivalent.toFixed(1)} KG`;
+    if (unitEl) unitEl.innerText = unitLabel;
+}
+
+function submitCalc() {
+    let totalBaseKg = 0;
+
+    if (calcState.tab === 'barra') {
+        const totalLbs = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
+        totalBaseKg = totalLbs / 2.20462;
+    } else if (calcState.tab === 'mancuernas') {
+        totalBaseKg = globalUnit === 'lbs' ? calcState.dumbW / 2.20462 : calcState.dumbW;
+    } else if (calcState.tab === 'maquina') {
+        totalBaseKg = globalUnit === 'lbs' ? calcState.machW / 2.20462 : calcState.machW;
+    }
+
+    const k = calcState.activeKey;
+
+    if (totalBaseKg > 0) {
+        persistInput(k, 'w', totalBaseKg);
+
+        // ─── GUARDAR CONFIGURACIÓN VISUAL ACTUAL ───
+        if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
+        sessionState[k].equip = calcState.tab;
+        sessionState[k].plates = [...calcState.plates];
+        sessionState[k].barW = calcState.barW;
+        sessionState[k].dumbW = calcState.dumbW;
+        sessionState[k].machW = calcState.machW;
+        persistSession();
+
+        // ─── AUTO-CASCADA TOTAL (Número y Visual) ───
+        const parts = k.split('_');
+        const d = parts[0], exI = parts[1];
+
+        // 🛡️ EL ESCUDO: Detectamos si es una serie de calentamiento (W)
+        const isWarmup = String(parts[2]).startsWith('W');
+
+        // Solo hacemos cascada si NO es calentamiento
+        if (!isWarmup) {
+            const currentSet = parseInt(parts[2]);
+            const totalSets = ROUTINE[d].exercises[exI].sets;
+
+            for (let nextSet = currentSet + 1; nextSet <= totalSets; nextSet++) {
+                const nextKey = `${d}_${exI}_${nextSet}`;
+                if (!sessionState[nextKey]) sessionState[nextKey] = { done: false, w: '', r: '' };
+
+                if (sessionState[nextKey].w === '' || sessionState[nextKey].w === undefined) {
+                    sessionState[nextKey].w = totalBaseKg;
+                    sessionState[nextKey].equip = calcState.tab;
+                    sessionState[nextKey].plates = [...calcState.plates];
+                    sessionState[nextKey].barW = calcState.barW;
+                    sessionState[nextKey].dumbW = calcState.dumbW;
+                    sessionState[nextKey].machW = calcState.machW;
+
+                    const nextRow = document.getElementById(`row-${nextKey}`);
+                    if (nextRow) {
+                        const nextWeightInput = nextRow.querySelector('.gym-input');
+                        if (nextWeightInput) nextWeightInput.value = formatUnitDisplay(totalBaseKg);
+                    }
+                }
+            }
+        }
+        persistSession();
+    } else {
+        persistInput(k, 'w', '');
+    }
+
+    document.getElementById('modal-calc').classList.remove('show');
+    if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
+
+    const row = document.getElementById(`row-${k}`);
+    if (row) {
+        const weightInput = row.querySelector('.gym-input');
+        if (weightInput) {
+            weightInput.value = totalBaseKg > 0 ? formatUnitDisplay(totalBaseKg) : '';
+        }
+    }
+}
+
+/* ─── CIRCULAR TIMER ─── */
+function updateTimerRing() {
+    const ring = document.getElementById('timer-ring');
+    const pct = timeLeft / timerDuration;
+    ring.style.strokeDashoffset = TIMER_CIRCUMFERENCE * (1 - pct);
+    ring.style.stroke = pct > 0.5 ? 'var(--pink)' : pct > 0.25 ? '#f59e0b' : '#ef4444';
+}
+function setTimerPreset(s) {
+    if (s < 150) s = 150; // Mínimo 2:30
+    if (s > 300) s = 300; // Máximo 5:00
+    timerDuration = s;
+    ['150', '210', '300'].forEach(p => {
+        const btn = document.getElementById(`preset-${p}`);
+        if (btn) btn.classList.toggle('active', parseInt(p) === s);
+    });
+    resetTimer();
+
+}
+function renderTimerDisplay() {
+    const m = Math.floor(timeLeft / 60), sec = timeLeft % 60;
+    // Esto pondrá 2:30, 5:00, etc.
+    document.getElementById('timer-display').innerText = `${m}:${sec < 10 ? '0' : ''}${sec}`;
+    updateTimerRing();
+}
+// ─── LÓGICA DE LAS RUEDAS ESTILO iOS ───
+let activeWheelItems = { min: null, sec: null };
+
+// 1. Dibuja los números del 00 al 59
+function initTimerWheel() {
+    const minCol = document.getElementById('wheel-min');
+    const secCol = document.getElementById('wheel-sec');
+    if (!minCol || !secCol) return;
+
+    let html = '<div style="height: 40px"></div>'; // Padding top
+    for (let i = 0; i < 60; i++) {
+        const val = i < 10 ? '0' + i : i;
+        html += `<div class="wheel-item" data-val="${i}">${val}</div>`;
+    }
+    html += '<div style="height: 40px"></div>'; // Padding bottom
+
+    minCol.innerHTML = html;
+    secCol.innerHTML = html;
+
+    setWheelToTime(Math.floor(timerDuration / 60), timerDuration % 60);
+}
+
+// 2. Física y vibración al girar
+function handleWheelScroll(type) {
+    const col = document.getElementById(`wheel-${type}`);
+    const items = col.querySelectorAll('.wheel-item');
+    const colCenter = col.getBoundingClientRect().top + col.clientHeight / 2;
+
+    let closest = null;
+    let minDiff = Infinity;
+
+    items.forEach(item => {
+        const rect = item.getBoundingClientRect();
+        const itemCenter = rect.top + rect.height / 2;
+        const diff = Math.abs(itemCenter - colCenter);
+        if (diff < minDiff) { minDiff = diff; closest = item; }
+    });
+
+    if (closest && activeWheelItems[type] !== closest) {
+        if (activeWheelItems[type]) activeWheelItems[type].classList.remove('selected', 'text-pink-400');
+        closest.classList.add('selected', 'text-pink-400');
+        activeWheelItems[type] = closest;
+
+        if (navigator.vibrate) navigator.vibrate([5]); // ¡Click mecánico!
+
+        clearTimeout(col.wheelTimeout);
+        col.wheelTimeout = setTimeout(updateDurationFromWheel, 100);
+    }
+}
+
+// 3. Guarda el valor cuando se detiene la rueda
+function updateDurationFromWheel() {
+    if (isRunning) return;
+    const m = parseInt(activeWheelItems.min.getAttribute('data-val'));
+    const s = parseInt(activeWheelItems.sec.getAttribute('data-val'));
+
+    timerDuration = (m * 60) + s;
+    if (timerDuration === 0) timerDuration = 5; // Evitamos timers de 0s
+    timeLeft = timerDuration;
+    renderTimerDisplay();
+}
+
+function setWheelToTime(m, s) {
+    document.getElementById('wheel-min').scrollTop = m * 40;
+    document.getElementById('wheel-sec').scrollTop = s * 40;
+    handleWheelScroll('min'); handleWheelScroll('sec');
+}
+
+// 4. Iniciar/Pausar (Transición Ruedas <-> Texto)
+function toggleTimer() {
+    const btn = document.getElementById('timer-btn');
+    const btnBig = document.getElementById('timer-btn-big');
+    const editMode = document.getElementById('timer-edit-mode');
+    const runMode = document.getElementById('timer-run-mode');
+
+    if (isRunning) {
+        clearInterval(timerId); isRunning = false;
+        btn.innerText = 'REANUDAR'; btnBig.innerText = 'REANUDAR DESCANSO';
+    } else {
+        if (timeLeft <= 0) timeLeft = timerDuration;
+        isRunning = true;
+        btn.innerText = 'PAUSAR'; btnBig.innerText = 'PAUSAR DESCANSO';
+
+        // Ocultar ruedas, mostrar texto
+        editMode.style.display = 'none';
+        runMode.classList.remove('hidden');
+
+        timerId = setInterval(() => {
+            if (timeLeft > 0) { timeLeft--; renderTimerDisplay(); }
+            else {
+                clearInterval(timerId); isRunning = false;
+                btn.innerText = 'INICIAR'; btnBig.innerText = 'INICIAR DESCANSO';
+                resetTimer();
+                showToast('¡Descanso terminado! A darle 💪');
+            }
+        }, 1000);
+    }
+}
+
+function resetTimer() {
+    clearInterval(timerId); isRunning = false;
+    timeLeft = timerDuration; renderTimerDisplay();
+    document.getElementById('timer-btn').innerText = 'INICIAR';
+    document.getElementById('timer-btn-big').innerText = 'INICIAR DESCANSO';
+
+    // Volver a mostrar ruedas
+    document.getElementById('timer-edit-mode').style.display = 'flex';
+    document.getElementById('timer-run-mode').classList.add('hidden');
+    setWheelToTime(Math.floor(timerDuration / 60), timerDuration % 60);
+}
+
+// 🔥 INICIALIZACIÓN: Agrega esta línea justo al cargar la app:
+setTimeout(initTimerWheel, 200);
+function startTimer() { clearInterval(timerId); timeLeft = timerDuration; renderTimerDisplay(); isRunning = false; toggleTimer(); }
+
+// Nuevas funciones del Timer Expandible
+function expandTimer() { document.getElementById('bottom-timer-bar').classList.add('expanded'); }
+function minimizeTimer() { document.getElementById('bottom-timer-bar').classList.remove('expanded'); }
+
+
+// Para actualizar ambos textos y anillos a la vez
+function updateTimerRing() {
+    const pct = 1 - timeLeft / timerDuration;
+    const ringMini = document.getElementById('timer-ring-mini');
+    const ringBig = document.getElementById('timer-ring-big');
+    if (ringMini) ringMini.style.strokeDashoffset = 213.6 * pct;
+    if (ringBig) ringBig.style.strokeDashoffset = 226 * pct;
+}
+function renderTimerDisplay() {
+    const m = Math.floor(timeLeft / 60), sec = timeLeft % 60;
+    const txt = `${m}:${sec < 10 ? '0' : ''}${sec}`;
+    document.getElementById('timer-display').innerText = txt;
+    document.getElementById('timer-display-big').innerText = txt;
+    updateTimerRing();
+}
+
+// Gesto para cerrar deslizando hacia abajo
+let timerTouchY = 0;
+const timerBarEl = document.getElementById('bottom-timer-bar');
+timerBarEl.addEventListener('touchstart', e => { timerTouchY = e.touches[0].clientY; }, { passive: true });
+timerBarEl.addEventListener('touchend', e => {
+    if (e.changedTouches[0].clientY - timerTouchY > 80) minimizeTimer();
+}, { passive: true });
+
+/* ─── HISTORIAL Y GUARDADO ─── */
+function openSaveModal() {
+    const sets = Object.values(sessionState).filter(s => s.done).length;
+    const vol = calcSessionVolume();
+    const xpEarned = XP_PER_WORKOUT + (sets * 2);
+    document.getElementById('summary-sets').innerText = sets;
+    document.getElementById('summary-vol').innerText = `${formatUnitDisplay(vol)} ${globalUnit.toUpperCase()}`;
+    document.getElementById('summary-xp').innerText = '+' + xpEarned;
+    document.getElementById('modal-summary').classList.add('show');
+}
+
+function saveToHistory() {
+    updateStreak();
+    const setsCount = Object.values(sessionState).filter(s => s.done).length;
+    const volume = calcSessionVolume();
+    const xpEarned = XP_PER_WORKOUT + (setsCount * 2);
+
+    const exData = {};
+    for (let k in sessionState) {
+        if (sessionState[k].done) {
+            const parts = k.split('_');
+            const d = parts[0], i = parts[1];
+            if (ROUTINE[d] && ROUTINE[d].exercises[i]) {
+                const exName = ROUTINE[d].exercises[i].name;
+                const w = parseFloat(sessionState[k].w) || 0;
+
+                if (!exData[exName]) exData[exName] = { maxWeight: 0 };
+                if (w > exData[exName].maxWeight) exData[exName].maxWeight = w;
+
+                categorizeAndAddStats(exName, 1);
+            }
+        }
+    }
+
+    historyState.unshift({
+        id: Date.now(),
+        date: new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }),
+        dateRaw: new Date().toDateString(),
+        day: ROUTINE[currentDay].label,
+        icon: ROUTINE[currentDay].icon,
+        sets: setsCount,
+        volume: volume,
+        exLog: exData
+    });
+
+    achState.stats.workouts++;
+
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(historyState));
+    sessionState = {};
+    persistSession();
+    checkActiveSession();
+
+    document.getElementById('modal-summary').classList.remove('show');
+    renderHistory();
+    renderDay(currentDay);
+    updateHomeStats();
+    renderHeatmap();
+    addXP(xpEarned);
+
+    checkAchievements();
+
+    setTimeout(launchConfetti, 100);
+    setView('history');
+    showToast('¡Rutina guardada! 🌸 +' + xpEarned + ' XP');
+}
+
+function renderHistory() {
+    const cont = document.getElementById('history-container');
+    const count = historyState.length;
+    document.getElementById('history-subtitle').innerText =
+        count === 0 ? 'Aún no hay sesiones' : `${count} sesión${count !== 1 ? 'es' : ''} registrada${count !== 1 ? 's' : ''}`;
+
+    renderProgressChart();
+
+    if (count === 0) {
+        cont.innerHTML = `<div class="py-16 text-center"><div class="text-5xl mb-4">🌸</div><p class="text-slate-400 font-medium">Completa tu primer entrenamiento</p><p class="text-xs text-slate-300 mt-1">y aparecerá aquí</p></div>`;
+        return;
+    }
+
+    cont.innerHTML = historyState.map((s, idx) => `
+        <div class="history-card relative pr-12" style="animation-delay:${idx * 60}ms">
+            <div class="flex items-center gap-3 flex-1">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 flex items-center justify-center text-xl flex-shrink-0">${s.icon || '💪'}</div>
+                <div>
+                    <p class="font-bold text-sm">${s.day || '—'}</p>
+                    <p class="text-[10px] text-muted font-bold uppercase mt-0.5">${s.date || ''}</p>
+                </div>
+            </div>
+            <div class="text-right flex-shrink-0">
+                <p class="text-xs font-black text-pink-500">${s.sets || 0} series</p>
+                ${s.volume != null && s.volume !== '' ? `<p class="text-[10px] font-bold text-emerald-500">${formatUnitDisplay(s.volume)} ${globalUnit.toUpperCase()} vol.</p>` : ''}
+            </div>
+            <button onclick="deleteHistoryEntry(${s.id})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-900/20 rounded-full active:scale-90 transition-transform">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            </button>
+        </div>`).join('');
+}
+
+function deleteHistoryEntry(id) {
+    if (!confirm('¿Seguro que deseas eliminar este entrenamiento? Se restará del volumen total de tu inicio.')) return;
+
+    const index = historyState.findIndex(h => h.id === id);
+    if (index > -1) {
+        historyState.splice(index, 1);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(historyState));
+
+        renderHistory();
+        updateHomeStats();
+        renderHeatmap();
+        showToast('Entrenamiento eliminado 🗑️');
+    }
+}
+function confirmReset() {
+    if (confirm('¿Segura que quieres borrar el progreso de hoy?')) {
+        sessionState = {};
+        persistSession();
+        checkActiveSession();
+        renderDay(currentDay);
+        setView('home');
+        showToast('Sesión reiniciada 🧹');
+    }
+}
+
+/* ════════════════════════════════════════════════════
+   EDITOR DE RUTINA
+════════════════════════════════════════════════════ */
+let editingDay = null;
+let editingExDay = null;
+let editingExIdx = null;
+let emojiTargetDay = null;
+let pendingEmoji = null;
+
+let _editorSortable = null;
+
+const EMOJI_OPTIONS = [
+    '💪', '🍑', '🔥', '✨', '🦵', '🏋️', '⚡', '🌟', '🎯', '💫',
+    '🏆', '👑', '💎', '🌸', '🦋', '🐉', '🌊', '🧠', '🩷', '❤️‍🔥',
+    '🫀', '💥', '🌺', '🌻', '🎀', '🏅', '🥇', '🔑', '🚀', '🌙',
+    '☀️', '🌈', '🍓', '🌶️', '🥊', '🤸', '🧗', '🏊', '🎽'
+];
+
+function renderEditor() {
+    const cont = document.getElementById('editor-days-container');
+    cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => renderEditorDay(parseInt(d))).join('');
+    initRipples();
+    initEditorSortable();
+}
+
+function initEditorSortable() {
+    const el = document.getElementById('editor-days-container');
+    if (!el || typeof Sortable === 'undefined') return;
+
+    if (_editorSortable) { _editorSortable.destroy(); _editorSortable = null; }
+
+    _editorSortable = Sortable.create(el, {
+        animation: 180,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        dragClass: 'sortable-drag',
+        forceFallback: false,
+
+        onEnd(evt) {
+            if (evt.oldIndex === evt.newIndex) return;
+
+            const newOrder = [...el.querySelectorAll('.editor-day-section')]
+                .map(el => parseInt(el.getAttribute('data-day-key')));
+
+            reorderRoutineDaysByArray(newOrder);
+        }
+    });
+}
+
+function reorderRoutineDaysByArray(newKeyOrder) {
+    const newRoutine = {};
+    const keyMap = {};
+
+    newKeyOrder.forEach((oldKey, idx) => {
+        const newKey = idx + 1;
+        newRoutine[newKey] = ROUTINE[oldKey];
+        keyMap[oldKey] = newKey;
+    });
+
+    const newSession = {};
+    for (const k of Object.keys(sessionState)) {
+        const parts = k.split('_');
+        const oldDay = parseInt(parts[0]);
+        if (keyMap[oldDay] !== undefined) {
+            const newK = `${keyMap[oldDay]}_${parts[1]}_${parts[2]}`;
+            newSession[newK] = sessionState[k];
+        }
+    }
+
+    if (keyMap[currentDay] !== undefined) currentDay = keyMap[currentDay];
+    if (editingDay !== null && keyMap[editingDay] !== undefined) editingDay = keyMap[editingDay];
+
+    ROUTINE = newRoutine;
+    sessionState = newSession;
+
+    saveRoutine();
+    persistSession();
+
+    renderDayPills();
+    renderWorkoutSelector();
+
+    showToast('¡Días reordenados! ⠿');
+    el_updateDayKeyAttributes();
+}
+
+function el_updateDayKeyAttributes() {
+    const cont = document.getElementById('editor-days-container');
+    if (!cont) return;
+    const sections = cont.querySelectorAll('.editor-day-section');
+    sections.forEach((el, idx) => {
+        const newKey = idx + 1;
+        el.setAttribute('data-day-key', newKey);
+        el.id = `editor-day-${newKey}`;
+        const dayLabel = el.querySelector('.day-key-label');
+        if (dayLabel) dayLabel.innerText = `DÍA ${newKey}`;
+    });
+}
+
+function renderEditorDay(d) {
+    const day = ROUTINE[d];
+    const isOpen = editingDay === d;
+    const exList = day.exercises.map((ex, i) => `
+        <div class="editor-ex-row" id="edrow-${d}-${i}">
+            <div class="flex-1 min-w-0">
+                <p class="font-bold text-sm truncate">${ex.name}</p>
+                <p class="text-[10px] text-muted">${ex.sets} series · ${ex.reps} reps</p>
+            </div>
+            <div class="flex items-center gap-1 flex-shrink-0">
+                <button onclick="moveExercise(${d},${i},-1)" class="ed-btn ed-btn-up ripple-btn" title="Subir">▲</button>
+                <button onclick="moveExercise(${d},${i},1)"  class="ed-btn ed-btn-down ripple-btn" title="Bajar">▼</button>
+                <button onclick="openEditExModal(${d},${i})" class="ed-btn ed-btn-edit ripple-btn" title="Editar">✏️</button>
+                <button onclick="deleteExercise(${d},${i})"  class="ed-btn ed-btn-del ripple-btn" title="Eliminar">🗑️</button>
+            </div>
+        </div>`).join('');
+
+    return `
+    <div class="editor-day-section" id="editor-day-${d}" data-day-key="${d}">
+        <div class="editor-day-header">
+            <div class="drag-handle" title="Arrastrar para reordenar">⠿</div>
+            <button class="emoji-btn-sm" onclick="openEmojiModal(${d})" title="Cambiar emoji">${day.icon}</button>
+            <div class="flex-1 min-w-0 mx-2">
+                <span class="text-[9px] font-bold uppercase tracking-widest text-pink-400 day-key-label">DÍA ${d}</span>
+                <input type="text" class="day-name-input block w-full" value="${day.label}" onchange="updateDayLabel(${d}, this.value)" placeholder="Nombre del día">
+            </div>
+            <button onclick="toggleEditorDay(${d})" class="editor-day-toggle ripple-btn ${isOpen ? 'open' : ''}" id="editor-toggle-${d}">▼</button>
+        </div>
+        <div id="editor-exlist-${d}" style="${isOpen ? '' : 'display:none'}">
+            ${exList}
+            <button onclick="addExercise(${d})" class="add-ex-btn ripple-btn">
+                <span style="font-size:18px">＋</span> Agregar Ejercicio
+            </button>
+        </div>
+    </div>`;
+}
+
+function toggleEditorDay(d) {
+    const list = document.getElementById(`editor-exlist-${d}`);
+    const btn = document.getElementById(`editor-toggle-${d}`);
+    const isHidden = list.style.display === 'none';
+    list.style.display = isHidden ? '' : 'none';
+    btn.classList.toggle('open', isHidden);
+    editingDay = isHidden ? d : null;
+}
+
+function updateDayLabel(d, value) {
+    ROUTINE[d].label = value.trim() || `Día ${d}`;
+    saveRoutine();
+    if (currentDay === d) document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
+}
+
+/* ─── EMOJI MODAL ─── */
+function openEmojiModal(d) {
+    emojiTargetDay = d;
+    pendingEmoji = ROUTINE[d].icon;
+    const grid = document.getElementById('emoji-grid-container');
+    grid.innerHTML = EMOJI_OPTIONS.map(em => `
+        <button class="emoji-opt ripple-btn ${em === pendingEmoji ? 'selected' : ''}" onclick="selectEmoji('${em}')">${em}</button>
+    `).join('');
+    document.getElementById('modal-emoji').classList.add('show');
+    initRipples();
+}
+function selectEmoji(em) {
+    pendingEmoji = em;
+    document.querySelectorAll('.emoji-opt').forEach(btn => btn.classList.toggle('selected', btn.innerText === em));
+}
+function saveEmojiModal() {
+    if (emojiTargetDay !== null && pendingEmoji) {
+        ROUTINE[emojiTargetDay].icon = pendingEmoji;
+        saveRoutine();
+        renderEditor();
+        showToast(`Emoji actualizado ${pendingEmoji} ✨`);
+    }
+    document.getElementById('modal-emoji').classList.remove('show');
+    emojiTargetDay = null; pendingEmoji = null;
+}
+
+/* ─── EDITAR EJERCICIO ─── */
+function openEditExModal(d, i) {
+    editingExDay = d; editingExIdx = i;
+    const ex = ROUTINE[d].exercises[i];
+    document.getElementById('ex-edit-name').value = ex.name || '';
+    document.getElementById('ex-edit-sets').value = ex.sets || 3;
+    document.getElementById('ex-edit-reps').value = ex.reps || '8-12';
+    document.getElementById('ex-edit-tip').value = ex.tip || '';
+    document.getElementById('ex-edit-details').value = ex.details || '';
+    document.getElementById('ex-edit-gif').value = ex.gif || '';
+    document.getElementById('ex-edit-gifVar').value = ex.gifVar || '';
+    document.getElementById('modal-edit-ex').classList.add('show');
+}
+function closeEditExModal() {
+    document.getElementById('modal-edit-ex').classList.remove('show');
+    editingExDay = null; editingExIdx = null;
+}
+function saveEditExModal() {
+    if (editingExDay === null || editingExIdx === null) return;
+    const name = document.getElementById('ex-edit-name').value.trim();
+    if (!name) { showToast('⚠️ El nombre no puede estar vacío'); return; }
+    const ex = ROUTINE[editingExDay].exercises[editingExIdx];
+    ex.name = name;
+    ex.sets = Math.max(1, parseInt(document.getElementById('ex-edit-sets').value) || 3);
+    ex.reps = document.getElementById('ex-edit-reps').value.trim() || '8-12';
+    ex.tip = document.getElementById('ex-edit-tip').value.trim();
+    ex.details = document.getElementById('ex-edit-details').value.trim();
+    ex.gif = document.getElementById('ex-edit-gif').value.trim();
+    ex.gifVar = document.getElementById('ex-edit-gifVar').value.trim();
+    saveRoutine();
+    closeEditExModal();
+    renderEditor();
+    playSound('save');
+    showToast('¡Ejercicio actualizado, Valeria! ✨');
+}
+
+/* ─── AGREGAR / ELIMINAR EJERCICIO ─── */
+function addExercise(d) {
+    ROUTINE[d].exercises.push({ name: 'Nuevo Ejercicio', sets: 3, reps: '8-12', tip: 'Agrega un tip aquí.', details: 'Descripción técnica del ejercicio.', gif: '', gifVar: '' });
+    saveRoutine();
+    editingDay = d;
+    renderEditor();
+    const newIdx = ROUTINE[d].exercises.length - 1;
+    setTimeout(() => openEditExModal(d, newIdx), 200);
+    showToast('Ejercicio agregado ➕');
+}
+function deleteExercise(d, i) {
+    if (ROUTINE[d].exercises.length <= 1) { showToast('⚠️ Debe haber al menos un ejercicio por día'); return; }
+    if (!confirm(`¿Eliminar "${ROUTINE[d].exercises[i].name}"?`)) return;
+    ROUTINE[d].exercises.splice(i, 1);
+    saveRoutine();
+    editingDay = d;
+    renderEditor();
+    showToast('Ejercicio eliminado 🗑️');
+}
+
+function moveExercise(d, i, direction) {
+    const arr = ROUTINE[d].exercises;
+    const newIdx = i + direction;
+    if (newIdx < 0 || newIdx >= arr.length) return;
+
+    [arr[i], arr[newIdx]] = [arr[newIdx], arr[i]];
+
+    const swapKeys = (dayK, posA, posB) => {
+        const maxSets = Math.max(
+            ROUTINE[dayK]?.exercises[posA]?.sets || 0,
+            ROUTINE[dayK]?.exercises[posB]?.sets || 0,
+            10
+        );
+        for (let s = 1; s <= maxSets; s++) {
+            const kA = `${dayK}_${posA}_${s}`;
+            const kB = `${dayK}_${posB}_${s}`;
+            const tmpA = sessionState[kA];
+            const tmpB = sessionState[kB];
+            if (tmpB !== undefined) sessionState[kA] = tmpB; else delete sessionState[kA];
+            if (tmpA !== undefined) sessionState[kB] = tmpA; else delete sessionState[kB];
+        }
+    };
+    swapKeys(d, i, newIdx);
+
+    saveRoutine();
+    persistSession();
+    editingDay = d;
+    renderEditor();
+}
+
+/* ─── RESET RUTINA ─── */
+function confirmResetRoutine() {
+    if (!confirm('¿Restaurar la rutina original? Todos tus cambios de ejercicios se perderán. Tu historial y PRs están seguros.')) return;
+    ROUTINE = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
+    saveRoutine();
+    editingDay = null;
+    renderEditor();
+    renderWorkoutSelector();
+    playSound('complete');
+    showToast('¡Rutina restaurada al original! 🔄');
+}
+
+function getExCardBackHTML(exName, ex, d, i) {
+    let currentVol = 0;
+    let completedSets = 0;
+    let currentMax = 0;
+
+    for (let s = 1; s <= ex.sets; s++) {
+        const st = sessionState[`${d}_${i}_${s}`];
+        if (st && st.done) {
+            const w = parseFloat(st.w) || 0;
+            const r = parseFloat(st.r) || 0;
+            currentVol += w * r;
+            completedSets++;
+            if (w > currentMax) currentMax = w;
+        }
+    }
+
+    const pastData = [...historyState].reverse().filter(h => h.exLog && h.exLog[exName]);
+    let chartPoints = pastData.map(h => h.exLog[exName].maxWeight);
+    if (currentMax > 0) chartPoints.push(currentMax);
+
+    chartPoints = chartPoints.slice(-6);
+
+    let chartHTML = '<div class="text-xs text-slate-400 font-medium">Guarda tu sesión hoy para ver tu gráfica 📈</div>';
+
+    if (chartPoints.length > 0) {
+        const maxW = Math.max(...chartPoints);
+        const minW = Math.min(...chartPoints) * 0.85;
+        const range = (maxW - minW) || 1;
+
+        const W = 260, H = 85, PX = 15, PY = 25;
+
+        let polylinePts = '';
+        let circlesHtml = '';
+        let textHtml = '';
+
+        if (chartPoints.length === 1) {
+            polylinePts = `${W / 2},${H / 2}`;
+            circlesHtml = `<circle cx="${W / 2}" cy="${H / 2}" r="5" fill="var(--card)" stroke="var(--pink)" stroke-width="2.5"/>`;
+            textHtml = `<text x="${W / 2}" y="${H / 2 - 12}" fill="var(--text-muted)" font-size="10" font-weight="900" text-anchor="middle" font-family="Poppins">${formatUnitDisplay(chartPoints[0])}</text>`;
+        } else {
+            polylinePts = chartPoints.map((val, idx) => {
+                const x = PX + (idx / (chartPoints.length - 1)) * (W - PX * 2);
+                const y = H - PY - ((val - minW) / range) * (H - PY * 2);
+                return `${x},${y}`;
+            }).join(' ');
+
+            chartPoints.forEach((val, idx) => {
+                const x = PX + (idx / (chartPoints.length - 1)) * (W - PX * 2);
+                const y = H - PY - ((val - minW) / range) * (H - PY * 2);
+
+                circlesHtml += `<circle cx="${x}" cy="${y}" r="4.5" fill="var(--card)" stroke="var(--pink)" stroke-width="2.5"/>`;
+
+                textHtml += `<text x="${x}" y="${y - 10}" fill="var(--text-muted)" font-size="9" font-weight="800" text-anchor="middle" font-family="Poppins">${formatUnitDisplay(val)}</text>`;
+            });
+        }
+
+        const maxY = H - PY - ((maxW - minW) / range) * (H - PY * 2);
+        const gridHtml = `<line x1="${PX}" y1="${maxY}" x2="${W - PX}" y2="${maxY}" stroke="var(--pink-border)" stroke-dasharray="4 4" stroke-width="1.5"/>`;
+
+        chartHTML = `
+            <svg viewBox="0 0 ${W} ${H}" class="w-full h-full overflow-visible">
+                ${gridHtml}
+                <polyline fill="none" stroke="var(--pink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polylinePts}"/>
+                ${circlesHtml}
+                ${textHtml}
+            </svg>`;
+    }
+
+    const pr = prState[exName] ? parseFloat(prState[exName]) : 0;
+    const prDisp = pr ? formatUnitDisplay(pr) + ' ' + globalUnit.toUpperCase() : 'Aún sin PR';
+    const volDisp = currentVol > 0 ? formatUnitDisplay(currentVol) + ' ' + globalUnit.toUpperCase() : '0 ' + globalUnit.toUpperCase();
+
+    return `
+        <div class="flip-container" id="card-${d}-${i}">
+            <div class="flip-inner" id="flip-${d}_${i}">
+                
+                <div class="flip-face flip-front card p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-white">${ex.name}</h3>
+                                <span class="text-[10px] font-bold text-pink-500 bg-pink-100 dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">📌 ${ex.tip}</p>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <button onclick="toggleFlip('${d}_${i}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs opacity-70 active:scale-90 transition-all">📊</button>
+                            <button onclick="toggleTips('${d}_${i}')" class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-xs active:scale-90 transition-all">💡</button>
+                        </div>
+                    </div>
+
+                    <div id="tips-${d}_${i}" class="coach-tips-panel">
+                        ${ex.details}
+                    </div>
+                    
+                    <div class="gif-container my-4">
+                        <video src="${ex.gif}" class="gif-video" autoplay loop muted playsinline></video>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Progreso</h4>
+                        <button onclick="addWarmup('${d}', ${i})" class="text-[9px] font-bold text-amber-500 bg-amber-100/20 px-2 py-1 rounded">+ Aproximación</button>
+                    </div>
+                    
+                    <div class="h-1 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
+                        <div id="prog-bar-${d}-${i}" class="h-full bg-pink-500 transition-all" style="width:0%"></div>
+                    </div>
+
+                    <div class="space-y-2">${rowsHtml}</div>
+                </div>
+
+                <div class="flip-face flip-back card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-sm text-pink-500">Historial: ${ex.name}</h3>
+                        <button onclick="toggleFlip('${d}_${i}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs active:scale-90 transition-all">↩️</button>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col items-center justify-center text-slate-400 text-xs text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6">
+                        <span class="text-4xl mb-3">📈</span>
+                        <p class="font-bold text-slate-500 dark:text-slate-300 mb-1">Centro de Datos</p>
+                        <p>Aquí construiremos la gráfica de volumen y récords personales de Valeria.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>`;
+}
+
+function toggleFlip(d, i) {
+    const card = document.getElementById(`card-${d}-${i}`);
+    if (card) {
+        card.classList.toggle('is-flipped');
+        if (navigator.vibrate) navigator.vibrate([15]);
+    }
+}
+
+document.getElementById('modal-summary').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
+document.getElementById('modal-edit-ex').addEventListener('click', function (e) { if (e.target === this) closeEditExModal(); });
+document.getElementById('modal-emoji').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
+document.getElementById('modal-calc').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
+
+renderTimerDisplay();
+
+/* ─── CONTROL DE SIDEBAR Y GESTOS (HORIZONTAL) ─── */
+function toggleSidebar(open) {
+    document.getElementById('sidebar-menu').classList.toggle('open', open);
+    document.getElementById('sidebar-overlay').classList.toggle('show', open);
+}
+
+function navTo(view) {
+    toggleSidebar(false);
+    setView(view);
+    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+    const activeBtn = document.getElementById(`m-${view}`);
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+let touchStartX = 0;
+document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+}, { passive: true }); // El passive: true mejora el rendimiento en móviles
+
+document.addEventListener('touchend', e => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchEndX - touchStartX;
+
+    if (touchStartX < 40 && diff > 80) {
+        toggleSidebar(true);
+    }
+    if (diff < -80 && document.getElementById('sidebar-menu').classList.contains('open')) {
+        toggleSidebar(false);
+    }
+}, { passive: true });
+
+/* ─── GESTO UNIVERSAL: DESLIZAR HACIA ABAJO PARA CERRAR (VERTICAL) ─── */
+let swipeStartY = 0;
+let activeSheet = null;
+
+document.addEventListener('touchstart', (e) => {
+    // Detectamos si el usuario tocó dentro de una hoja expandida o un modal
+    const sheet = e.target.closest('.modal-content, .calc-sheet, .bottom-bar.expanded');
+
+    // Evitamos interferir si está haciendo scroll en una lista interna (como la lista de mancuernas)
+    const isScrollable = e.target.closest('[style*="overflow-y"], .overflow-y-auto, .wheel-col, .wheel-picker-container');
+
+    if (sheet && !isScrollable) {
+        swipeStartY = e.touches[0].clientY;
+        activeSheet = sheet;
+        // Le quitamos la transición temporalmente para que el arrastre se sienta pegado al dedo
+        activeSheet.style.transition = 'none';
+    } else {
+        activeSheet = null;
+    }
+}, { passive: true });
+
+document.addEventListener('touchmove', (e) => {
+    if (!activeSheet) return;
+    const currentY = e.touches[0].clientY;
+    const diffY = currentY - swipeStartY;
+
+    // Solo permitimos arrastrar hacia abajo (números positivos)
+    if (diffY > 0) {
+        activeSheet.style.transform = `translateY(${diffY}px)`;
+    }
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    if (!activeSheet) return;
+
+    const diffY = e.changedTouches[0].clientY - swipeStartY;
+
+    // Le devolvemos la transición suave de CSS
+    activeSheet.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+    activeSheet.style.transform = ''; // Limpiamos el transform en línea
+
+    // Si deslizó más de 100px hacia abajo, ¡CERRAR!
+    if (diffY > 100) {
+        if (activeSheet.classList.contains('bottom-bar')) {
+            minimizeTimer();
+        } else {
+            // Cierra cualquier modal o calculadora que esté abierta
+            document.querySelectorAll('.modal-overlay.show, .calc-overlay.show').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+    }
+    activeSheet = null;
+}, { passive: true });
+
+// ─── LÓGICA DEL SLIDER DE REPETICIONES ───
+function openReps(k, currentVal) {
+    currentRepsKey = k;
+    const slider = document.getElementById('reps-slider');
+    const display = document.getElementById('reps-display-big');
+
+    // Si ya tenía reps, mostramos ese número; si no, por defecto 8
+    const startVal = currentVal ? parseInt(currentVal) : 8;
+    slider.value = startVal;
+    display.innerText = startVal;
+
+    document.getElementById('modal-reps').classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([15]);
+}
+
+function updateRepsDisplay(val) {
+    document.getElementById('reps-display-big').innerText = val;
+    if (navigator.vibrate) navigator.vibrate([10]); // Pequeña vibración al deslizar
+}
+
+function submitReps() {
+    if (!currentRepsKey) return;
+    const finalReps = document.getElementById('reps-slider').value;
+
+    // 1. Guardar en la serie actual
+    if (!sessionState[currentRepsKey]) sessionState[currentRepsKey] = { done: false, w: '', r: '' };
+    sessionState[currentRepsKey].r = finalReps;
+
+    // Actualizar vista de la celda actual (el índice [1] es el input de reps)
+    const currentRow = document.getElementById(`row-${currentRepsKey}`);
+    if (currentRow) currentRow.querySelectorAll('.gym-input')[1].value = finalReps;
+
+    // 2. ─── AUTO-CASCADA PARA REPETICIONES ───
+    const parts = currentRepsKey.split('_');
+    const d = parts[0], exI = parts[1];
+
+    // 🛡️ EL ESCUDO: Detectamos si es calentamiento
+    const isWarmup = String(parts[2]).startsWith('W');
+
+    // Solo hacemos cascada si NO es calentamiento
+    if (!isWarmup) {
+        const currentSet = parseInt(parts[2]);
+        const totalSets = ROUTINE[d].exercises[exI].sets;
+
+        for (let nextSet = currentSet + 1; nextSet <= totalSets; nextSet++) {
+            const nextKey = `${d}_${exI}_${nextSet}`;
+            if (!sessionState[nextKey]) sessionState[nextKey] = { done: false, w: '', r: '' };
+
+            // Solo hace cascada si la celda de abajo está vacía
+            if (sessionState[nextKey].r === '' || sessionState[nextKey].r === undefined) {
+                sessionState[nextKey].r = finalReps;
+                const nextRow = document.getElementById(`row-${nextKey}`);
+                if (nextRow) nextRow.querySelectorAll('.gym-input')[1].value = finalReps;
+            }
+        }
+    }
+
+    persistSession();
+    document.getElementById('modal-reps').classList.remove('show');
+    if (navigator.vibrate) navigator.vibrate([40, 30]); // Confirmación
+}
