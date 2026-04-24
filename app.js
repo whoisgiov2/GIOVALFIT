@@ -818,209 +818,7 @@ function getOverallFatiguePercentage() {
     const avgFatigue = Object.values(fatigueData).reduce((a, b) => a + b, 0) / Object.keys(fatigueData).length;
     return Math.round(avgFatigue);
 }
-/* ════════════════════════════════════════════════════
-   SKETCHFAB 3D VIEWER INITIALIZATION & MATERIAL MANAGEMENT
-════════════════════════════════════════════════════ */
 
-let sketchfabAPI = null;
-let sketchfabMaterials = null;
-let sketchfabMaterialMap = {};
-
-// Muscle group keywords to match against Sketchfab material names
-const SKETCHFAB_MATERIAL_KEYWORDS = {
-    'chest': ['pectoral', 'chest', 'pecho', 'pec', 'breast'],
-    'back': ['back', 'latissimus', 'lat', 'dorsal', 'espalda', 'trapezius', 'trap'],
-    'shoulders': ['deltoid', 'shoulder', 'hombro', 'delt'],
-    'arms': ['bicep', 'tricep', 'arm', 'brazo', 'forearm', 'antebraz'],
-    'quads': ['quad', 'quadriceps', 'rectus femoris', 'vastus', 'cuadricep'],
-    'glutes': ['glute', 'gluteus', 'glúteo', 'maximus', 'medius'],
-    'core': ['rectus abdominis', 'abdomen', 'abs', 'abdominal', 'core']
-};
-
-function initializeSketchfabViewer() {
-    const iframe = document.getElementById('sketchfab-viewer');
-
-    // Fallback check: Ensure Sketchfab API is loaded
-    if (typeof Sketchfab === 'undefined') {
-        console.warn('⚠️ Sketchfab API not yet loaded. Retrying in 1s...');
-        setTimeout(initializeSketchfabViewer, 1000);
-        return;
-    }
-
-    const uid = '26e55759a6cd443b8fd5b520d79a36de';
-    const client = new Sketchfab();
-
-    client.init(uid, {
-        success: onSketchfabSuccess,
-        error: onSketchfabError,
-        ui_controls: 1,
-        ui_infos: 0,
-        ui_inspector: 0,
-        ui_settings: 0,
-        ui_watermark: 1,
-        preload: 1,
-        autostart: 0,
-        autospin: 0.5
-    });
-}
-
-function onSketchfabSuccess(api) {
-    sketchfabAPI = api;
-    console.log('✅ Sketchfab Viewer ready!');
-
-    // Once viewer is ready, get all materials
-    api.addEventListener('viewerready', function () {
-        console.log('🎨 Fetching materials...');
-        api.getMaterialList(function (materials) {
-            sketchfabMaterials = materials;
-            detectAndMapMaterials(materials);
-            console.log('📋 Materials detected:', materials);
-            // Update heatmap with current fatigue data
-            updateSketchfabHeatmap();
-        });
-    });
-
-    // Listen for model load completion
-    api.addEventListener('modelLoaded', function () {
-        console.log('🏋️ 3D Model fully loaded!');
-    });
-}
-
-function onSketchfabError() {
-    console.error('❌ Sketchfab initialization failed');
-}
-
-function detectAndMapMaterials(materials) {
-    /**
-     * This function analyzes the material list and maps each material
-     * to a muscle group based on keyword matching in the material name.
-     */
-
-    sketchfabMaterialMap = {}; // Reset map
-
-    materials.forEach((material, index) => {
-        const materialName = material.name.toLowerCase();
-        console.log(`Material ${index}: "${material.name}"`);
-
-        // Try to find which muscle group this material belongs to
-        let assignedMuscle = null;
-
-        for (const [muscleGroup, keywords] of Object.entries(SKETCHFAB_MATERIAL_KEYWORDS)) {
-            if (keywords.some(kw => materialName.includes(kw))) {
-                assignedMuscle = muscleGroup;
-                console.log(`  ➜ Mapped to: ${muscleGroup}`);
-                break;
-            }
-        }
-
-        // Store the mapping
-        sketchfabMaterialMap[index] = {
-            name: material.name,
-            muscle: assignedMuscle,
-            materialObj: material
-        };
-    });
-
-    console.log('🔍 Final material-to-muscle map:', sketchfabMaterialMap);
-}
-
-function getColorFromFatigue(fatiguePercent) {
-    /**
-     * Convert fatigue percentage (0-100) to RGB color values
-     * 0% = dark grey (recovered)
-     * 50% = vibrant pink (mild fatigue)
-     * 100% = deep red (high fatigue)
-     */
-
-    let r, g, b;
-
-    if (fatiguePercent <= 20) {
-        // Dark grey: fully recovered (no emissive)
-        return { albedo: [0.2, 0.2, 0.2], emissive: [0, 0, 0] };
-    } else if (fatiguePercent <= 40) {
-        // Light pink: mild fatigue
-        r = 1.0; g = 0.5; b = 0.7;
-        return { albedo: [r, g, b], emissive: [r * 0.4, g * 0.2, b * 0.3] };
-    } else if (fatiguePercent <= 65) {
-        // Vibrant pink: moderate fatigue (WITH GLOW)
-        r = 1.0; g = 0.3; b = 0.58;
-        return { albedo: [r, g, b], emissive: [r * 0.8, g * 0.4, b * 0.7] };
-    } else {
-        // Deep red: high fatigue, needs rest (INTENSE GLOW)
-        r = 1.0; g = 0.15; b = 0.15;
-        return { albedo: [r, g, b], emissive: [r * 0.9, g * 0.3, b * 0.3] };
-    }
-}
-
-function applyHeatmapColors(fatigueData) {
-    /**
-     * Apply fatigue-based colors to all Sketchfab materials.
-     * This is called whenever the heatmap needs to update.
-     */
-
-    if (!sketchfabAPI || !sketchfabMaterials) {
-        console.warn('⚠️ Sketchfab API or materials not ready yet');
-        return;
-    }
-
-    console.log('🎨 Applying heatmap colors...');
-
-    for (const [materialIndex, mapping] of Object.entries(sketchfabMaterialMap)) {
-        const muscleGroup = mapping.muscle;
-        const materialName = mapping.name;
-
-        // Get fatigue for this muscle group
-        const fatigue = fatigueData[muscleGroup] || 0;
-
-        // Convert fatigue to color
-        const colorData = getColorFromFatigue(fatigue);
-
-        console.log(`  ${materialName} (${muscleGroup}): ${fatigue.toFixed(0)}% fatigue`);
-
-        // Apply color to material
-        sketchfabAPI.setMaterial(parseInt(materialIndex), colorData, function (err) {
-            if (err) console.error(`  ❌ Error updating material ${materialIndex}:`, err);
-        });
-    }
-}
-
-function updateSketchfabHeatmap() {
-    /**
-     * Main update function: Calculate fatigue and apply to 3D model.
-     * Call this whenever you want to refresh the heatmap.
-     */
-
-    const fatigueData = calculateMuscleFatigue();
-    const overallFatigue = getOverallFatiguePercentage();
-
-    // Update 3D colors
-    applyHeatmapColors(fatigueData);
-
-    // Update badge
-    const indicator = document.getElementById('fatigue-indicator-3d');
-    if (indicator) {
-        let status, colorClass;
-
-        if (overallFatigue <= 25) {
-            status = `100% Recuperada ✨`;
-            colorClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
-        } else if (overallFatigue <= 50) {
-            status = `${100 - overallFatigue}% Fresca 💪`;
-            colorClass = 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300';
-        } else if (overallFatigue <= 75) {
-            status = `${100 - overallFatigue}% Energía ⚡`;
-            colorClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
-        } else {
-            status = `Descansa 🧘‍♀️`;
-            colorClass = 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
-        }
-
-        indicator.className = `text-[10px] font-black px-2 py-1 rounded-full ${colorClass}`;
-        indicator.innerText = status;
-    }
-
-    console.log('✅ Heatmap updated!');
-}
 /* ════════════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════════════ */
@@ -1055,10 +853,6 @@ window.onload = () => {
         navTo('workout');
         showToast('Reanudando tu sesión... 💪');
     }
-    // Initialize Sketchfab 3D viewer
-    setTimeout(() => {
-        initializeSketchfabViewer();
-    }, 500); // Small delay to ensure DOM is ready
 };
 
 function toggleDarkMode() {
@@ -1177,7 +971,6 @@ function setView(v) {
     if (v === 'home') {
         updateHomeStats();
         renderHeatmap();
-        updateSketchfabHeatmap();
         checkActiveSession();
     }
 
@@ -2435,8 +2228,6 @@ function saveToHistory() {
     checkAchievements();
 
     setTimeout(launchConfetti, 100);
-    // Refresh 3D heatmap
-    updateSketchfabHeatmap();
     checkAchievements();
     setView('history');
     showToast('¡Rutina guardada! 🌸 +' + xpEarned + ' XP');
@@ -2917,59 +2708,30 @@ document.getElementById('modal-calc').addEventListener('click', function (e) { i
 
 renderTimerDisplay();
 
-/* ─── CONTROL DE SIDEBAR Y GESTOS (HORIZONTAL) ─── */
-function toggleSidebar(open) {
-    document.getElementById('sidebar-menu').classList.toggle('open', open);
-    document.getElementById('sidebar-overlay').classList.toggle('show', open);
-}
-
+/* ─── NAVEGACIÓN BOTTOM BAR ─── */
 function navTo(view) {
-    toggleSidebar(false);
     setView(view);
-    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-    const activeBtn = document.getElementById(`m-${view}`);
+    // Quitar activo de todos los botones
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    // Poner activo al botón seleccionado
+    const activeBtn = document.getElementById(`nav-btn-${view}`);
     if (activeBtn) activeBtn.classList.add('active');
+
+    // Pequeña vibración háptica al cambiar de pestaña
+    if (navigator.vibrate) navigator.vibrate([10]);
 }
-
-let touchStartX = 0;
-document.addEventListener('touchstart', (e) => {
-    const sheet = e.target.closest('.modal-content, .calc-sheet, .bottom-bar.expanded');
-
-    // ─── WHEEL ZONE GUARD ───────────────────────────────────────────────────
-    // Block swipe-to-close if the touch origin is anywhere inside the timer
-    // edit container — including the gaps between columns and the highlight bar.
-    // Using closest() on #timer-edit-mode catches the target itself AND every
-    // descendant, so a finger slipping between .wheel-col elements is still safe.
-    const inWheelZone = !!e.target.closest('#timer-edit-mode');
-
-    // Also guard naturally-scrollable lists (e.g. dumbbell grid)
-    const inScrollable = !!e.target.closest('.overflow-y-auto, .wheel-col');
-
-    if (sheet && !inWheelZone && !inScrollable) {
-        swipeStartY = e.touches[0].clientY;
-        activeSheet = sheet;
-        // Remove transition so drag tracks the finger with zero lag
-        activeSheet.style.transition = 'none';
-    } else {
-        activeSheet = null;
-    }
-}, { passive: true });
-
 /* ─── GESTO UNIVERSAL: DESLIZAR HACIA ABAJO PARA CERRAR (VERTICAL) ─── */
 let swipeStartY = 0;
 let activeSheet = null;
 
 document.addEventListener('touchstart', (e) => {
-    // Detectamos si el usuario tocó dentro de una hoja expandida o un modal
     const sheet = e.target.closest('.modal-content, .calc-sheet, .bottom-bar.expanded');
+    const inWheelZone = !!e.target.closest('#timer-edit-mode');
+    const isScrollable = !!e.target.closest('[style*="overflow-y"], .overflow-y-auto, .wheel-col, .wheel-picker-container');
 
-    // Evitamos interferir si está haciendo scroll en una lista interna (como la lista de mancuernas)
-    const isScrollable = e.target.closest('[style*="overflow-y"], .overflow-y-auto, .wheel-col, .wheel-picker-container');
-
-    if (sheet && !isScrollable) {
+    if (sheet && !inWheelZone && !isScrollable) {
         swipeStartY = e.touches[0].clientY;
         activeSheet = sheet;
-        // Le quitamos la transición temporalmente para que el arrastre se sienta pegado al dedo
         activeSheet.style.transition = 'none';
     } else {
         activeSheet = null;
@@ -2980,32 +2742,19 @@ document.addEventListener('touchmove', (e) => {
     if (!activeSheet) return;
     const currentY = e.touches[0].clientY;
     const diffY = currentY - swipeStartY;
-
-    // Solo permitimos arrastrar hacia abajo (números positivos)
-    if (diffY > 0) {
-        activeSheet.style.transform = `translateY(${diffY}px)`;
-    }
+    if (diffY > 0) activeSheet.style.transform = `translateY(${diffY}px)`;
 }, { passive: true });
 
 document.addEventListener('touchend', (e) => {
     if (!activeSheet) return;
-
     const diffY = e.changedTouches[0].clientY - swipeStartY;
 
-    // Le devolvemos la transición suave de CSS
     activeSheet.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
-    activeSheet.style.transform = ''; // Limpiamos el transform en línea
+    activeSheet.style.transform = '';
 
-    // Si deslizó más de 100px hacia abajo, ¡CERRAR!
     if (diffY > 100) {
-        if (activeSheet.classList.contains('bottom-bar')) {
-            minimizeTimer();
-        } else {
-            // Cierra cualquier modal o calculadora que esté abierta
-            document.querySelectorAll('.modal-overlay.show, .calc-overlay.show').forEach(el => {
-                el.classList.remove('show');
-            });
-        }
+        if (activeSheet.classList.contains('bottom-bar')) minimizeTimer();
+        else document.querySelectorAll('.modal-overlay.show, .calc-overlay.show').forEach(el => el.classList.remove('show'));
     }
     activeSheet = null;
 }, { passive: true });
@@ -3070,38 +2819,4 @@ function submitReps() {
     persistSession();
     document.getElementById('modal-reps').classList.remove('show');
     if (navigator.vibrate) navigator.vibrate([40, 30]); // Confirmación
-}
-/* ════════════════════════════════════════════════════
-   DEBUG HELPERS FOR SKETCHFAB MATERIAL DISCOVERY
-════════════════════════════════════════════════════ */
-
-// Call this in browser console to see all materials
-function debugSketchfabMaterials() {
-    console.log('=== SKETCHFAB MATERIAL DEBUG ===');
-    console.log('Materials List:', sketchfabMaterials);
-    console.log('Material Map:', sketchfabMaterialMap);
-    console.log('API Ready:', sketchfabAPI ? '✅ Yes' : '❌ No');
-
-    if (sketchfabMaterialMap) {
-        console.log('\nMaterial → Muscle Mapping:');
-        for (const [idx, mapping] of Object.entries(sketchfabMaterialMap)) {
-            console.log(`  [${idx}] "${mapping.name}" → ${mapping.muscle || '❌ UNMAPPED'}`);
-        }
-    }
-}
-
-// Call this to manually force a heatmap update
-function debugUpdateHeatmap() {
-    console.log('🔄 Forcing heatmap update...');
-    updateSketchfabHeatmap();
-}
-
-// Call this to see current fatigue data
-function debugFatigueData() {
-    const fatigueData = calculateMuscleFatigue();
-    console.log('=== FATIGUE DATA (Last 72h) ===');
-    for (const [muscle, fatigue] of Object.entries(fatigueData)) {
-        const bar = '█'.repeat(Math.round(fatigue / 5)) + '░'.repeat(20 - Math.round(fatigue / 5));
-        console.log(`${muscle.padEnd(12)} [${bar}] ${fatigue.toFixed(1)}%`);
-    }
 }

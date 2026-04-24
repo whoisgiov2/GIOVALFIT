@@ -1,41 +1,54 @@
 /* ─── VARIABLES ─────────────────────────────────────── */
+/* ─── VARIABLES (PALETA MINIMALISTA TIERRA) ─────────────────────────────────────── */
 :root {
-    --pink: #ff4d94;
-    /* Rosa más vibrante */
-    --pink-dark: #ff0066;
-    --pink-light: #fff0f6;
-    --pink-border: rgba(255, 77, 148, 0.15);
-    --pink-glow: rgba(255, 77, 148, 0.25);
-    --gold: #ffb800;
-    --gold-glow: rgba(255, 184, 0, 0.3);
-    --bg: #ffffff;
-    /* Fondo claro puro */
-    --card: #ffffff;
-    --text-main: #000000;
-    --text-muted: #6b7280;
-    --slate-100: #f3f4f6;
-    --radius-card: 28px;
-    --radius-sm: 16px;
-    --transition: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
-    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.04);
-    --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-    --shadow-pink: 0 6px 20px rgba(255, 77, 148, 0.14), 0 2px 6px rgba(255, 77, 148, 0.08);
-    --shadow-gold: 0 6px 20px rgba(255, 184, 0, 0.18), 0 2px 6px rgba(255, 184, 0, 0.10);
-    --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.10);
+    --pink: #7C444F;
+    /* Acento Principal */
+    --pink-dark: #664343;
+    /* Hover y sombras oscuras */
+    --pink-light: #F8EBEB;
+    /* Fondos activos suaves */
+    --pink-border: rgba(124, 68, 79, 0.15);
+    --pink-glow: transparent;
+    /* Minimalismo = Cero brillos neón */
+
+    --gold: #FFB22C;
+    /* Récords y advertencias */
+    --gold-glow: transparent;
+
+    --bg: #FDF8F8;
+    /* Fondo base blanco-crema cálido */
+    --card: #FFFFFF;
+    /* Tarjetas blancas limpias */
+    --text-main: #3B3030;
+    /* Texto principal oscuro */
+    --text-muted: #795757;
+    /* Texto secundario taupe */
+    --slate-100: #F3EBEB;
+
+    --radius-card: 24px;
+    /* Un poco menos redondas para mayor elegancia */
+    --radius-sm: 14px;
+    --transition: 0.3s ease;
+
+    /* Sombras súper suaves y difuminadas (Soft-UI) */
+    --shadow-card: 0 4px 15px rgba(59, 48, 48, 0.03), 0 1px 3px rgba(59, 48, 48, 0.02);
+    --shadow-hover: 0 10px 25px rgba(59, 48, 48, 0.06);
+    --shadow-pink: 0 6px 16px rgba(124, 68, 79, 0.12);
+    --shadow-gold: 0 6px 16px rgba(255, 178, 44, 0.12);
+    --shadow-modal: 0 20px 40px rgba(59, 48, 48, 0.08);
 }
 
 .dark {
-    --bg: #000000;
-    /* Negro profundo AMOLED */
-    --card: #0c0c0c;
-    /* Tarjetas en gris carbón casi negro */
-    --text-main: #ffffff;
-    --text-muted: #888888;
-    --slate-100: #1a1a1a;
-    /* Elementos secundarios oscuros */
-    --pink-light: #1a0a12;
-    /* Fondo de acento rosa muy oscuro */
-    --pink-border: rgba(255, 77, 148, 0.25);
+    --bg: #272020;
+    /* Marrón-gris casi negro */
+    --card: #3B3030;
+    /* Carbón cálido para tarjetas */
+    --text-main: #FDF8F8;
+    --text-muted: #B5828C;
+    /* Malva para textos secundarios */
+    --slate-100: #4A3C3C;
+    --pink-light: rgba(124, 68, 79, 0.15);
+    --pink-border: rgba(229, 152, 155, 0.15);
 }
 
 .dark .stat-card,
@@ -43,13 +56,14 @@
 .dark .home-card,
 .dark .sidebar,
 .dark .bg-white {
-    box-shadow: 0 4px 20px rgba(255, 77, 148, 0.05);
-    border-color: rgba(255, 77, 148, 0.12);
+    box-shadow: none;
+    /* En modo oscuro minimalista, preferimos bordes sobre sombras */
+    border-color: rgba(229, 152, 155, 0.1);
 }
 
 /* Efecto de cristal para el sidebar en modo oscuro */
 .dark .sidebar {
-    background: rgba(12, 12, 12, 0.95);
+    background: rgba(39, 32, 32, 0.95);
     backdrop-filter: blur(20px);
 }
 
@@ -83,17 +97,18 @@ h2,
 h3,
 h4,
 .font-display {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Outfit', sans-serif;
 }
 
-/* ─── ORBS ANIMADOS DE FONDO ─── */
+/* ─── ORBS ANIMADOS DE FONDO (SUAVIZADOS) ─── */
 .bg-orb {
     position: fixed;
     border-radius: 50%;
-    filter: blur(80px);
+    filter: blur(100px);
     pointer-events: none;
     z-index: 0;
-    opacity: 0.12;
+    opacity: 0.05;
+    /* Muy sutil */
 }
 
 .orb-1 {
@@ -749,36 +764,42 @@ h4,
     color: #6ee7b7;
 }
 
-/* ─── TIMER EVOLUCIONADO: MINIMIZADO VS EXPANDIDO ─── */
+/* ─── TIMER FLOTANTE (Evolucionado) ─── */
 .bottom-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 85px;
+    /* Sube para no tapar la barra de navegación */
+    left: 16px;
+    /* Separado de las orillas */
+    right: 16px;
     background: rgba(8, 8, 8, 0.88) !important;
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
-    z-index: 400;
-    transition: height 0.52s cubic-bezier(0.16, 1, 0.3, 1),
-        border-radius 0.52s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    border-top: 0.5px solid rgba(255, 77, 148, 0.22);
-    box-shadow: 0 -1px 0 rgba(255, 77, 148, 0.12),
-        0 -20px 60px rgba(0, 0, 0, 0.55),
-        0 -4px 16px rgba(0, 0, 0, 0.3);
+    z-index: 500;
+    /* Mayor que el nav */
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 0.5px solid rgba(255, 77, 148, 0.22);
+    border-radius: 24px;
+    /* Forma de píldora flotante */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     height: 90px;
     padding: 12px 22px;
 }
 
 .bottom-bar.expanded {
-    height: 60vh;
-    border-top-left-radius: 32px;
-    border-top-right-radius: 32px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65vh;
+    border-radius: 32px 32px 0 0;
+    /* Se pega abajo y redondea arriba */
     padding: 20px;
+    border-bottom: none;
 }
 
 .bottom-bar.hidden-bar {
-    transform: translateY(100%);
+    transform: translateY(250%);
+    opacity: 0;
 }
 
 .timer-handle {
@@ -1598,71 +1619,29 @@ h4,
     transform: scale(0.95);
 }
 
-/* ─── SIDEBAR & GESTURES ─── */
-.sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar-overlay.show {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: -280px;
-    width: 280px;
-    height: 100%;
-    background: var(--card);
-    z-index: 210;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-}
-
-.sidebar.open {
-    transform: translateX(280px);
-}
-
-.menu-item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    padding: 16px;
-    border-radius: 16px;
-    font-weight: 700;
+/* ─── BOTTOM NAVIGATION BAR ─── */
+.nav-item {
     color: var(--text-muted);
-    transition: all 0.2s;
-    margin-bottom: 8px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 18px;
+    border: 2px solid transparent;
 }
 
-.menu-item.active {
+.nav-item.active {
+    color: var(--pink);
     background: var(--pink-light);
-    color: var(--pink-dark);
+    transform: translateY(-3px);
+    border-color: var(--pink-border);
+    box-shadow: 0 4px 12px rgba(124, 68, 79, 0.08);
 }
 
-.menu-item:active {
-    transform: scale(0.97);
+.nav-item:active {
+    transform: scale(0.9);
 }
 
-.swipe-sensor {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 100%;
-    z-index: 150;
-    background: transparent;
+/* Evitar que la barra inferior estorbe al final de la página */
+body {
+    padding-bottom: 100px;
 }
 
 /* ─── CUSTOM SLIDER (REPS) ─── */
@@ -1830,8 +1809,12 @@ input[type=range]::-webkit-slider-runnable-track {
     display: flex;
     align-items: center;
     gap: 8px;
-    /* matches gap in .wheel-picker-container */
-    margin-bottom: 2px;
+    margin-bottom: -15px;
+    /* Acerca el espacio físico a los números */
+    transform: translateY(18px);
+    /* Baja el texto visualmente */
+    position: relative;
+    z-index: 10;
     pointer-events: none;
     user-select: none;
 }

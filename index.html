@@ -9,15 +9,44 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
-    <script async src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: { extend: { colors: { beige: { 50: '#fdfaf6', 100: '#f7f3ed' } } } }
+            theme: {
+                extend: {
+                    colors: {
+                        /* Paleta Tierra/Minimalista de GiovaFit */
+                        pink: {
+                            50: '#FDF8F8',
+                            100: '#F8EBEB',
+                            300: '#E5989B', /* Rosa Suave */
+                            400: '#B5828C', /* Malva */
+                            500: '#7C444F', /* Rosa Profundo (Principal) */
+                            600: '#664343', /* Marrón Oscuro */
+                            800: '#3B3030', /* Carbón Cálido */
+                            900: '#272020',
+                        },
+                        slate: {
+                            50: '#FDF8F8',
+                            100: '#F3EBEB',
+                            200: '#E5D6D6',
+                            300: '#C7B1B1',
+                            400: '#795757', /* Taupe (Textos secundarios) */
+                            500: '#664343',
+                            700: '#4A3C3C',
+                            800: '#3B3030', /* Fondos oscuros */
+                            900: '#272020',
+                        },
+                        amber: {
+                            500: '#FFB22C', /* Acento Dorado/Amarillo */
+                        }
+                    }
+                }
+            }
         }
     </script>
     <link rel="stylesheet" href="styles.css">
@@ -43,30 +72,54 @@
                 💪</button>
         </div>
     </div>
-    <!-- Menú Lateral -->
-    <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
-    <div id="sidebar-menu" class="sidebar">
-        <div class="mb-8 px-4">
-            <h2 class="text-xl font-black text-pink-500">Menú</h2>
-            <p class="text-[10px] text-muted font-bold uppercase tracking-tighter">Gestión de App</p>
-        </div>
-        <div class="flex-1">
-            <button onclick="navTo('home')" class="menu-item w-full" id="m-home"><span>🏠</span> Inicio</button>
-            <button onclick="navTo('workout')" class="menu-item w-full" id="m-workout"><span>🏋️‍♀️</span>
-                Entrenar</button>
-            <button onclick="navTo('achievements')" class="menu-item w-full" id="m-achievements"><span>🏆</span>
-                Logros</button>
-            <button onclick="navTo('history')" class="menu-item w-full" id="m-history"><span>📜</span>
-                Historial</button>
-            <button onclick="navTo('settings')" class="menu-item w-full" id="m-settings"><span>⚙️</span> Rutina</button>
-        </div>
-        <div class="border-t border-pink-border pt-6">
-            <button onclick="toggleDarkMode(); toggleSidebar(false)" class="menu-item w-full">
-                <span id="theme-icon">🌙</span> Modo Oscuro
-            </button>
-        </div>
-    </div>
-    <div class="swipe-sensor" id="swipe-sensor"></div>
+    <nav id="bottom-nav-bar"
+        class="fixed bottom-4 left-4 right-4 z-[400] bg-white/90 dark:bg-[#3B3030]/90 backdrop-blur-xl border border-pink-border rounded-3xl shadow-lg flex justify-around items-center px-2 py-2 transition-transform duration-300">
+        <button onclick="navTo('home')" class="nav-item active flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
+            id="nav-btn-home">
+            <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                </path>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest uppercase">Inicio</span>
+        </button>
+        <button onclick="navTo('workout')" class="nav-item flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
+            id="nav-btn-workout">
+            <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
+                </path>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest uppercase">Entrenar</span>
+        </button>
+        <button onclick="navTo('achievements')" class="nav-item flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
+            id="nav-btn-achievements">
+            <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                </path>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest uppercase">Logros</span>
+        </button>
+        <button onclick="navTo('history')" class="nav-item flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
+            id="nav-btn-history">
+            <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                </path>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest uppercase">Historial</span>
+        </button>
+        <button onclick="navTo('settings')" class="nav-item flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
+            id="nav-btn-settings">
+            <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
+                </path>
+            </svg>
+            <span class="text-[9px] font-black tracking-widest uppercase">Rutina</span>
+        </button>
+    </nav>
 
     <div id="app" class="max-w-md mx-auto px-5 pt-8">
 
@@ -141,54 +194,6 @@
                     <span id="week-summary" class="text-xs font-bold text-pink-500">0 / 7 días</span>
                 </div>
                 <div class="flex gap-2 justify-between" id="heatmap-container"></div>
-            </div>
-            <!-- ─── 3D ANATOMICAL RECOVERY HEATMAP (SKETCHFAB) ─── -->
-            <div
-                class="bg-white dark:bg-slate-800 border border-pink-border rounded-2xl overflow-hidden mb-6 shadow-sm">
-                <!-- Header with fatigue indicator -->
-                <div class="px-4 py-3 flex justify-between items-center border-b border-pink-border/40">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Tu Anatomía 3D</p>
-                    <span id="fatigue-indicator-3d"
-                        class="text-[10px] font-black px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-                        100% Recuperada ✨
-                    </span>
-                </div>
-
-                <!-- Sketchfab iframe container -->
-                <div id="sketchfab-container"
-                    style="position: relative; width: 100%; padding-bottom: 100%; height: 0; overflow: hidden; background: #0a0a0a;">
-                    <iframe id="sketchfab-viewer" title="GiovaFit Muscle Anatomy 3D"
-                        src="https://sketchfab.com/models/26e55759a6cd443b8fd5b520d79a36de/embed?autospin=0.5&autostart=1"
-                        frameborder="0" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking
-                        execution-while-out-of-viewport execution-while-not-rendered web-share
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 0 0 20px 20px;"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-
-                <!-- Legend -->
-                <div
-                    class="px-4 py-3 bg-slate-50/50 dark:bg-slate-900/30 border-t border-pink-border/40 grid grid-cols-2 gap-2 text-[9px]">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full" style="background: #374151;"></div>
-                        <span class="text-slate-600 dark:text-slate-300">Recuperada</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full"
-                            style="background: var(--pink); box-shadow: 0 0 8px var(--pink);"></div>
-                        <span class="text-slate-600 dark:text-slate-300">Fatigada</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full" style="background: #dc2626; box-shadow: 0 0 10px #dc2626;">
-                        </div>
-                        <span class="text-slate-600 dark:text-slate-300">Muy cansada</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full" style="background: #10b981; box-shadow: 0 0 8px #10b981;">
-                        </div>
-                        <span class="text-slate-600 dark:text-slate-300">Súper fresca</span>
-                    </div>
-                </div>
             </div>
             <div id="active-session-banner" class="mb-6 hidden"></div>
 
