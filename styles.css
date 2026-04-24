@@ -16,7 +16,12 @@
     --slate-100: #f3f4f6;
     --radius-card: 28px;
     --radius-sm: 16px;
-    --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 8px 28px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-pink: 0 6px 20px rgba(255, 77, 148, 0.14), 0 2px 6px rgba(255, 77, 148, 0.08);
+    --shadow-gold: 0 6px 20px rgba(255, 184, 0, 0.18), 0 2px 6px rgba(255, 184, 0, 0.10);
+    --shadow-modal: 0 24px 60px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.10);
 }
 
 .dark {
@@ -327,13 +332,19 @@ h4,
 /* ─── STATS GRID ─── */
 .stat-card {
     background: var(--card);
-    border-radius: 18px;
-    border: 1px solid var(--pink-border);
-    padding: 16px;
+    border-radius: 22px;
+    border: 0.5px solid var(--pink-border);
+    padding: 20px 16px;
     text-align: center;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--shadow-card);
     position: relative;
     overflow: hidden;
+    transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.stat-card:active {
+    transform: scale(0.97);
+    box-shadow: var(--shadow-pink);
 }
 
 .stat-card::before {
@@ -401,19 +412,25 @@ h4,
 /* ─── HOME CARDS ─── */
 .home-card {
     background: var(--card);
-    border-radius: 20px;
-    padding: 20px;
-    border: 1px solid var(--pink-border);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-    transition: all var(--transition);
+    border-radius: 24px;
+    padding: 22px 20px;
+    border: 0.5px solid var(--pink-border);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
     cursor: pointer;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+}
+
+.home-card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 77, 148, 0.28);
 }
 
 .home-card:active {
-    transform: scale(0.96);
+    transform: scale(0.965);
+    box-shadow: var(--shadow-pink);
 }
 
 .home-card.active-session {
@@ -450,23 +467,23 @@ h4,
 /* ─── EXERCISE CARDS ─── */
 .card {
     background: var(--card);
-    border-radius: var(--radius-card);
-    border: 1px solid var(--pink-border);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-    transition: all var(--transition);
+    border-radius: 28px;
+    border: 0.5px solid var(--pink-border);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow var(--transition), transform var(--transition), border-color var(--transition);
     overflow: hidden;
     position: relative;
 }
 
 .card.complete {
-    border-color: var(--pink);
-    box-shadow: 0 10px 30px var(--pink-glow);
-    transform: translateY(-4px);
+    border-color: rgba(255, 77, 148, 0.5);
+    box-shadow: var(--shadow-pink);
+    transform: translateY(-3px);
 }
 
 .card.pr-card {
-    border-color: var(--gold) !important;
-    box-shadow: 0 10px 30px var(--gold-glow) !important;
+    border-color: rgba(255, 184, 0, 0.55) !important;
+    box-shadow: var(--shadow-gold) !important;
 }
 
 .card-stagger {
@@ -638,22 +655,28 @@ h4,
 }
 
 .gym-input {
-    background: var(--card);
-    border: 1.5px solid var(--pink-border);
-    border-radius: 10px;
-    padding: 8px;
+    background: var(--bg);
+    border: 0.5px solid var(--pink-border);
+    border-radius: 12px;
+    padding: 10px 8px;
     font-size: 14px;
     font-weight: 700;
     text-align: center;
     width: 100%;
     color: var(--text-main);
-    transition: all 0.2s;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .gym-input:focus {
     outline: none;
-    border-color: var(--pink);
-    box-shadow: 0 0 0 3px var(--pink-glow);
+    border-color: rgba(255, 77, 148, 0.6);
+    background: var(--card);
+    box-shadow: 0 0 0 3.5px rgba(255, 77, 148, 0.12);
+}
+
+.set-row.done .gym-input {
+    border-color: rgba(255, 77, 148, 0.4);
+    background: var(--pink-light);
 }
 
 .set-row.done .gym-input {
@@ -661,23 +684,32 @@ h4,
 }
 
 .check-btn {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    background: var(--card);
-    border: 2px solid var(--pink-border);
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    background: var(--bg);
+    border: 0.5px solid var(--pink-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: background 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.26s ease,
+        transform 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.26s ease;
     color: var(--text-muted);
+    flex-shrink: 0;
 }
 
 .check-btn.done {
-    background: var(--pink);
-    border-color: var(--pink);
+    background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    border-color: transparent;
     color: white;
-    transform: scale(1.08);
+    transform: scale(1.1);
+    box-shadow: 0 4px 14px rgba(255, 77, 148, 0.35);
+}
+
+.check-btn:active {
+    transform: scale(0.9);
 }
 
 /* ─── DETAILS PANEL ─── */
@@ -723,15 +755,19 @@ h4,
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(10, 10, 10, 0.85) !important;
-    backdrop-filter: blur(25px) saturate(160%);
-    -webkit-backdrop-filter: blur(25px) saturate(160%);
+    background: rgba(8, 8, 8, 0.88) !important;
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
     z-index: 400;
-    transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-    border-top: 1px solid rgba(255, 77, 148, 0.3);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    transition: height 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+        border-radius 0.52s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-top: 0.5px solid rgba(255, 77, 148, 0.22);
+    box-shadow: 0 -1px 0 rgba(255, 77, 148, 0.12),
+        0 -20px 60px rgba(0, 0, 0, 0.55),
+        0 -4px 16px rgba(0, 0, 0, 0.3);
     height: 90px;
-    padding: 12px 20px;
+    padding: 12px 22px;
 }
 
 .bottom-bar.expanded {
@@ -812,13 +848,14 @@ h4,
 
 .modal-content {
     background: var(--card);
-    border-radius: 28px 28px 0 0;
+    border-radius: 32px 32px 0 0;
     width: 100%;
     max-width: 480px;
-    padding: 30px 30px calc(30px + env(safe-area-inset-bottom));
+    padding: 32px 28px calc(32px + env(safe-area-inset-bottom));
     color: var(--text-main);
     transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-modal);
+    transition: transform 0.48s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-overlay.show .modal-content {
@@ -882,15 +919,20 @@ h4,
 /* ─── HISTORY CARDS ─── */
 .history-card {
     background: var(--card);
-    border-radius: 20px;
-    border: 1px solid var(--pink-border);
-    padding: 16px;
+    border-radius: 22px;
+    border: 0.5px solid var(--pink-border);
+    padding: 18px 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-    animation: viewFadeIn 0.3s ease-out forwards;
+    box-shadow: var(--shadow-card);
+    animation: viewFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: box-shadow var(--transition);
+}
+
+.history-card:active {
+    box-shadow: var(--shadow-hover);
 }
 
 /* ─── FIX: Progress Chart Container ─── */
@@ -1781,4 +1823,35 @@ input[type=range]::-webkit-slider-runnable-track {
     color: white;
     padding-bottom: 6px;
     opacity: 0.8;
+}
+
+/* ─── TIMER COLUMN LABELS ─── */
+.wheel-labels-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* matches gap in .wheel-picker-container */
+    margin-bottom: 2px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.wheel-unit-label {
+    width: 65px;
+    /* exact match to .wheel-col width */
+    text-align: center;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.28);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Invisible spacer that mirrors the rendered width of .wheel-colon
+   (34px font, single character ≈ 18–22px). Fixed at 20px is safe. */
+.wheel-colon-spacer {
+    display: block;
+    width: 20px;
+    flex-shrink: 0;
 }

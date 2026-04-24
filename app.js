@@ -355,6 +355,7 @@ function toggleGlobalUnit() {
     document.getElementById('unit-disp').innerText = globalUnit.toUpperCase();
     if (navigator.vibrate) navigator.vibrate([20]);
 
+    buildBarbellUI();
     buildDumbGrid();
     updateCalcUnitLabels();
     updateHomeStats();
@@ -554,6 +555,68 @@ function updateHomeStats() {
     const txt = dispVol > 9999 ? (dispVol / 1000).toFixed(1) + 'k' : Math.round(dispVol);
     document.getElementById('stat-volume').innerText = `${txt} ${globalUnit.toUpperCase()}`;
 }
+
+/* ════════════════════════════════════════════════════
+   ANATOMY HEATMAP UI UPDATER
+════════════════════════════════════════════════════ */
+
+function updateAnatomyHeatmap() {
+    const fatigueData = calculateMuscleFatigue();
+
+    // Color mapping function: 0% (green) → 50% (pink) → 100% (red)
+    function getColorForFatigue(fatigue) {
+        // fatigue: 0-100 (0 = recovered/green, 100 = completely exhausted/red)
+
+        if (fatigue <= 20) {
+            // Green: fully recovered
+            return { fill: '#10b981', stroke: '#047857' }; // emerald
+        } else if (fatigue <= 40) {
+            // Light Pink: mild fatigue
+            return { fill: '#fce7f3', stroke: 'var(--pink-border)' }; // pink-100
+        } else if (fatigue <= 65) {
+            // Vibrant Pink: moderate fatigue
+            return { fill: 'var(--pink)', stroke: 'var(--pink-dark)' }; // primary pink
+        } else {
+            // Deep Red: high fatigue, needs rest
+            return { fill: '#dc2626', stroke: '#991b1b' }; // red-600/700
+        }
+    }
+
+    // Update all muscle group paths
+    document.querySelectorAll('.muscle-path').forEach(path => {
+        const muscle = path.getAttribute('data-muscle');
+        if (muscle && fatigueData[muscle] !== undefined) {
+            const colors = getColorForFatigue(fatigueData[muscle]);
+            path.setAttribute('fill', colors.fill);
+            path.setAttribute('stroke', colors.stroke);
+        }
+    });
+
+    // Update the overall fatigue indicator badge
+    const overallFatigue = getOverallFatiguePercentage();
+    const indicator = document.getElementById('fatigue-indicator');
+    if (indicator) {
+        let status, colorClass;
+
+        if (overallFatigue <= 25) {
+            status = `100% Recuperada ✨`;
+            colorClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+        } else if (overallFatigue <= 50) {
+            status = `${100 - overallFatigue}% Fresca 💪`;
+            colorClass = 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300';
+        } else if (overallFatigue <= 75) {
+            status = `${100 - overallFatigue}% Energía ⚡`;
+            colorClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
+        } else {
+            status = `Descansa 🧘‍♀️`;
+            colorClass = 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+        }
+
+        indicator.className = `text-[10px] font-black px-2 py-1 rounded-full ${colorClass}`;
+        indicator.innerText = status;
+    }
+}
+
 function animateCount(id, target) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -645,7 +708,319 @@ function renderDayPills() {
         </button>`).join('');
     initRipples();
 }
+/* ════════════════════════════════════════════════════
+   ANATOMICAL RECOVERY & FATIGUE CALCULATION
+════════════════════════════════════════════════════ */
 
+// Exercise-to-Muscle mapping (comprehensive)
+const EXERCISE_MUSCLE_MAP = {
+    'chest': ['press inclinado', 'press militar', 'vuelos posteriores', 'pecho', 'pectoral'],
+    'back': ['remo', 'jalón', 'pullover', 'espalda', 'dorsal', 'polea', 'lat pulldown'],
+    'shoulders': ['elevaciones laterales', 'press militar', 'deltoides', 'lateral raise', 'overhead'],
+    'arms': ['curl', 'tríceps', 'brazo', 'martillo', 'hammer', 'pushdown', 'rope'],
+    'quads': ['sentadilla', 'extensión cuádriceps', 'prensa', 'leg extension', 'leg press', 'cuádriceps', 'squat'],
+    'glutes': ['peso muerto', 'glúteo', 'kickback', 'hip thrust', 'sentadilla búlgara', 'bulgarian'],
+    'core': ['silla romana', 'ab', 'crunch', 'core', 'abdomen']
+};
+
+function getMuscleGroupFromExercise(exerciseName) {
+    const nameLower = exerciseName.toLowerCase();
+    for (const [muscle, keywords] of Object.entries(EXERCISE_MUSCLE_MAP)) {
+        if (keywords.some(kw => nameLower.includes(kw))) {
+            return muscle;
+        }
+    }
+    // Default fallback: if we can't categorize, assume it's compound (affects all)
+    return null;
+}
+
+function calculateMuscleFatigue() {
+    const now = new Date().getTime();
+    const HOURS_72 = 72 * 60 * 60 * 1000;
+    const cutoffTime = now - HOURS_72;
+
+    // Initialize fatigue for each muscle (0 = fresh, 100 = completely fatigued)
+    const muscleFatigue = {
+        chest: 0,
+        back: 0,
+        shoulders: 0,
+        arms: 0,
+        quads: 0,
+        glutes: 0,
+        core: 0
+    };
+
+    const muscleWorkCount = {
+        chest: 0,
+        back: 0,
+        shoulders: 0,
+        arms: 0,
+        quads: 0,
+        glutes: 0,
+        core: 0
+    };
+
+    // Process each history entry from most recent
+    for (let i = 0; i < historyState.length; i++) {
+        const session = historyState[i];
+        if (!session.dateRaw) continue;
+
+        // Parse the date from dateRaw (format: "Wed Apr 22 2026")
+        const sessionDate = new Date(session.dateRaw);
+        const sessionTime = sessionDate.getTime();
+
+        // Only look at last 72 hours
+        if (sessionTime < cutoffTime) break;
+
+        // Calculate hours ago (0 = today, 24 = yesterday, 48 = 2 days ago, etc)
+        const hoursAgo = (now - sessionTime) / (60 * 60 * 1000);
+
+        // Fatigue decay function: Starts at 100%, decays to 0 over 72 hours
+        let fatigueMultiplier = 0;
+        if (hoursAgo < 24) {
+            fatigueMultiplier = 1.0; // 100% - just trained
+        } else if (hoursAgo < 48) {
+            fatigueMultiplier = 0.65; // 65% - trained yesterday
+        } else {
+            fatigueMultiplier = 0.25; // 25% - trained 2-3 days ago
+        }
+
+        // Process exercises in this session
+        if (session.exLog && typeof session.exLog === 'object') {
+            for (const [exerciseName, exData] of Object.entries(session.exLog)) {
+                const muscle = getMuscleGroupFromExercise(exerciseName);
+
+                // If we identified a muscle group, add fatigue
+                if (muscle && muscleFatigue.hasOwnProperty(muscle)) {
+                    // Weight of contribution: more volume = more fatigue
+                    const volume = exData.maxWeight || 10; // If no weight, use default
+                    const contribution = Math.min(40, volume / 5); // Cap at 40 per exercise
+
+                    muscleFatigue[muscle] += contribution * fatigueMultiplier;
+                    muscleWorkCount[muscle] += 1;
+                }
+            }
+        }
+    }
+
+    // Normalize fatigue to 0-100 scale
+    const normalizedFatigue = {};
+    for (const muscle in muscleFatigue) {
+        // Cap at 100, floor at 0
+        normalizedFatigue[muscle] = Math.max(0, Math.min(100, muscleFatigue[muscle]));
+    }
+
+    return normalizedFatigue;
+}
+
+function getOverallFatiguePercentage() {
+    const fatigueData = calculateMuscleFatigue();
+    const avgFatigue = Object.values(fatigueData).reduce((a, b) => a + b, 0) / Object.keys(fatigueData).length;
+    return Math.round(avgFatigue);
+}
+/* ════════════════════════════════════════════════════
+   SKETCHFAB 3D VIEWER INITIALIZATION & MATERIAL MANAGEMENT
+════════════════════════════════════════════════════ */
+
+let sketchfabAPI = null;
+let sketchfabMaterials = null;
+let sketchfabMaterialMap = {};
+
+// Muscle group keywords to match against Sketchfab material names
+const SKETCHFAB_MATERIAL_KEYWORDS = {
+    'chest': ['pectoral', 'chest', 'pecho', 'pec', 'breast'],
+    'back': ['back', 'latissimus', 'lat', 'dorsal', 'espalda', 'trapezius', 'trap'],
+    'shoulders': ['deltoid', 'shoulder', 'hombro', 'delt'],
+    'arms': ['bicep', 'tricep', 'arm', 'brazo', 'forearm', 'antebraz'],
+    'quads': ['quad', 'quadriceps', 'rectus femoris', 'vastus', 'cuadricep'],
+    'glutes': ['glute', 'gluteus', 'glúteo', 'maximus', 'medius'],
+    'core': ['rectus abdominis', 'abdomen', 'abs', 'abdominal', 'core']
+};
+
+function initializeSketchfabViewer() {
+    const iframe = document.getElementById('sketchfab-viewer');
+
+    // Fallback check: Ensure Sketchfab API is loaded
+    if (typeof Sketchfab === 'undefined') {
+        console.warn('⚠️ Sketchfab API not yet loaded. Retrying in 1s...');
+        setTimeout(initializeSketchfabViewer, 1000);
+        return;
+    }
+
+    const uid = '26e55759a6cd443b8fd5b520d79a36de';
+    const client = new Sketchfab();
+
+    client.init(uid, {
+        success: onSketchfabSuccess,
+        error: onSketchfabError,
+        ui_controls: 1,
+        ui_infos: 0,
+        ui_inspector: 0,
+        ui_settings: 0,
+        ui_watermark: 1,
+        preload: 1,
+        autostart: 0,
+        autospin: 0.5
+    });
+}
+
+function onSketchfabSuccess(api) {
+    sketchfabAPI = api;
+    console.log('✅ Sketchfab Viewer ready!');
+
+    // Once viewer is ready, get all materials
+    api.addEventListener('viewerready', function () {
+        console.log('🎨 Fetching materials...');
+        api.getMaterialList(function (materials) {
+            sketchfabMaterials = materials;
+            detectAndMapMaterials(materials);
+            console.log('📋 Materials detected:', materials);
+            // Update heatmap with current fatigue data
+            updateSketchfabHeatmap();
+        });
+    });
+
+    // Listen for model load completion
+    api.addEventListener('modelLoaded', function () {
+        console.log('🏋️ 3D Model fully loaded!');
+    });
+}
+
+function onSketchfabError() {
+    console.error('❌ Sketchfab initialization failed');
+}
+
+function detectAndMapMaterials(materials) {
+    /**
+     * This function analyzes the material list and maps each material
+     * to a muscle group based on keyword matching in the material name.
+     */
+
+    sketchfabMaterialMap = {}; // Reset map
+
+    materials.forEach((material, index) => {
+        const materialName = material.name.toLowerCase();
+        console.log(`Material ${index}: "${material.name}"`);
+
+        // Try to find which muscle group this material belongs to
+        let assignedMuscle = null;
+
+        for (const [muscleGroup, keywords] of Object.entries(SKETCHFAB_MATERIAL_KEYWORDS)) {
+            if (keywords.some(kw => materialName.includes(kw))) {
+                assignedMuscle = muscleGroup;
+                console.log(`  ➜ Mapped to: ${muscleGroup}`);
+                break;
+            }
+        }
+
+        // Store the mapping
+        sketchfabMaterialMap[index] = {
+            name: material.name,
+            muscle: assignedMuscle,
+            materialObj: material
+        };
+    });
+
+    console.log('🔍 Final material-to-muscle map:', sketchfabMaterialMap);
+}
+
+function getColorFromFatigue(fatiguePercent) {
+    /**
+     * Convert fatigue percentage (0-100) to RGB color values
+     * 0% = dark grey (recovered)
+     * 50% = vibrant pink (mild fatigue)
+     * 100% = deep red (high fatigue)
+     */
+
+    let r, g, b;
+
+    if (fatiguePercent <= 20) {
+        // Dark grey: fully recovered (no emissive)
+        return { albedo: [0.2, 0.2, 0.2], emissive: [0, 0, 0] };
+    } else if (fatiguePercent <= 40) {
+        // Light pink: mild fatigue
+        r = 1.0; g = 0.5; b = 0.7;
+        return { albedo: [r, g, b], emissive: [r * 0.4, g * 0.2, b * 0.3] };
+    } else if (fatiguePercent <= 65) {
+        // Vibrant pink: moderate fatigue (WITH GLOW)
+        r = 1.0; g = 0.3; b = 0.58;
+        return { albedo: [r, g, b], emissive: [r * 0.8, g * 0.4, b * 0.7] };
+    } else {
+        // Deep red: high fatigue, needs rest (INTENSE GLOW)
+        r = 1.0; g = 0.15; b = 0.15;
+        return { albedo: [r, g, b], emissive: [r * 0.9, g * 0.3, b * 0.3] };
+    }
+}
+
+function applyHeatmapColors(fatigueData) {
+    /**
+     * Apply fatigue-based colors to all Sketchfab materials.
+     * This is called whenever the heatmap needs to update.
+     */
+
+    if (!sketchfabAPI || !sketchfabMaterials) {
+        console.warn('⚠️ Sketchfab API or materials not ready yet');
+        return;
+    }
+
+    console.log('🎨 Applying heatmap colors...');
+
+    for (const [materialIndex, mapping] of Object.entries(sketchfabMaterialMap)) {
+        const muscleGroup = mapping.muscle;
+        const materialName = mapping.name;
+
+        // Get fatigue for this muscle group
+        const fatigue = fatigueData[muscleGroup] || 0;
+
+        // Convert fatigue to color
+        const colorData = getColorFromFatigue(fatigue);
+
+        console.log(`  ${materialName} (${muscleGroup}): ${fatigue.toFixed(0)}% fatigue`);
+
+        // Apply color to material
+        sketchfabAPI.setMaterial(parseInt(materialIndex), colorData, function (err) {
+            if (err) console.error(`  ❌ Error updating material ${materialIndex}:`, err);
+        });
+    }
+}
+
+function updateSketchfabHeatmap() {
+    /**
+     * Main update function: Calculate fatigue and apply to 3D model.
+     * Call this whenever you want to refresh the heatmap.
+     */
+
+    const fatigueData = calculateMuscleFatigue();
+    const overallFatigue = getOverallFatiguePercentage();
+
+    // Update 3D colors
+    applyHeatmapColors(fatigueData);
+
+    // Update badge
+    const indicator = document.getElementById('fatigue-indicator-3d');
+    if (indicator) {
+        let status, colorClass;
+
+        if (overallFatigue <= 25) {
+            status = `100% Recuperada ✨`;
+            colorClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300';
+        } else if (overallFatigue <= 50) {
+            status = `${100 - overallFatigue}% Fresca 💪`;
+            colorClass = 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300';
+        } else if (overallFatigue <= 75) {
+            status = `${100 - overallFatigue}% Energía ⚡`;
+            colorClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300';
+        } else {
+            status = `Descansa 🧘‍♀️`;
+            colorClass = 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300';
+        }
+
+        indicator.className = `text-[10px] font-black px-2 py-1 rounded-full ${colorClass}`;
+        indicator.innerText = status;
+    }
+
+    console.log('✅ Heatmap updated!');
+}
 /* ════════════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════════════ */
@@ -663,7 +1038,7 @@ window.onload = () => {
     xpState = JSON.parse(localStorage.getItem(XP_KEY) || '{"xp":0,"level":1,"streak":0,"lastDate":null}');
     prState = JSON.parse(localStorage.getItem(PR_KEY) || '{}');
 
-    setCalcBar(45);
+    buildBarbellUI();
     buildDumbGrid();
     updateCalcUnitLabels();
 
@@ -680,6 +1055,10 @@ window.onload = () => {
         navTo('workout');
         showToast('Reanudando tu sesión... 💪');
     }
+    // Initialize Sketchfab 3D viewer
+    setTimeout(() => {
+        initializeSketchfabViewer();
+    }, 500); // Small delay to ensure DOM is ready
 };
 
 function toggleDarkMode() {
@@ -798,11 +1177,19 @@ function setView(v) {
     if (v === 'home') {
         updateHomeStats();
         renderHeatmap();
+        updateSketchfabHeatmap();
         checkActiveSession();
     }
 
     if (v === 'workout') {
-        const hasActive = Object.keys(sessionState).some(k => sessionState[k] && sessionState[k].done);
+        const hasActive = Object.keys(sessionState).some(k => {
+            const s = sessionState[k];
+            return s && (
+                s.done ||
+                (s.w !== '' && s.w !== null && s.w !== undefined) ||
+                (s.r !== '' && s.r !== null && s.r !== undefined)
+            );
+        });
         if (hasActive) {
             showActiveWorkoutZone(true);
             renderDay(currentDay);
@@ -875,12 +1262,29 @@ function startDay(d) {
     if (activeDay && activeDay !== d) {
         if (!confirm(`Tienes progreso en el Día ${activeDay}. ¿Borrar y empezar Día ${d}?`)) return;
         sessionState = {};
+        window._activePrefill = null;
         persistSession();
         checkActiveSession();
     }
 
     currentDay = d;
     document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
+
+    // ─── SMART PREFILL: only runs when the day has no existing data ───
+    const hasDayData = Object.keys(sessionState).some(k => {
+        const parts = k.split('_');
+        return parts[0] == d && (sessionState[k].done || sessionState[k].w || sessionState[k].r);
+    });
+
+    if (!hasDayData) {
+        const applied = applySmartPrefill(d);
+        if (applied) {
+            const hasOverload = Object.values(window._activePrefill || {}).some(p => p.shouldOverload);
+            showToast(hasOverload
+                ? '📈 ¡Sobrecarga progresiva lista para ti!'
+                : '💡 Pesos de tu última sesión pre-cargados');
+        }
+    }
 
     showActiveWorkoutZone(true);
     renderDay(d);
@@ -889,11 +1293,11 @@ function startDay(d) {
 
 function continueDay(d) {
     currentDay = d;
+    // navTo → setView → now correctly detects w/r/done → shows active zone
+    navTo('workout');
+    // Title is set after setView because showActiveWorkoutZone(true) makes the header visible
     document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
-    showActiveWorkoutZone(true);
-    renderDay(d);
 }
-
 function changeDay(day) {
     currentDay = day;
     document.getElementById('workout-title-disp').innerText = ROUTINE[day].label;
@@ -922,76 +1326,150 @@ function addWarmup(d, exI) {
     if (navigator.vibrate) navigator.vibrate([20]);
 }
 
-// ─── RENDERIZADO DE LAS TARJETAS MEJORADO ───
 function renderDay(d) {
     const cont = document.getElementById('exercises-container');
+    const isDark = document.documentElement.classList.contains('dark');
+
     cont.innerHTML = ROUTINE[d].exercises.map((ex, i) => {
         let rowsHtml = '';
 
-        // --- Generar filas de Warmup ---
+        // ─── PRE-CALCULATE PROGRESS (so we can show it on first render) ───
+        let doneCount = 0;
+        for (let s = 1; s <= ex.sets; s++) {
+            if (sessionState[`${d}_${i}_${s}`]?.done) doneCount++;
+        }
+        const pct = ex.sets > 0 ? Math.round((doneCount / ex.sets) * 100) : 0;
+        const isComplete = doneCount === ex.sets && ex.sets > 0;
+
+        // ─── OVERLOAD / PREFILL BANNER (shown above set rows) ───
+        const firstKey = `${d}_${i}_1`;
+        const hasOverload = !!sessionState[firstKey]?.overloadSuggested;
+        const hasPrefill = !hasOverload && !!sessionState[firstKey]?.prefilled && !sessionState[firstKey]?.done;
+        const incLabel = globalUnit === 'lbs' ? '5 lbs' : '2.5 kg';
+
+        const overloadBanner = hasOverload ? `
+            <div style="display:flex;align-items:center;gap:9px;
+                background:${isDark ? 'rgba(52,211,153,0.1)' : 'rgba(16,185,129,0.07)'};
+                border:1px solid ${isDark ? 'rgba(52,211,153,0.28)' : 'rgba(16,185,129,0.22)'};
+                border-radius:13px;padding:9px 12px;margin-bottom:12px">
+                <span style="font-size:16px">📈</span>
+                <div>
+                    <p style="font-size:10px;font-weight:900;letter-spacing:0.04em;margin:0;
+                        color:${isDark ? '#34d399' : '#065f46'}">SOBRECARGA PROGRESIVA</p>
+                    <p style="font-size:10px;font-weight:600;margin:1px 0 0;
+                        color:${isDark ? '#6ee7b7' : '#059669'}">
+                        +${incLabel} sugeridos vs tu última sesión</p>
+                </div>
+            </div>` : '';
+
+        const prefillBanner = hasPrefill ? `
+            <div style="display:flex;align-items:center;gap:8px;
+                background:var(--pink-light);border:1px solid var(--pink-border);
+                border-radius:11px;padding:7px 11px;margin-bottom:10px">
+                <span style="font-size:13px">💡</span>
+                <p style="font-size:10px;font-weight:700;color:var(--pink-dark);margin:0">
+                    Pesos de tu última sesión pre-cargados</p>
+            </div>` : '';
+
+        // ─── WARMUP ROWS ───
         const warmupsCount = sessionState[`warmups_${d}_${i}`] || 0;
         for (let w = 1; w <= warmupsCount; w++) {
             const k = `${d}_${i}_W${w}`;
             const st = sessionState[k] || {};
-            rowsHtml += `<div class="set-row warmup-row ${st.done ? 'done' : ''}" id="row-${k}">
-                <span class="warmup-label">W</span>
-                <input type="text" readonly class="gym-input cursor-pointer" placeholder="0" value="${st.w || ''}" onclick="openCalc('${k}', '${ex.name}')">
-                <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps" value="${st.r || ''}" onclick="openReps('${k}', this.value)">
-                <button onclick="markSet('${k}',${i},${ex.sets}, '${ex.name}')" class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
-            </div>`;
+            rowsHtml += `
+                <div class="set-row warmup-row ${st.done ? 'done' : ''}" id="row-${k}">
+                    <span class="warmup-label">W</span>
+                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="0"
+                        value="${st.w ? formatUnitDisplay(st.w) : ''}"
+                        onclick="openCalc('${k}','${ex.name}')">
+                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps"
+                        value="${st.r || ''}" onclick="openReps('${k}',this.value)">
+                    <button onclick="markSet('${k}',${i},${ex.sets},'${ex.name}')"
+                        class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
+                </div>`;
         }
 
-        // --- Generar filas normales ---
+        // ─── NORMAL SET ROWS ───
         for (let s = 1; s <= ex.sets; s++) {
             const k = `${d}_${i}_${s}`;
             const st = sessionState[k] || {};
-            rowsHtml += `<div class="set-row ${st.done ? 'done' : ''}" id="row-${k}">
-                <span class="text-[10px] font-bold text-slate-400">${s}</span>
-                <input type="text" readonly class="gym-input cursor-pointer" placeholder="0" value="${st.w || ''}" onclick="openCalc('${k}', '${ex.name}')">
-                <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps" value="${st.r || ''}" onclick="openReps('${k}', this.value)">
-                <button onclick="markSet('${k}',${i},${ex.sets}, '${ex.name}')" class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
-            </div>`;
+            const isOverloadSet = s === 1 && !!st.overloadSuggested;
+            // Subtle left-accent on prefilled (not yet done) rows
+            const prefillStyle = (st.prefilled && !st.done)
+                ? 'border-left:2.5px solid var(--pink);border-radius:12px;'
+                : '';
+
+            rowsHtml += `
+                <div class="set-row ${st.done ? 'done' : ''}" id="row-${k}"
+                    style="${prefillStyle}">
+                    <span style="font-size:10px;font-weight:800;min-width:14px;text-align:center;
+                        color:${isOverloadSet ? 'var(--pink)' : 'var(--text-muted)'}">
+                        ${isOverloadSet ? '▲' : s}
+                    </span>
+                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="0"
+                        value="${st.w ? formatUnitDisplay(st.w) : ''}"
+                        onclick="openCalc('${k}','${ex.name}')">
+                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps"
+                        value="${st.r || ''}" onclick="openReps('${k}',this.value)">
+                    <button onclick="markSet('${k}',${i},${ex.sets},'${ex.name}')"
+                        class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
+                </div>`;
         }
 
         return `
-        <div class="card p-6 mb-4" id="card-${d}-${i}">
+        <div class="card p-6 mb-4 ${isComplete ? 'complete' : ''}" id="card-${d}-${i}">
+
             <div class="flex justify-between items-start mb-4">
                 <div class="flex-1">
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <h3 class="font-bold text-sm text-slate-800 dark:text-white">${ex.name}</h3>
-                        <span class="text-[10px] font-bold text-pink-500 bg-pink-100 dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
+                        <span class="text-[10px] font-bold text-pink-500 bg-pink-100
+                            dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
+                        ${isComplete
+                ? `<span class="text-[10px] font-black text-emerald-600
+                                bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded">✓ COMPLETO</span>`
+                : ''}
                     </div>
                     <p class="text-[10px] text-slate-400 mt-1">📌 ${ex.tip}</p>
                 </div>
-                
                 <div class="flex gap-2">
-                    <button onclick="showExerciseStats('${ex.name}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs opacity-70 active:scale-90 transition-all">📊</button>
-                    <button onclick="toggleTips('${d}_${i}')" class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-xs active:scale-90 transition-all">💡</button>
+                    <button onclick="showExerciseStats('${ex.name}')"
+                        class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center
+                            justify-content:center text-xs opacity-70 active:scale-90 transition-all"
+                        title="Estadísticas">📊</button>
+                    <button onclick="toggleTips('${d}_${i}')"
+                        class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center
+                            justify-center text-xs active:scale-90 transition-all"
+                        title="Tips de coach">💡</button>
                 </div>
             </div>
 
-            <div id="tips-${d}_${i}" class="coach-tips-panel">
-                ${ex.details}
-            </div>
-            
+            <div id="tips-${d}_${i}" class="coach-tips-panel">${ex.details}</div>
+
             <div class="gif-container my-4">
                 <video src="${ex.gif}" class="gif-video" autoplay loop muted playsinline></video>
             </div>
 
-            <div class="flex justify-between items-center mb-3">
-                <h4 class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Progreso</h4>
-                <button onclick="addWarmup('${d}', ${i})" class="text-[9px] font-bold text-amber-500 bg-amber-100/20 px-2 py-1 rounded">+ Aproximación</button>
-            </div>
-            
-            <div class="h-1 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
-                <div id="prog-bar-${d}-${i}" class="h-full bg-pink-500 transition-all" style="width:0%"></div>
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="text-[9px] font-black uppercase tracking-tighter text-slate-400">
+                    Series · ${doneCount}/${ex.sets}</h4>
+                <button onclick="addWarmup('${d}',${i})"
+                    class="text-[9px] font-bold text-amber-500 bg-amber-100/20 px-2 py-1 rounded">
+                    + Aproximación</button>
             </div>
 
+            <div class="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
+                <div id="prog-bar-${d}-${i}"
+                    class="h-full bg-gradient-to-r from-pink-400 to-pink-600 rounded-full transition-all duration-500"
+                    style="width:${pct}%"></div>
+            </div>
+
+            ${overloadBanner}
+            ${prefillBanner}
             <div class="space-y-2">${rowsHtml}</div>
         </div>`;
     }).join('');
 
-    // Asegurarse de actualizar los pills de días
     updateDayPills(d);
 }
 
@@ -1090,7 +1568,60 @@ function updateCalcUnitLabels() {
     if (dumbLbl) dumbLbl.innerText = u;
     if (machLbl) machLbl.innerText = u;
 }
+/* ─── BARBELL UI BUILDER (unit-aware, called on load & unit switch) ─── */
+function buildBarbellUI() {
+    const isKg = globalUnit === 'kg';
 
+    const bars = isKg
+        ? [{ w: 20, label: 'Olímpica (20)' }, { w: 15, label: 'Corta (15)' }, { w: 10, label: 'Smith (10)' }]
+        : [{ w: 45, label: 'Olímpica (45)' }, { w: 25, label: 'Corta (25)' }, { w: 15, label: 'Smith (15)' }];
+
+    const platesCfg = isKg
+        ? [
+            { w: 20, sz: 'w-16 h-16', txt: 'text-xl', bd: 'border-4', bg: 'bg-pink-500', br: 'border-pink-600', sh: 'shadow-pink-200' },
+            { w: 15, sz: 'w-14 h-14', txt: 'text-lg', bd: 'border-4', bg: 'bg-blue-500', br: 'border-blue-600', sh: 'shadow-blue-200' },
+            { w: 10, sz: 'w-12 h-12', txt: 'text-base', bd: 'border-4', bg: 'bg-emerald-500', br: 'border-emerald-600', sh: 'shadow-emerald-200' },
+            { w: 5, sz: 'w-10 h-10', txt: 'text-sm', bd: 'border-4', bg: 'bg-amber-500', br: 'border-amber-600', sh: 'shadow-amber-200' },
+            { w: 2.5, sz: 'w-9 h-9', txt: 'text-[11px]', bd: 'border-2', bg: 'bg-purple-500', br: 'border-purple-600', sh: 'shadow-purple-200' }
+        ]
+        : [
+            { w: 45, sz: 'w-16 h-16', txt: 'text-xl', bd: 'border-4', bg: 'bg-pink-500', br: 'border-pink-600', sh: 'shadow-pink-200' },
+            { w: 25, sz: 'w-14 h-14', txt: 'text-lg', bd: 'border-4', bg: 'bg-blue-500', br: 'border-blue-600', sh: 'shadow-blue-200' },
+            { w: 10, sz: 'w-12 h-12', txt: 'text-base', bd: 'border-4', bg: 'bg-emerald-500', br: 'border-emerald-600', sh: 'shadow-emerald-200' },
+            { w: 5, sz: 'w-10 h-10', txt: 'text-sm', bd: 'border-4', bg: 'bg-amber-500', br: 'border-amber-600', sh: 'shadow-amber-200' },
+            { w: 2.5, sz: 'w-9 h-9', txt: 'text-[11px]', bd: 'border-2', bg: 'bg-purple-500', br: 'border-purple-600', sh: 'shadow-purple-200' }
+        ];
+
+    // Validate calcState.barW against the current unit's bar list
+    const validBarWs = bars.map(b => b.w);
+    if (!validBarWs.includes(calcState.barW)) calcState.barW = bars[0].w;
+
+    const barSel = document.getElementById('calc-bar-selector');
+    if (barSel) {
+        barSel.innerHTML = bars.map(b =>
+            `<button onclick="setCalcBar(${b.w})" data-bar-w="${b.w}"
+                class="px-4 py-2 text-[10px] font-bold rounded-full transition-all ripple-btn border
+                    bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-700 dark:border-transparent">
+                ${b.label}
+            </button>`
+        ).join('');
+    }
+
+    const plateCont = document.getElementById('calc-plate-btns');
+    if (plateCont) {
+        plateCont.innerHTML = platesCfg.map(p =>
+            `<button onclick="addCalcPlate(${p.w})"
+                class="plate-btn ${p.sz} ${p.bg} ${p.txt} ${p.bd} ${p.br} dark:shadow-none ${p.sh} shadow-lg ripple-btn">
+                ${p.w}
+            </button>`
+        ).join('');
+    }
+
+    // Unit switch = fresh plate slate
+    calcState.plates = [];
+    setCalcBar(calcState.barW);
+    setTimeout(initRipples, 50);
+}
 function buildDumbGrid() {
     const grid = document.getElementById('calc-dumb-grid');
     if (!grid) return;
@@ -1117,10 +1648,14 @@ function openCalc(k, exName, currentStoredKg) {
     // ─── LÓGICA DE MEMORIA VISUAL ───
     const savedData = sessionState[k] || {};
     // Si hay discos/pesos guardados, los clonamos. Si no, iniciamos en blanco.
-    calcState.plates = savedData.plates ? [...savedData.plates] : [];
+    const _defaultBar = globalUnit === 'kg' ? 20 : 45;
+    const _validBars = globalUnit === 'kg' ? [20, 15, 10] : [45, 25, 15];
+    const _validPlates = globalUnit === 'kg' ? [20, 15, 10, 5, 2.5] : [45, 25, 10, 5, 2.5];
+    const _savedBarW = savedData.barW || _defaultBar;
+    calcState.barW = _validBars.includes(_savedBarW) ? _savedBarW : _defaultBar;
+    calcState.plates = (savedData.plates || []).filter(p => _validPlates.includes(p));
     calcState.dumbW = savedData.dumbW || 0;
     calcState.machW = savedData.machW || 0;
-    calcState.barW = savedData.barW || 45; // Barra olímpica por defecto
 
     const nameLow = exName.toLowerCase();
     let initTab = 'barra';
@@ -1169,12 +1704,12 @@ function setCalcTab(t) {
 function setCalcBar(w) {
     if (navigator.vibrate) navigator.vibrate([20]);
     calcState.barW = w;
-    [45, 25, 15].forEach(id => {
-        const btn = document.getElementById(`cbar-${id}`);
-        if (!btn) return;
-        if (id === w) {
+    // Target dynamically-generated buttons via data attribute — no hardcoded IDs
+    document.querySelectorAll('#calc-bar-selector button').forEach(btn => {
+        const bw = parseFloat(btn.getAttribute('data-bar-w'));
+        if (bw === w) {
             btn.classList.add('bg-pink-100', 'text-pink-600', 'border-pink-300', 'dark:bg-pink-900/40', 'dark:border-pink-500');
-            btn.classList.remove('bg-slate-100', 'text-slate-500', 'border-transparent', 'dark:bg-slate-700', 'border-slate-200');
+            btn.classList.remove('bg-slate-100', 'text-slate-500', 'border-slate-200', 'dark:bg-slate-700', 'dark:border-transparent', 'border-transparent');
         } else {
             btn.classList.remove('bg-pink-100', 'text-pink-600', 'border-pink-300', 'dark:bg-pink-900/40', 'dark:border-pink-500');
             btn.classList.add('bg-slate-100', 'text-slate-500', 'border-slate-200', 'dark:bg-slate-700', 'dark:border-transparent');
@@ -1206,46 +1741,61 @@ function stepCalcMach(step) {
 }
 
 function updateCalcVisuals() {
+    // ─── Plate visual props keyed by weight, unit-aware ───
+    const plateMap = globalUnit === 'kg'
+        ? { 20: ['h-12', 'bg-pink-500'], 15: ['h-10', 'bg-blue-500'], 10: ['h-8', 'bg-emerald-500'], 5: ['h-6', 'bg-amber-500'], 2.5: ['h-5', 'bg-purple-500'] }
+        : { 45: ['h-12', 'bg-pink-500'], 25: ['h-10', 'bg-blue-500'], 10: ['h-8', 'bg-emerald-500'], 5: ['h-6', 'bg-amber-500'], 2.5: ['h-5', 'bg-purple-500'] };
+
     const cont = document.getElementById('calc-visual-plates');
     if (cont) {
         cont.innerHTML = calcState.plates.map(p => {
-            let h = 'h-10', color = 'bg-slate-500';
-            if (p === 45) { h = 'h-12'; color = 'bg-pink-500'; }
-            else if (p === 25) { h = 'h-10'; color = 'bg-blue-500'; }
-            else if (p === 10) { h = 'h-8'; color = 'bg-emerald-500'; }
-            else if (p === 5) { h = 'h-6'; color = 'bg-amber-500'; }
-            else if (p === 2.5) { h = 'h-5'; color = 'bg-purple-500'; }
+            const [h, color] = plateMap[p] || ['h-6', 'bg-slate-500'];
             return `<div class="w-2.5 rounded-sm ${h} ${color} border border-black/20 shadow-sm"></div>`;
         }).join('');
     }
 
-    let displayValue = 0;
-    let kgEquivalent = 0;
-    let unitLabel = 'lbs';
+    let displayValue = 0, kgEquivalent = 0, unitLabel = globalUnit, subText = '';
+    const headerEl = document.getElementById('calc-header-label');
 
     if (calcState.tab === 'barra') {
-        const totalLbs = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
-        displayValue = totalLbs;
-        kgEquivalent = totalLbs / 2.20462;
-        unitLabel = 'lbs';
-        document.getElementById('calc-header-label').innerText = 'Peso Total (LBS)';
+        // Plates are in the current unit — no conversion needed for KG mode
+        const total = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
+        if (globalUnit === 'kg') {
+            displayValue = Math.round(total * 10) / 10;
+            kgEquivalent = displayValue;
+            unitLabel = 'kg';
+            subText = `≈ ${(displayValue * 2.20462).toFixed(1)} LBS`;
+            if (headerEl) headerEl.innerText = 'Peso Total (KG)';
+        } else {
+            displayValue = Math.round(total * 10) / 10;
+            kgEquivalent = Math.round((total / 2.20462) * 10) / 10;
+            unitLabel = 'lbs';
+            subText = `≈ ${kgEquivalent.toFixed(1)} KG`;
+            if (headerEl) headerEl.innerText = 'Peso Total (LBS)';
+        }
     } else if (calcState.tab === 'mancuernas') {
         displayValue = calcState.dumbW;
-        kgEquivalent = globalUnit === 'lbs' ? calcState.dumbW / 2.20462 : calcState.dumbW;
+        kgEquivalent = globalUnit === 'lbs'
+            ? Math.round((calcState.dumbW / 2.20462) * 10) / 10
+            : calcState.dumbW;
         unitLabel = globalUnit;
-        document.getElementById('calc-header-label').innerText = `Peso por Mancuerna (${globalUnit.toUpperCase()})`;
+        subText = `≈ ${kgEquivalent.toFixed(1)} KG`;
+        if (headerEl) headerEl.innerText = `Peso por Mancuerna (${globalUnit.toUpperCase()})`;
     } else if (calcState.tab === 'maquina') {
         displayValue = calcState.machW;
-        kgEquivalent = globalUnit === 'lbs' ? calcState.machW / 2.20462 : calcState.machW;
+        kgEquivalent = globalUnit === 'lbs'
+            ? Math.round((calcState.machW / 2.20462) * 10) / 10
+            : calcState.machW;
         unitLabel = globalUnit;
-        document.getElementById('calc-header-label').innerText = `Peso Máquina (${globalUnit.toUpperCase()})`;
+        subText = `≈ ${kgEquivalent.toFixed(1)} KG`;
+        if (headerEl) headerEl.innerText = `Peso Máquina (${globalUnit.toUpperCase()})`;
     }
 
     const mainEl = document.getElementById('calc-total-main');
     const subEl = document.getElementById('calc-total-sub');
     const unitEl = document.getElementById('calc-total-unit-label');
     if (mainEl) mainEl.innerText = Number.isInteger(displayValue) ? displayValue : displayValue.toFixed(1);
-    if (subEl) subEl.innerText = `≈ ${kgEquivalent.toFixed(1)} KG`;
+    if (subEl) subEl.innerText = subText;
     if (unitEl) unitEl.innerText = unitLabel;
 }
 
@@ -1253,12 +1803,17 @@ function submitCalc() {
     let totalBaseKg = 0;
 
     if (calcState.tab === 'barra') {
-        const totalLbs = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
-        totalBaseKg = totalLbs / 2.20462;
+        const total = calcState.barW + calcState.plates.reduce((acc, p) => acc + p * 2, 0);
+        // Barbell plates are now in the active unit — only convert when in LBS
+        totalBaseKg = globalUnit === 'kg'
+            ? Math.round(total * 10) / 10
+            : Math.round((total / 2.20462) * 10) / 10;
     } else if (calcState.tab === 'mancuernas') {
-        totalBaseKg = globalUnit === 'lbs' ? calcState.dumbW / 2.20462 : calcState.dumbW;
+        const raw = globalUnit === 'lbs' ? calcState.dumbW / 2.20462 : calcState.dumbW;
+        totalBaseKg = Math.round(raw * 10) / 10;
     } else if (calcState.tab === 'maquina') {
-        totalBaseKg = globalUnit === 'lbs' ? calcState.machW / 2.20462 : calcState.machW;
+        const raw = globalUnit === 'lbs' ? calcState.machW / 2.20462 : calcState.machW;
+        totalBaseKg = Math.round(raw * 10) / 10;
     }
 
     const k = calcState.activeKey;
@@ -1266,7 +1821,6 @@ function submitCalc() {
     if (totalBaseKg > 0) {
         persistInput(k, 'w', totalBaseKg);
 
-        // ─── GUARDAR CONFIGURACIÓN VISUAL ACTUAL ───
         if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
         sessionState[k].equip = calcState.tab;
         sessionState[k].plates = [...calcState.plates];
@@ -1275,14 +1829,11 @@ function submitCalc() {
         sessionState[k].machW = calcState.machW;
         persistSession();
 
-        // ─── AUTO-CASCADA TOTAL (Número y Visual) ───
+        // ─── Auto-cascade to empty sets below ───
         const parts = k.split('_');
         const d = parts[0], exI = parts[1];
-
-        // 🛡️ EL ESCUDO: Detectamos si es una serie de calentamiento (W)
         const isWarmup = String(parts[2]).startsWith('W');
 
-        // Solo hacemos cascada si NO es calentamiento
         if (!isWarmup) {
             const currentSet = parseInt(parts[2]);
             const totalSets = ROUTINE[d].exercises[exI].sets;
@@ -1318,10 +1869,313 @@ function submitCalc() {
     const row = document.getElementById(`row-${k}`);
     if (row) {
         const weightInput = row.querySelector('.gym-input');
-        if (weightInput) {
-            weightInput.value = totalBaseKg > 0 ? formatUnitDisplay(totalBaseKg) : '';
+        if (weightInput) weightInput.value = totalBaseKg > 0 ? formatUnitDisplay(totalBaseKg) : '';
+    }
+}
+/* ════════════════════════════════════════════════════
+   FEATURE 1 & 2 HELPERS — REP RANGE PARSERS
+════════════════════════════════════════════════════ */
+function parseRepRangeTop(repStr) {
+    if (!repStr) return 12;
+    const parts = String(repStr).replace(/\s/g, '').split('-');
+    return parseInt(parts[parts.length - 1]) || 12;
+}
+function parseRepRangeMid(repStr) {
+    if (!repStr) return 10;
+    const parts = String(repStr).replace(/\s/g, '').split('-');
+    if (parts.length === 2) return Math.round((parseInt(parts[0]) + parseInt(parts[1])) / 2);
+    return parseInt(parts[0]) || 10;
+}
+
+/* ════════════════════════════════════════════════════
+   FEATURE 1 — SMOOTH BEZIER CHART ENGINE
+════════════════════════════════════════════════════ */
+function buildExerciseChartSVG(exName, currentSessionMax) {
+    const pastSessions = [...historyState].reverse().filter(h => h.exLog && h.exLog[exName]);
+    let chartPoints = pastSessions.map(h => parseFloat(h.exLog[exName].maxWeight) || 0);
+    if (currentSessionMax > 0) chartPoints.push(currentSessionMax);
+    chartPoints = chartPoints.slice(-8);
+
+    // ─── EDGE CASE: Zero sessions ───
+    if (chartPoints.length === 0) {
+        return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+            height:130px;text-align:center;padding:0 20px">
+            <div style="font-size:36px;margin-bottom:10px">🌱</div>
+            <p style="font-weight:800;font-size:13px;color:var(--text-main);margin:0">Primera vez aquí</p>
+            <p style="font-size:11px;color:var(--text-muted);margin:6px 0 0;line-height:1.6">
+                Completa tu primera serie para iniciar el seguimiento de carga</p></div>`;
+    }
+
+    // ─── EDGE CASE: Single data point ───
+    if (chartPoints.length === 1) {
+        return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+            height:130px;text-align:center">
+            <p style="font-size:10px;font-weight:800;color:var(--text-muted);margin:0 0 6px;
+                text-transform:uppercase;letter-spacing:0.08em">Primera sesión</p>
+            <p style="font-size:42px;font-weight:900;color:var(--pink);margin:0;
+                font-family:'Poppins',sans-serif;line-height:1">${formatUnitDisplay(chartPoints[0])}</p>
+            <p style="font-size:11px;font-weight:700;color:var(--text-muted);margin:4px 0 0">
+                ${globalUnit.toUpperCase()}</p>
+            <p style="font-size:10px;color:var(--text-muted);margin:12px 0 0">
+                Una sesión más para ver tu gráfica 📈</p></div>`;
+    }
+
+    // ─── TREND BADGE ───
+    const last = chartPoints[chartPoints.length - 1];
+    const prev = chartPoints[chartPoints.length - 2];
+    const diff = parseFloat((last - prev).toFixed(2));
+    const pr = prState[exName] ? parseFloat(prState[exName]) : 0;
+    const isNewPR = currentSessionMax > 0 && pr > 0 && Math.abs(currentSessionMax - pr) < 0.01;
+    const isDark = document.documentElement.classList.contains('dark');
+
+    let trendStyle, trendText;
+    if (isNewPR) {
+        trendStyle = 'background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;';
+        trendText = '🥇 ¡Nuevo Récord Personal!';
+    } else if (diff > 0.01) {
+        trendStyle = `background:${isDark ? 'rgba(52,211,153,0.15)' : 'rgba(16,185,129,0.1)'};
+                      color:${isDark ? '#34d399' : '#065f46'};`;
+        trendText = `▲ +${formatUnitDisplay(Math.abs(diff))} ${globalUnit.toUpperCase()} vs sesión anterior`;
+    } else if (diff < -0.01) {
+        trendStyle = `background:${isDark ? 'rgba(248,113,113,0.15)' : 'rgba(239,68,68,0.08)'};
+                      color:${isDark ? '#f87171' : '#991b1b'};`;
+        trendText = `▼ −${formatUnitDisplay(Math.abs(diff))} ${globalUnit.toUpperCase()} vs sesión anterior`;
+    } else {
+        trendStyle = 'background:var(--slate-100);color:var(--text-muted);';
+        trendText = '→ Sin cambio vs sesión anterior';
+    }
+    const trendBadge = `<span style="${trendStyle}display:inline-block;padding:4px 12px;
+        border-radius:20px;font-size:10px;font-weight:900;letter-spacing:0.03em">${trendText}</span>`;
+
+    // ─── SMOOTH BEZIER CURVE (Cardinal-to-Cubic conversion) ───
+    const W = 280, H = 90, PX = 18, PY = 22;
+    const maxW = Math.max(...chartPoints);
+    const minW = Math.min(...chartPoints);
+    const padding = Math.max((maxW - minW) * 0.15, maxW * 0.05, 2);
+    const rMin = minW - padding;
+    const rMax = maxW + padding;
+    const range = rMax - rMin || 1;
+
+    const pts = chartPoints.map((val, idx) => ({
+        x: PX + (idx / (chartPoints.length - 1)) * (W - PX * 2),
+        y: PY + (1 - (val - rMin) / range) * (H - PY * 2),
+        val, idx
+    }));
+
+    const T = 0.35; // Cardinal tension
+    let linePath = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+    for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(0, i - 1)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(pts.length - 1, i + 2)];
+        const cp1x = (p1.x + (p2.x - p0.x) * T).toFixed(1);
+        const cp1y = (p1.y + (p2.y - p0.y) * T).toFixed(1);
+        const cp2x = (p2.x - (p3.x - p1.x) * T).toFixed(1);
+        const cp2y = (p2.y - (p3.y - p1.y) * T).toFixed(1);
+        linePath += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+    }
+
+    const gradId = `exGrad_${exName.replace(/[^a-zA-Z0-9]/g, '')}`;
+    const areaPath = `${linePath} L ${pts[pts.length - 1].x.toFixed(1)},${H} L ${pts[0].x.toFixed(1)},${H} Z`;
+
+    // Smart label set: first point, last point, and peak (if different)
+    const peakIdx = chartPoints.indexOf(maxW);
+    const labelIdxs = new Set([0, chartPoints.length - 1]);
+    if (peakIdx !== 0 && peakIdx !== chartPoints.length - 1) labelIdxs.add(peakIdx);
+
+    const dotsHtml = pts.map((p, i) => {
+        const isLast = i === pts.length - 1;
+        const isPeak = i === peakIdx;
+        const r = (isLast || isPeak) ? 5 : 3.5;
+        const fill = isLast ? 'var(--pink)' : isPeak ? '#f59e0b' : 'var(--card)';
+        const stroke = isLast ? 'var(--pink)' : isPeak ? '#f59e0b' : 'rgba(255,77,148,0.55)';
+        return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r}"
+            fill="${fill}" stroke="${stroke}" stroke-width="2.5"/>`;
+    }).join('');
+
+    const labelsHtml = pts.filter((_, i) => labelIdxs.has(i)).map(p => {
+        const isLast = p.idx === pts.length - 1;
+        const isPeak = p.idx === peakIdx;
+        const fill = isLast ? 'var(--pink)' : isPeak ? '#f59e0b' : 'var(--text-muted)';
+        return `<text x="${p.x.toFixed(1)}" y="${(p.y - 11).toFixed(1)}" fill="${fill}"
+            font-size="9" font-weight="800" text-anchor="middle"
+            font-family="Poppins,sans-serif">${formatUnitDisplay(p.val)}</text>`;
+    }).join('');
+
+    const firstDate = pastSessions[0]?.date || '';
+    const lastDate = currentSessionMax > 0 ? 'Hoy' : (pastSessions[pastSessions.length - 1]?.date || '');
+    const totalRecs = pastSessions.length + (currentSessionMax > 0 ? 1 : 0);
+
+    return `
+        <div style="margin-bottom:12px">${trendBadge}</div>
+        <svg viewBox="0 0 ${W} ${H}" width="100%" style="overflow:visible;display:block">
+            <defs>
+                <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%"   stop-color="var(--pink)" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="var(--pink)" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+            <path d="${areaPath}" fill="url(#${gradId})" stroke="none"/>
+            <path d="${linePath}" fill="none" stroke="var(--pink)" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+            ${dotsHtml}${labelsHtml}
+        </svg>
+        <div style="display:flex;justify-content:space-between;padding:6px ${PX}px 0">
+            <span style="font-size:9px;font-weight:700;color:var(--text-muted)">${firstDate}</span>
+            <span style="font-size:9px;font-weight:800;color:var(--pink)">${totalRecs} registros</span>
+            <span style="font-size:9px;font-weight:700;color:var(--text-muted)">${lastDate}</span>
+        </div>`;
+}
+
+/* ─── FEATURE 1: Exercise Stats Modal (called by 📊 button) ─── */
+function showExerciseStats(exName) {
+    // Find max weight in current open session for this exercise
+    let currentMax = 0;
+    for (const k in sessionState) {
+        if (!sessionState[k].done) continue;
+        const parts = k.split('_');
+        const d = parts[0], i = parts[1];
+        if (ROUTINE[d]?.exercises[i]?.name === exName) {
+            const w = parseFloat(sessionState[k].w) || 0;
+            if (w > currentMax) currentMax = w;
         }
     }
+
+    const pr = prState[exName] ? parseFloat(prState[exName]) : 0;
+    const sessionsWithEx = historyState.filter(h => h.exLog && h.exLog[exName]);
+    const sessionsCount = sessionsWithEx.length;
+    const chartHTML = buildExerciseChartSVG(exName, currentMax);
+
+    // Total volume for this exercise across all history
+    const totalVolKg = sessionsWithEx.reduce((sum, h) => {
+        const ex = h.exLog[exName];
+        if (!ex) return sum;
+        if (ex.setsData?.length) return sum + ex.setsData.reduce((s, set) => s + (set.w || 0) * (set.r || 0), 0);
+        return sum + (ex.maxWeight || 0) * (ex.completedSets || 3) * parseRepRangeMid(ex.repRange || '10');
+    }, 0);
+    const volDisp = totalVolKg > 9999
+        ? (globalUnit === 'lbs' ? (totalVolKg * 2.20462 / 1000).toFixed(1) + 'k' : (totalVolKg / 1000).toFixed(1) + 'k')
+        : formatUnitDisplay(totalVolKg);
+
+    // Build or reuse the dynamic modal DOM node (only created once)
+    let modal = document.getElementById('modal-ex-stats');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-ex-stats';
+        modal.className = 'modal-overlay';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-height:88vh;overflow-y:auto">
+                <div class="modal-handle"></div>
+                <div id="ex-stats-body"></div>
+            </div>`;
+        modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('show'); });
+        document.body.appendChild(modal);
+    }
+
+    document.getElementById('ex-stats-body').innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+            <div>
+                <h2 style="font-family:'Poppins',sans-serif;font-weight:900;font-size:18px;
+                    margin:0;color:var(--text-main);line-height:1.25">${exName}</h2>
+                <p style="font-size:11px;color:var(--text-muted);margin:5px 0 0;font-weight:600">
+                    ${sessionsCount} sesión${sessionsCount !== 1 ? 'es' : ''} · ${volDisp} ${globalUnit.toUpperCase()} vol. total</p>
+            </div>
+            <button onclick="document.getElementById('modal-ex-stats').classList.remove('show')"
+                style="width:34px;height:34px;border-radius:50%;background:var(--slate-100);
+                    border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;
+                    justify-content:center;color:var(--text-muted);flex-shrink:0">✕</button>
+        </div>
+        ${pr > 0 ? `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+            <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(217,119,6,0.07));
+                border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;text-align:center">
+                <p style="font-size:9px;font-weight:800;color:#b45309;text-transform:uppercase;
+                    letter-spacing:0.07em;margin:0 0 6px">🏆 Récord Personal</p>
+                <p style="font-size:28px;font-weight:900;color:#b45309;margin:0;
+                    font-family:'Poppins',sans-serif;line-height:1">${formatUnitDisplay(pr)}</p>
+                <p style="font-size:10px;font-weight:700;color:#d97706;margin:3px 0 0">
+                    ${globalUnit.toUpperCase()}</p>
+            </div>
+            <div style="background:var(--pink-light);border:1px solid var(--pink-border);
+                border-radius:18px;padding:16px;text-align:center">
+                <p style="font-size:9px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;
+                    letter-spacing:0.07em;margin:0 0 6px">📅 Sesiones</p>
+                <p style="font-size:28px;font-weight:900;color:var(--pink-dark);margin:0;
+                    font-family:'Poppins',sans-serif;line-height:1">${sessionsCount}</p>
+                <p style="font-size:10px;font-weight:700;color:var(--pink-dark);margin:3px 0 0">totales</p>
+            </div>
+        </div>` : ''}
+        <div style="background:var(--slate-100);border-radius:20px;padding:16px">
+            <p style="font-size:9px;font-weight:800;color:var(--text-muted);text-transform:uppercase;
+                letter-spacing:0.07em;margin:0 0 14px">Progreso de Carga Histórico</p>
+            ${chartHTML}
+        </div>`;
+
+    modal.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate([15]);
+}
+
+/* ════════════════════════════════════════════════════
+   FEATURE 2 — PROGRESSIVE OVERLOAD PREFILL ENGINE
+════════════════════════════════════════════════════ */
+function getSmartPrefill(d) {
+    const dayLabel = ROUTINE[d].label;
+    // Match by stored dayKey (new sessions) OR by day label (legacy sessions)
+    const lastSession = historyState.find(h =>
+        String(h.dayKey) === String(d) || h.day === dayLabel
+    );
+    if (!lastSession?.exLog) return null;
+
+    const prefillMap = {};
+    ROUTINE[d].exercises.forEach((ex, exI) => {
+        const hist = lastSession.exLog[ex.name];
+        if (!hist?.maxWeight) return;
+
+        const repTop = parseRepRangeTop(hist.repRange || ex.reps);
+        const completedAll = (hist.completedSets || 0) >= (hist.totalSets || ex.sets);
+        const hitTopReps = (hist.maxReps || 0) >= repTop;
+        const shouldOverload = completedAll && hitTopReps;
+        const increment = globalUnit === 'lbs' ? 5 : 2.5;
+
+        prefillMap[exI] = {
+            baseWeight: hist.maxWeight,
+            suggestedWeight: shouldOverload ? hist.maxWeight + increment : hist.maxWeight,
+            maxReps: hist.maxReps || parseRepRangeMid(ex.reps),
+            shouldOverload,
+            increment,
+            setsData: hist.setsData || [],
+            repRange: hist.repRange || ex.reps
+        };
+    });
+
+    return Object.keys(prefillMap).length > 0 ? prefillMap : null;
+}
+
+function applySmartPrefill(d) {
+    const prefill = getSmartPrefill(d);
+    if (!prefill) return false;
+
+    ROUTINE[d].exercises.forEach((ex, exI) => {
+        const p = prefill[exI];
+        if (!p) return;
+        for (let s = 1; s <= ex.sets; s++) {
+            const k = `${d}_${exI}_${s}`;
+            if (!sessionState[k]) sessionState[k] = { done: false, w: '', r: '' };
+            // Set 1 with overload → bumped weight. Others → per-set data or base weight.
+            const prevSet = p.setsData[s - 1];
+            sessionState[k].w = (s === 1 && p.shouldOverload)
+                ? p.suggestedWeight
+                : (prevSet?.w || p.baseWeight);
+            sessionState[k].r = String(prevSet?.r || p.maxReps);
+            sessionState[k].prefilled = true;
+            if (s === 1 && p.shouldOverload) sessionState[k].overloadSuggested = true;
+        }
+    });
+
+    window._activePrefill = prefill;
+    persistSession();
+    return true;
 }
 
 /* ─── CIRCULAR TIMER ─── */
@@ -1509,21 +2363,47 @@ function saveToHistory() {
     const volume = calcSessionVolume();
     const xpEarned = XP_PER_WORKOUT + (setsCount * 2);
 
+    // ─── BUILD ENHANCED EXERCISE LOG (ordered setsData, full metrics) ───
     const exData = {};
+    const exSetsByNum = {}; // Buffer for ordered per-set data
+
     for (let k in sessionState) {
-        if (sessionState[k].done) {
-            const parts = k.split('_');
-            const d = parts[0], i = parts[1];
-            if (ROUTINE[d] && ROUTINE[d].exercises[i]) {
-                const exName = ROUTINE[d].exercises[i].name;
-                const w = parseFloat(sessionState[k].w) || 0;
+        if (!sessionState[k].done) continue;
+        const parts = k.split('_');
+        const [d, exI, setId] = parts;
+        if (String(setId).startsWith('W')) continue; // Exclude warmup sets
+        if (!ROUTINE[d]?.exercises[exI]) continue;
 
-                if (!exData[exName]) exData[exName] = { maxWeight: 0 };
-                if (w > exData[exName].maxWeight) exData[exName].maxWeight = w;
+        const exName = ROUTINE[d].exercises[exI].name;
+        const w = parseFloat(sessionState[k].w) || 0;
+        const r = parseFloat(sessionState[k].r) || 0;
+        const setNum = parseInt(setId);
 
-                categorizeAndAddStats(exName, 1);
-            }
+        if (!exData[exName]) {
+            exData[exName] = {
+                maxWeight: 0,
+                maxReps: 0,
+                completedSets: 0,
+                totalSets: ROUTINE[d].exercises[exI].sets,
+                repRange: ROUTINE[d].exercises[exI].reps,
+                setsData: []
+            };
+            exSetsByNum[exName] = {};
         }
+
+        exData[exName].completedSets++;
+        if (w > exData[exName].maxWeight) exData[exName].maxWeight = w;
+        if (r > exData[exName].maxReps) exData[exName].maxReps = r;
+        exSetsByNum[exName][setNum] = { w, r };
+
+        categorizeAndAddStats(exName, 1);
+    }
+
+    // Sort setsData by set number so prefill index-matches correctly
+    for (const exName in exSetsByNum) {
+        exData[exName].setsData = Object.keys(exSetsByNum[exName])
+            .sort((a, b) => parseInt(a) - parseInt(b))
+            .map(n => exSetsByNum[exName][n]);
     }
 
     historyState.unshift({
@@ -1531,9 +2411,10 @@ function saveToHistory() {
         date: new Date().toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }),
         dateRaw: new Date().toDateString(),
         day: ROUTINE[currentDay].label,
+        dayKey: currentDay,          // ← NEW: used by applySmartPrefill for accurate matching
         icon: ROUTINE[currentDay].icon,
         sets: setsCount,
-        volume: volume,
+        volume,
         exLog: exData
     });
 
@@ -1541,6 +2422,7 @@ function saveToHistory() {
 
     localStorage.setItem(HISTORY_KEY, JSON.stringify(historyState));
     sessionState = {};
+    window._activePrefill = null;
     persistSession();
     checkActiveSession();
 
@@ -1550,10 +2432,12 @@ function saveToHistory() {
     updateHomeStats();
     renderHeatmap();
     addXP(xpEarned);
-
     checkAchievements();
 
     setTimeout(launchConfetti, 100);
+    // Refresh 3D heatmap
+    updateSketchfabHeatmap();
+    checkAchievements();
     setView('history');
     showToast('¡Rutina guardada! 🌸 +' + xpEarned + ' XP');
 }
@@ -1890,7 +2774,7 @@ function confirmResetRoutine() {
     showToast('¡Rutina restaurada al original! 🔄');
 }
 
-function getExCardBackHTML(exName, ex, d, i) {
+function getExCardBackHTML(exName, ex, d, i, rowsHtml) {
     let currentVol = 0;
     let completedSets = 0;
     let currentMax = 0;
@@ -1963,7 +2847,7 @@ function getExCardBackHTML(exName, ex, d, i) {
     const volDisp = currentVol > 0 ? formatUnitDisplay(currentVol) + ' ' + globalUnit.toUpperCase() : '0 ' + globalUnit.toUpperCase();
 
     return `
-        <div class="flip-container" id="card-${d}-${i}">
+        <div class="flip-container mb-4" id="card-${d}-${i}">
             <div class="flip-inner" id="flip-${d}_${i}">
                 
                 <div class="flip-face flip-front card p-6">
@@ -1973,11 +2857,10 @@ function getExCardBackHTML(exName, ex, d, i) {
                                 <h3 class="font-bold text-sm text-slate-800 dark:text-white">${ex.name}</h3>
                                 <span class="text-[10px] font-bold text-pink-500 bg-pink-100 dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">📌 ${ex.tip}</p>
                         </div>
                         
                         <div class="flex gap-2">
-                            <button onclick="toggleFlip('${d}_${i}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs opacity-70 active:scale-90 transition-all">📊</button>
+                            <button onclick="toggleFlip(${d}, ${i})" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs opacity-70 active:scale-90 transition-all">📊</button>
                             <button onclick="toggleTips('${d}_${i}')" class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-xs active:scale-90 transition-all">💡</button>
                         </div>
                     </div>
@@ -2005,7 +2888,7 @@ function getExCardBackHTML(exName, ex, d, i) {
                 <div class="flip-face flip-back card p-6">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="font-bold text-sm text-pink-500">Historial: ${ex.name}</h3>
-                        <button onclick="toggleFlip('${d}_${i}')" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs active:scale-90 transition-all">↩️</button>
+                        <button onclick="toggleFlip(${d}, ${i})" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs active:scale-90 transition-all">↩️</button>
                     </div>
                     
                     <div class="flex-1 flex flex-col items-center justify-center text-slate-400 text-xs text-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl p-6">
@@ -2049,19 +2932,26 @@ function navTo(view) {
 }
 
 let touchStartX = 0;
-document.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-}, { passive: true }); // El passive: true mejora el rendimiento en móviles
+document.addEventListener('touchstart', (e) => {
+    const sheet = e.target.closest('.modal-content, .calc-sheet, .bottom-bar.expanded');
 
-document.addEventListener('touchend', e => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchEndX - touchStartX;
+    // ─── WHEEL ZONE GUARD ───────────────────────────────────────────────────
+    // Block swipe-to-close if the touch origin is anywhere inside the timer
+    // edit container — including the gaps between columns and the highlight bar.
+    // Using closest() on #timer-edit-mode catches the target itself AND every
+    // descendant, so a finger slipping between .wheel-col elements is still safe.
+    const inWheelZone = !!e.target.closest('#timer-edit-mode');
 
-    if (touchStartX < 40 && diff > 80) {
-        toggleSidebar(true);
-    }
-    if (diff < -80 && document.getElementById('sidebar-menu').classList.contains('open')) {
-        toggleSidebar(false);
+    // Also guard naturally-scrollable lists (e.g. dumbbell grid)
+    const inScrollable = !!e.target.closest('.overflow-y-auto, .wheel-col');
+
+    if (sheet && !inWheelZone && !inScrollable) {
+        swipeStartY = e.touches[0].clientY;
+        activeSheet = sheet;
+        // Remove transition so drag tracks the finger with zero lag
+        activeSheet.style.transition = 'none';
+    } else {
+        activeSheet = null;
     }
 }, { passive: true });
 
@@ -2180,4 +3070,38 @@ function submitReps() {
     persistSession();
     document.getElementById('modal-reps').classList.remove('show');
     if (navigator.vibrate) navigator.vibrate([40, 30]); // Confirmación
+}
+/* ════════════════════════════════════════════════════
+   DEBUG HELPERS FOR SKETCHFAB MATERIAL DISCOVERY
+════════════════════════════════════════════════════ */
+
+// Call this in browser console to see all materials
+function debugSketchfabMaterials() {
+    console.log('=== SKETCHFAB MATERIAL DEBUG ===');
+    console.log('Materials List:', sketchfabMaterials);
+    console.log('Material Map:', sketchfabMaterialMap);
+    console.log('API Ready:', sketchfabAPI ? '✅ Yes' : '❌ No');
+
+    if (sketchfabMaterialMap) {
+        console.log('\nMaterial → Muscle Mapping:');
+        for (const [idx, mapping] of Object.entries(sketchfabMaterialMap)) {
+            console.log(`  [${idx}] "${mapping.name}" → ${mapping.muscle || '❌ UNMAPPED'}`);
+        }
+    }
+}
+
+// Call this to manually force a heatmap update
+function debugUpdateHeatmap() {
+    console.log('🔄 Forcing heatmap update...');
+    updateSketchfabHeatmap();
+}
+
+// Call this to see current fatigue data
+function debugFatigueData() {
+    const fatigueData = calculateMuscleFatigue();
+    console.log('=== FATIGUE DATA (Last 72h) ===');
+    for (const [muscle, fatigue] of Object.entries(fatigueData)) {
+        const bar = '█'.repeat(Math.round(fatigue / 5)) + '░'.repeat(20 - Math.round(fatigue / 5));
+        console.log(`${muscle.padEnd(12)} [${bar}] ${fatigue.toFixed(1)}%`);
+    }
 }
