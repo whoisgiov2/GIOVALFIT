@@ -35,7 +35,8 @@ function setRandomQuote() {
 ════════════════════════════════════════════════════ */
 const DEFAULT_ROUTINE = {
     1: {
-        label: 'Push · Superior', icon: '💪',
+        label: 'Push · Superior',
+        icon: 'zap',
         exercises: [
             {
                 name: 'Press Inclinado Máquina', sets: 3, reps: '6-8',
@@ -82,7 +83,8 @@ const DEFAULT_ROUTINE = {
         ]
     },
     2: {
-        label: 'Lower A · Glúteo', icon: '🍑',
+        label: 'Lower A · Glúteo',
+        icon: 'target',
         exercises: [
             {
                 name: 'Sentadilla Búlgara', sets: 3, reps: '8-10',
@@ -126,7 +128,9 @@ const DEFAULT_ROUTINE = {
         ]
     },
     3: {
-        label: 'Lower B · Pierna', icon: '🔥',
+        label: 'Lower B · Pierna',
+        icon: 'flame',
+
         exercises: [
             {
                 name: 'Prensa Pies Altos', sets: 3, reps: '8-10',
@@ -162,7 +166,8 @@ const DEFAULT_ROUTINE = {
         ]
     },
     4: {
-        label: 'Pull · Brazos', icon: '✨',
+        label: 'Pull · Brazos',
+        icon: 'dumbbell',
         exercises: [
             {
                 name: 'Press Militar DB', sets: 3, reps: '8-10',
@@ -224,48 +229,24 @@ let achState = {
 
 const MEDALS_DB = [
     // --- CONSTANCIA Y ENTRENAMIENTOS ---
-    { id: 'workout_1', icon: '🔥', title: 'El Primer Paso', desc: 'Completaste tu primer entrenamiento. El viaje hacia tu mejor versión comienza con un solo paso.', req: { type: 'workouts', count: 1 } },
-    { id: 'workout_4', icon: '📅', title: 'Semana Perfecta', desc: 'Completaste 4 sesiones. ¡Tienes una constancia de hierro y se nota!', req: { type: 'workouts', count: 4 } },
-    { id: 'workout_10', icon: '🎯', title: 'Racha de Élite', desc: '10 entrenamientos. La disciplina se está convirtiendo en tu segunda naturaleza.', req: { type: 'workouts', count: 10 } },
-    { id: 'workout_20', icon: '🚀', title: 'Fuerza Imparable', desc: '20 entrenamientos. Llevas una inercia que absolutamente nada puede detener.', req: { type: 'workouts', count: 20 } },
-    { id: 'workout_30', icon: '🌌', title: 'Viajera Cósmica', desc: '30 entrenamientos. Has trascendido tus propias barreras y expectativas.', req: { type: 'workouts', count: 30 } },
+    { id: 'workout_1',  icon: 'zap',         title: 'El Primer Paso',      desc: 'Completaste tu primer entrenamiento...', req: { type: 'workouts', count: 1  } },
+    { id: 'workout_4',  icon: 'calendar',    title: 'Semana Perfecta',     desc: 'Completaste 4 sesiones...',             req: { type: 'workouts', count: 4  } },
+    { id: 'workout_10', icon: 'bar-chart-2', title: 'Racha de Élite',      desc: '10 entrenamientos...',                  req: { type: 'workouts', count: 10 } },
+    { id: 'workout_20', icon: 'send',        title: 'Fuerza Imparable',    desc: '20 entrenamientos...',                  req: { type: 'workouts', count: 20 } },
+    { id: 'workout_30', icon: 'star',        title: 'Viajera Cósmica',      desc: '30 entrenamientos...',                  req: { type: 'workouts', count: 30 } },
 
     // --- LOGROS POR RACHA (CONSTANCIA) ---
-    { id: 'streak_3', icon: '🕯️', title: 'Hábito en Marcha', desc: 'Mantuviste una racha de 3 días. El fuego interno se ha encendido.', req: { type: 'streak', count: 3 } },
-    { id: 'streak_7', icon: '🕯️', title: 'Semana de Fuego', desc: '7 días seguidos entrenando. ¡Eres la definición de disciplina!', req: { type: 'streak', count: 7 } },
-    { id: 'streak_15', icon: '☀️', title: 'Sol Invencible', desc: '15 días de racha. Nada puede apagar tu determinación.', req: { type: 'streak', count: 15 } },
+    { id: 'streak_3',  icon: 'flame',  title: 'Hábito en Marcha', desc: 'Mantuviste una racha de 3 días...', req: { type: 'streak', count: 3  } },
+    { id: 'streak_7',  icon: 'sun',    title: 'Semana de Fuego',  desc: '7 días seguidos entrenando...',       req: { type: 'streak', count: 7  } },
+    { id: 'streak_15', icon: 'sunrise',title: 'Sol Invencible',   desc: '15 días de racha...',                req: { type: 'streak', count: 15 } },
 
     // --- FUERZA Y RÉCORDS (PRs) ---
-    { id: 'pr_5', icon: '🥇', title: 'Fuerza Despierta', desc: 'Rompiste 5 Récords Personales. Tu cuerpo se está adaptando y fortaleciendo maravillosamente.', req: { type: 'prs', count: 5 } },
-    { id: 'pr_10', icon: '🏆', title: 'Maestra del Hierro', desc: '10 Récords Personales. Has superado tus límites una y otra vez con total elegancia.', req: { type: 'prs', count: 10 } },
-    { id: 'pr_20', icon: '💎', title: 'Leyenda del Gimnasio', desc: '20 Récords Personales. Eres una verdadera máquina de progreso.', req: { type: 'prs', count: 20 } },
-
-    // --- ANATOMÍA: PECHO ---
-    { id: 'chest_20', icon: '🛡️', title: 'Armadura Superior', desc: '20 series de empuje. Entrenar el pecho da estabilidad a todo el torso y realza tu postura.', req: { type: 'chest', count: 20 } },
-    { id: 'chest_50', icon: '👑', title: 'Reina de la Selva', desc: '50 series de pecho. Tu tren superior es una fortaleza impenetrable.', req: { type: 'chest', count: 50 } },
-
-    // --- ANATOMÍA: PIERNA Y GLÚTEO ---
-    { id: 'legs_20', icon: '🍑', title: 'Base de Titanio', desc: '20 series de tren inferior. Glúteos y piernas fuertes previenen lesiones y te dan un poder increíble.', req: { type: 'gluteLegs', count: 20 } },
-    { id: 'legs_50', icon: '🔥', title: 'Diosa Guerrera', desc: '50 series de piernas. Sostienes el peso de tus metas con unas piernas invencibles.', req: { type: 'gluteLegs', count: 50 } },
-
-    // --- ANATOMÍA: BRAZOS ---
-    { id: 'arms_20', icon: '💪', title: 'Brazos de Acero', desc: '20 series de brazo. Unos brazos fuertes y tonificados mejoran tu rendimiento en cualquier otro ejercicio.', req: { type: 'arms', count: 20 } },
-    { id: 'arms_50', icon: '⚔️', title: 'Amazona de Hierro', desc: '50 series de brazo. Esculpidos, fuertes y capaces de levantar cualquier desafío.', req: { type: 'arms', count: 50 } },
-
-    // --- ANATOMÍA: ESPALDA ---
-    { id: 'back_20', icon: '🦅', title: 'Postura Perfecta', desc: '20 series de espalda. Una espalda fuerte es la clave para una silueta estilizada y sin encorvamientos.', req: { type: 'back', count: 20 } },
-    { id: 'back_50', icon: '🪽', title: 'Alas de Valquiria', desc: '50 series de espalda. Eres tan fuerte y estética como tus propias ambiciones.', req: { type: 'back', count: 50 } },
-
-    // --- NIVELES GLOBALES ---
-    { id: 'level_5', icon: '🌱', title: 'Brote de Poder', desc: 'Alcanzaste el Nivel 5. Estás dejando atrás la versión que eras antes.', req: { type: 'level', count: 5 } },
-    { id: 'level_10', icon: '🌟', title: 'Maestra Ascendida', desc: 'Nivel 10 alcanzado. Has dominado los fundamentos de tu propio cuerpo.', req: { type: 'level', count: 10 } },
-    { id: 'level_15', icon: '🎭', title: 'Transformación Real', desc: 'Alcanzaste el Nivel 15. Tu cuerpo y mente están en sintonía total.', req: { type: 'level', count: 15 } },
-    { id: 'level_20', icon: '✨', title: 'Iluminada', desc: 'Nivel 20 alcanzado. La luz de la disciplina y el amor propio brilla en ti.', req: { type: 'level', count: 20 } },
-    { id: 'level_50', icon: '🔱', title: 'Diosa del Olimpo', desc: 'Nivel 50 alcanzado. Atenea y Afrodita estarían orgullosas de tu dedicación.', req: { type: 'level', count: 50 } }
-];
+    { id: 'pr_5',  icon: 'dumbbell',       title: 'Fuerza Despierta',    desc: 'Rompiste 5 Récords Personales...', req: { type: 'prs', count: 5  } },
+    { id: 'pr_10', icon: 'shield',         title: 'Maestra del Hierro',  desc: '10 Récords Personales...',          req: { type: 'prs', count: 10 } },
+    { id: 'pr_20', icon: 'award',          title: 'Leyenda del Gimnasio',desc: '20 Récords Personales...',          req: { type: 'prs', count: 20 } },
+]
 
 function saveAchievements() { localStorage.setItem(ACH_KEY, JSON.stringify(achState)); }
-
 let ROUTINE = {};
 let currentDay = 1;
 let sessionState = {};
@@ -433,11 +414,32 @@ function initRipples() {
     });
 }
 
+/**
+ * Universal icon renderer — Lucide name string OR legacy inline SVG HTML.
+ * @param {string} nameOrSvg  - Lucide icon name (e.g. 'dumbbell') or raw SVG HTML
+ * @param {string} cls        - CSS classes applied to the <i> tag
+ */
+function renderIcon(nameOrSvg, cls = 'w-6 h-6') {
+    if (!nameOrSvg) return `<i data-lucide="dumbbell" class="${cls}"></i>`;
+    if (nameOrSvg.includes('<')) return nameOrSvg; // legacy SVG string — pass through
+    return `<i data-lucide="${nameOrSvg}" class="${cls}"></i>`;
+}
+
 const XP_PER_SET = 10;
 const XP_PER_WORKOUT = 100;
 const XP_PER_LEVEL = 500;
-const LEVEL_ICONS = ['🌱', '💪', '🔥', '⭐', '💫', '👑', '🏆', '💎', '🌟', '🚀'];
-
+const LEVEL_ICONS = [
+    'seedling',  // Level 1 — just starting
+    'zap',       // Level 2 — energy awakens
+    'flame',     // Level 3 — on fire
+    'star',      // Level 4 — rising star
+    'award',     // Level 5 — award winner
+    'shield',    // Level 6 — fortress
+    'target',    // Level 7 — locked on target
+    'crown',     // Level 8 — royalty
+    'gem',       // Level 9 — precious
+    'trophy',    // Level 10 — champion
+];
 function addXP(amount) {
     const prevLevel = xpState.level;
     xpState.xp += amount;
@@ -470,7 +472,10 @@ function updateXPDisplay() {
 }
 function showLevelUp(level) {
     const overlay = document.getElementById('levelup-overlay');
-    document.getElementById('lu-icon').innerText = LEVEL_ICONS[Math.min(level - 1, LEVEL_ICONS.length - 1)];
+    const iconName = LEVEL_ICONS[Math.min(level - 1, LEVEL_ICONS.length - 1)];
+    const luIcon = document.getElementById('lu-icon');
+    luIcon.innerHTML = renderIcon(iconName, 'w-12 h-12');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     document.getElementById('lu-level').innerText = `LVL ${level}`;
     document.getElementById('lu-msg').innerText = getLevelMsg(level);
     overlay.classList.add('show');
@@ -677,7 +682,6 @@ function launchConfetti() {
     setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors }), 400);
 }
 
-/* ─── HOME CARDS / SELECTOR ─── */
 function renderWorkoutSelector() {
     const cont = document.getElementById('workout-day-cards');
     if (!cont) return;
@@ -686,27 +690,31 @@ function renderWorkoutSelector() {
 
     cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => {
         const isSuggested = parseInt(d) === nextDaySuggestion;
+        const iconName = ROUTINE[d].icon || 'zap';
         return `
-                <div class="home-card ripple-btn ${isSuggested ? 'border-pink-400 bg-pink-50/30 dark:bg-pink-900/20' : ''}" onclick="startDay(${d})">
-                    <div class="flex justify-between items-start w-full">
-                        <div class="text-2xl">${ROUTINE[d].icon}</div>
-                        ${isSuggested ? '<span class="text-[8px] font-black bg-pink-500 text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">Toca hoy</span>' : ''}
+                <div class="bg-white dark:bg-[#2C2C2E] rounded-[24px] p-6 shadow-sm active:scale-95 transition-all ripple-btn border border-frost-100 dark:border-[#3A3A3C] ${isSuggested ? 'ring-2 ring-rose-300 dark:ring-rose-500/40' : ''}" onclick="startDay(${d})">
+                    <div class="flex justify-between items-start w-full mb-3">
+                        <div class="w-12 h-12 rounded-[12px] bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500">
+                            <i data-lucide="${iconName}" class="w-6 h-6"></i>
+                        </div>
+                        ${isSuggested ? '<span class="text-[9px] font-black bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 px-3 py-1 rounded-full uppercase tracking-widest">Sugerido hoy</span>' : ''}
                     </div>
-                    <h3 class="font-bold text-sm mt-1">Día ${d}</h3>
-                    <p class="text-[11px] text-muted">${ROUTINE[d].label}</p>
+                    <h3 class="font-bold text-base text-frost-900 dark:text-white mb-1">Día ${d}</h3>
+                    <p class="text-[13px] text-secondary">${ROUTINE[d].label}</p>
                 </div>`;
     }).join('');
     initRipples();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
-
 function renderDayPills() {
     const cont = document.getElementById('day-pills-container');
     if (!cont) return;
     cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => `
-        <button onclick="changeDay(${d})" id="tab-${d}" class="day-pill ripple-btn ${parseInt(d) === currentDay ? 'active' : ''}">
-            ${ROUTINE[d].icon} D${d}
+        <button onclick="changeDay(${d})" id="tab-${d}" class="day-pill ripple-btn ${parseInt(d) === currentDay ? 'active' : ''} flex items-center justify-center gap-1">
+            <i data-lucide="${ROUTINE[d].icon || 'zap'}" class="w-4 h-4 mr-1"></i> D${d}
         </button>`).join('');
     initRipples();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 /* ════════════════════════════════════════════════════
    ANATOMICAL RECOVERY & FATIGUE CALCULATION
@@ -825,7 +833,6 @@ function getOverallFatiguePercentage() {
 window.onload = () => {
     if (localStorage.getItem('dark') === 'true') {
         document.documentElement.classList.add('dark');
-        document.getElementById('theme-icon').innerText = '☀️';
     }
     document.getElementById('unit-disp').innerText = globalUnit.toUpperCase();
 
@@ -846,6 +853,8 @@ window.onload = () => {
     renderHeatmap();
     initRipples();
 
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
     setView('home');
 
     const hasActive = Object.keys(sessionState).some(k => sessionState[k].done);
@@ -858,9 +867,12 @@ window.onload = () => {
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('dark', isDark);
-    document.getElementById('theme-icon').innerText = isDark ? '☀️' : '🌙';
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) {
+        btn.innerHTML = `<i data-lucide="${isDark ? 'sun' : 'moon'}" class="w-5 h-5"></i>`;
+        lucide.createIcons();
+    }
 }
-
 function showToast(msg) {
     const toast = document.getElementById('toast-container');
     toast.innerText = msg;
@@ -897,7 +909,7 @@ function showMedalPopup(medal) {
     const popup = document.createElement('div');
     popup.className = 'medal-popup';
     popup.innerHTML = `
-                <div class="medal-icon-wrap">${medal.icon}</div>
+                <div class="medal-icon-wrap">${renderIcon(medal.icon, 'w-8 h-8')}</div>
                 <div>
                     <p class="text-[9px] font-black uppercase tracking-widest text-gold mb-0.5" style="color: var(--gold)">¡Nuevo Logro!</p>
                     <h3 class="font-bold text-slate-800 dark:text-white leading-tight">${medal.title}</h3>
@@ -907,6 +919,7 @@ function showMedalPopup(medal) {
     document.body.appendChild(popup);
     popup.offsetHeight;
     popup.classList.add('show');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     setTimeout(() => {
         popup.classList.remove('show');
@@ -935,13 +948,14 @@ function renderTrophyShowcase() {
     cont.innerHTML = MEDALS_DB.map(m => {
         const unlocked = achState.unlocked.includes(m.id);
         return `
-                <div class="trophy-item ${unlocked ? 'unlocked' : ''}" onclick="alert('${m.title}\\n\\n${m.desc}')">
-                    <div class="text-3xl mb-2">${m.icon}</div>
-                    <p class="text-[9px] font-bold uppercase leading-tight ${unlocked ? 'text-slate-800 dark:text-white' : 'text-slate-400'}">${m.title}</p>
+                <div class="bg-white dark:bg-frost-900/30 rounded-[16px] p-4 shadow-sm border border-frost-100 dark:border-frost-800 text-center cursor-pointer active:scale-90 transition-transform ripple-btn hover:shadow-md ${unlocked ? 'ring-2 ring-warning dark:ring-warning/50' : 'opacity-50'}" onclick="alert('${m.title}\\n\\n${m.desc}')" title="${m.title}">
+                    <div class="flex items-center justify-center mb-2 text-rose-500">${renderIcon(m.icon, 'w-8 h-8')}</div>
+                    <p class="text-[9px] font-bold uppercase leading-tight text-frost-900 dark:text-white">${m.title}</p>
                 </div>`;
     }).join('');
 
     if (countEl) countEl.innerText = `${achState.unlocked.length} / ${MEDALS_DB.length}`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 
     if (document.getElementById('stat-ach-prs')) {
         document.getElementById('stat-ach-prs').innerText = achState.stats.prs;
@@ -966,7 +980,22 @@ function setView(v) {
         if (navEl) navEl.classList.toggle('active', x === v);
     });
 
-    document.getElementById('bottom-timer-bar').classList.toggle('hidden-bar', v !== 'workout');
+    const hasActive = Object.keys(sessionState).some(k => {
+        const s = sessionState[k];
+        return s && (s.done || (s.w !== '' && s.w !== null && s.w !== undefined) || (s.r !== '' && s.r !== null && s.r !== undefined));
+    });
+
+    const tb = document.getElementById('bottom-timer-bar');
+    if (tb) {
+        if (v === 'workout' && hasActive) {
+            tb.classList.remove('hidden');
+            tb.classList.remove('hidden-bar');
+        } else {
+            tb.classList.add('hidden');
+            tb.classList.add('hidden-bar');
+        }
+    }
+    if (typeof minimizeTimer === 'function') minimizeTimer();
 
     if (v === 'home') {
         updateHomeStats();
@@ -975,14 +1004,6 @@ function setView(v) {
     }
 
     if (v === 'workout') {
-        const hasActive = Object.keys(sessionState).some(k => {
-            const s = sessionState[k];
-            return s && (
-                s.done ||
-                (s.w !== '' && s.w !== null && s.w !== undefined) ||
-                (s.r !== '' && s.r !== null && s.r !== undefined)
-            );
-        });
         if (hasActive) {
             showActiveWorkoutZone(true);
             renderDay(currentDay);
@@ -1005,6 +1026,8 @@ function setView(v) {
         renderEditor();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function showActiveWorkoutZone(show) {
@@ -1013,6 +1036,17 @@ function showActiveWorkoutZone(show) {
 
     const globalHeader = document.getElementById('main-global-header');
     if (globalHeader) globalHeader.style.display = show ? 'none' : 'flex';
+    
+    const tb = document.getElementById('bottom-timer-bar');
+    if (tb) {
+        if (show && document.getElementById('view-workout') && !document.getElementById('view-workout').classList.contains('hidden')) {
+            tb.classList.remove('hidden');
+            tb.classList.remove('hidden-bar');
+        } else {
+            tb.classList.add('hidden');
+            tb.classList.add('hidden-bar');
+        }
+    }
 }
 
 /* ─── ACTIVE SESSION BANNER ─── */
@@ -1031,7 +1065,7 @@ function checkActiveSession() {
         banner.innerHTML = `
             <div class="home-card active-session ripple-btn" onclick="continueDay(${activeDay})">
                 <div class="flex items-center gap-3 mb-1">
-                    <span class="text-2xl">${ROUTINE[activeDay].icon}</span>
+                    <span class="flex items-center text-white">${renderIcon(ROUTINE[activeDay].icon)}</span>
                     <h3 class="font-bold text-white text-base">Continuar sesión</h3>
                 </div>
                 <p class="text-[12px] text-pink-100 font-medium">Día ${activeDay} · ${ROUTINE[activeDay].label}</p>
@@ -1141,27 +1175,27 @@ function renderDay(d) {
         const incLabel = globalUnit === 'lbs' ? '5 lbs' : '2.5 kg';
 
         const overloadBanner = hasOverload ? `
-            <div style="display:flex;align-items:center;gap:9px;
-                background:${isDark ? 'rgba(52,211,153,0.1)' : 'rgba(16,185,129,0.07)'};
-                border:1px solid ${isDark ? 'rgba(52,211,153,0.28)' : 'rgba(16,185,129,0.22)'};
-                border-radius:13px;padding:9px 12px;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:10px;
+                background:${isDark ? 'rgba(36,138,61,0.1)' : 'rgba(36,138,61,0.08)'};
+                border:1px solid ${isDark ? 'rgba(36,138,61,0.3)' : 'rgba(36,138,61,0.2)'};
+                border-radius:16px;padding:12px 14px;margin-bottom:12px">
                 <span style="font-size:16px">📈</span>
                 <div>
-                    <p style="font-size:10px;font-weight:900;letter-spacing:0.04em;margin:0;
-                        color:${isDark ? '#34d399' : '#065f46'}">SOBRECARGA PROGRESIVA</p>
-                    <p style="font-size:10px;font-weight:600;margin:1px 0 0;
-                        color:${isDark ? '#6ee7b7' : '#059669'}">
-                        +${incLabel} sugeridos vs tu última sesión</p>
+                    <p style="font-size:10px;font-weight:800;letter-spacing:0.04em;margin:0;
+                        color:${isDark ? '#6ee7b7' : '#248A3D'}">Sobrecarga progresiva</p>
+                    <p style="font-size:10px;font-weight:600;margin:2px 0 0;
+                        color:${isDark ? '#86c699' : '#248A3D'}">
+                        +${incLabel} sugeridos</p>
                 </div>
             </div>` : '';
 
         const prefillBanner = hasPrefill ? `
-            <div style="display:flex;align-items:center;gap:8px;
-                background:var(--pink-light);border:1px solid var(--pink-border);
-                border-radius:11px;padding:7px 11px;margin-bottom:10px">
-                <span style="font-size:13px">💡</span>
-                <p style="font-size:10px;font-weight:700;color:var(--pink-dark);margin:0">
-                    Pesos de tu última sesión pre-cargados</p>
+            <div style="display:flex;align-items:center;gap:10px;
+                background:var(--rose-tint);border:1px solid rgba(255,143,163,0.2);
+                border-radius:16px;padding:12px 14px;margin-bottom:12px">
+                <span style="font-size:14px">💾</span>
+                <p style="font-size:11px;font-weight:600;color:var(--rose-hover);margin:0">
+                    Pesos de última sesión pre-cargados</p>
             </div>` : '';
 
         // ─── WARMUP ROWS ───
@@ -1172,10 +1206,10 @@ function renderDay(d) {
             rowsHtml += `
                 <div class="set-row warmup-row ${st.done ? 'done' : ''}" id="row-${k}">
                     <span class="warmup-label">W</span>
-                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="0"
+                    <input type="text" inputmode="decimal" readonly class="gym-input cursor-pointer" placeholder="Ej. 20"
                         value="${st.w ? formatUnitDisplay(st.w) : ''}"
                         onclick="openCalc('${k}','${ex.name}')">
-                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps"
+                    <input type="text" inputmode="numeric" readonly class="gym-input cursor-pointer" placeholder="Ej. 12"
                         value="${st.r || ''}" onclick="openReps('${k}',this.value)">
                     <button onclick="markSet('${k}',${i},${ex.sets},'${ex.name}')"
                         class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
@@ -1199,10 +1233,10 @@ function renderDay(d) {
                         color:${isOverloadSet ? 'var(--pink)' : 'var(--text-muted)'}">
                         ${isOverloadSet ? '▲' : s}
                     </span>
-                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="0"
+                    <input type="text" inputmode="decimal" readonly class="gym-input cursor-pointer" placeholder="Ej. 20"
                         value="${st.w ? formatUnitDisplay(st.w) : ''}"
                         onclick="openCalc('${k}','${ex.name}')">
-                    <input type="text" readonly class="gym-input cursor-pointer" placeholder="reps"
+                    <input type="text" inputmode="numeric" readonly class="gym-input cursor-pointer" placeholder="Ej. 12"
                         value="${st.r || ''}" onclick="openReps('${k}',this.value)">
                     <button onclick="markSet('${k}',${i},${ex.sets},'${ex.name}')"
                         class="check-btn ${st.done ? 'done' : ''}">${st.done ? '✓' : ''}</button>
@@ -1210,60 +1244,68 @@ function renderDay(d) {
         }
 
         return `
-        <div class="card p-6 mb-4 ${isComplete ? 'complete' : ''}" id="card-${d}-${i}">
+        <div class="bg-white dark:bg-[#2C2C2E] rounded-[24px] p-6 mb-4 shadow-sm border border-frost-100 dark:border-[#3A3A3C] ${isComplete ? 'ring-1 ring-green-500/30 dark:ring-green-400/20' : ''}" id="card-${d}-${i}">
 
-            <div class="flex justify-between items-start mb-4">
+            <!-- ─── HEADER ─── -->
+            <div class="flex justify-between items-start mb-5">
                 <div class="flex-1">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <h3 class="font-bold text-sm text-slate-800 dark:text-white">${ex.name}</h3>
-                        <span class="text-[10px] font-bold text-pink-500 bg-pink-100
-                            dark:bg-pink-900/30 px-2 py-0.5 rounded">${ex.sets}×${ex.reps}</span>
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                        <h3 class="font-bold text-base text-frost-900 dark:text-white">${ex.name}</h3>
+                        <span class="text-[10px] font-bold text-rose-600 bg-rose-50 dark:bg-rose-500/20 px-2.5 py-1 rounded-full">${ex.sets}×${ex.reps}</span>
                         ${isComplete
-                ? `<span class="text-[10px] font-black text-emerald-600
-                                bg-emerald-50 dark:bg-emerald-900/30 px-2 py-0.5 rounded">✓ COMPLETO</span>`
+                ? `<span class="text-[10px] font-black text-success bg-success-bg dark:bg-success-600/20 px-2.5 py-1 rounded-full">✓ Completo</span>`
                 : ''}
                     </div>
-                    <p class="text-[10px] text-slate-400 mt-1">📌 ${ex.tip}</p>
+                    <p class="text-[12px] text-secondary font-500">Tip: ${ex.tip}</p>
                 </div>
                 <div class="flex gap-2">
                     <button onclick="showExerciseStats('${ex.name}')"
-                        class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center
-                            justify-content:center text-xs opacity-70 active:scale-90 transition-all"
-                        title="Estadísticas">📊</button>
+                        class="w-9 h-9 rounded-[12px] bg-frost-100 dark:bg-frost-800 flex items-center justify-center text-[13px] text-secondary active:scale-85 transition-transform"
+                        title="Ver estadísticas"><i data-lucide="bar-chart-2" class="w-4 h-4"></i></button>
                     <button onclick="toggleTips('${d}_${i}')"
-                        class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center
-                            justify-center text-xs active:scale-90 transition-all"
-                        title="Tips de coach">💡</button>
+                        class="w-9 h-9 rounded-[12px] bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-600 dark:text-rose-400 active:scale-85 transition-transform"
+                        title="Ver tips"><i data-lucide="lightbulb" class="w-4 h-4"></i></button>
                 </div>
             </div>
 
-            <div id="tips-${d}_${i}" class="coach-tips-panel">${ex.details}</div>
-
-            <div class="gif-container my-4">
-                <video src="${ex.gif}" class="gif-video" autoplay loop muted playsinline></video>
+            <!-- ─── COACH TIPS ─── -->
+            <div id="tips-${d}_${i}" class="coach-tips-panel hidden bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 rounded-[16px] p-4 mb-4 text-[13px] text-frost-900 dark:text-frost-100 leading-relaxed">
+                <div class="flex items-start gap-2">
+                    <i data-lucide="info" class="w-4 h-4 text-rose-500 mt-0.5 flex-shrink-0"></i>
+                    <div>${ex.details.replace(/🎯/g, '').replace(/Coach:/g, '<b>Coach:</b>')}</div>
+                </div>
             </div>
 
-            <div class="flex justify-between items-center mb-2">
-                <h4 class="text-[9px] font-black uppercase tracking-tighter text-slate-400">
-                    Series · ${doneCount}/${ex.sets}</h4>
-                <button onclick="addWarmup('${d}',${i})"
-                    class="text-[9px] font-bold text-amber-500 bg-amber-100/20 px-2 py-1 rounded">
-                    + Aproximación</button>
+            <!-- ─── EXERCISE VIDEO ─── -->
+            <div class="w-full h-56 rounded-[18px] bg-frost-100 dark:bg-frost-800 overflow-hidden mb-5">
+                <video src="${ex.gif}" class="w-full h-full object-cover" autoplay loop muted playsinline></video>
             </div>
 
-            <div class="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mb-4 overflow-hidden">
-                <div id="prog-bar-${d}-${i}"
-                    class="h-full bg-gradient-to-r from-pink-400 to-pink-600 rounded-full transition-all duration-500"
-                    style="width:${pct}%"></div>
+            <!-- ─── PROGRESS BAR ─── -->
+            <div class="mb-5">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-[11px] font-bold uppercase tracking-wide text-secondary">Progreso · ${doneCount}/${ex.sets}</h4>
+                    <button onclick="addWarmup('${d}',${i})"
+                        class="text-[11px] font-bold text-warning bg-warning-bg dark:bg-warning/20 px-2.5 py-1 rounded-full">
+                        + Aproximación</button>
+                </div>
+                <div class="h-2 bg-frost-100 dark:bg-frost-800 rounded-full overflow-hidden">
+                    <div id="prog-bar-${d}-${i}"
+                        class="h-full bg-rose-500 dark:bg-rose-400 rounded-full transition-all duration-500"
+                        style="width:${pct}%"></div>
+                </div>
             </div>
 
             ${overloadBanner}
             ${prefillBanner}
+            
+            <!-- ─── SET ROWS ─── -->
             <div class="space-y-2">${rowsHtml}</div>
         </div>`;
     }).join('');
 
     updateDayPills(d);
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function toggleEx(d, i) { document.getElementById(`details-${d}-${i}`).classList.toggle('expanded'); }
@@ -1293,6 +1335,8 @@ function markSet(k, exI, totalSets, exName) {
     const btn = row?.querySelector('.check-btn');
     if (row) row.classList.toggle('done', newState);
     if (btn) { btn.classList.toggle('done', newState); btn.innerText = newState ? '✓' : ''; }
+    
+    if (newState && typeof toggleFocusMode === 'function') toggleFocusMode(true);
 
     if (newState) {
         playSound('check');
@@ -1877,14 +1921,14 @@ function showExerciseStats(exName) {
             <button onclick="document.getElementById('modal-ex-stats').classList.remove('show')"
                 style="width:34px;height:34px;border-radius:50%;background:var(--slate-100);
                     border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;
-                    justify-content:center;color:var(--text-muted);flex-shrink:0">✕</button>
+                    justify-content:center;color:var(--text-muted);flex-shrink:0"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
         ${pr > 0 ? `
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
             <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(217,119,6,0.07));
                 border:1px solid rgba(245,158,11,0.25);border-radius:18px;padding:16px;text-align:center">
                 <p style="font-size:9px;font-weight:800;color:#b45309;text-transform:uppercase;
-                    letter-spacing:0.07em;margin:0 0 6px">🏆 Récord Personal</p>
+                    letter-spacing:0.07em;margin:0 0 6px"><i data-lucide="award" class="w-3 h-3 inline-block" style="margin-top:-2px;margin-right:2px"></i> Récord Personal</p>
                 <p style="font-size:28px;font-weight:900;color:#b45309;margin:0;
                     font-family:'Poppins',sans-serif;line-height:1">${formatUnitDisplay(pr)}</p>
                 <p style="font-size:10px;font-weight:700;color:#d97706;margin:3px 0 0">
@@ -1893,7 +1937,7 @@ function showExerciseStats(exName) {
             <div style="background:var(--pink-light);border:1px solid var(--pink-border);
                 border-radius:18px;padding:16px;text-align:center">
                 <p style="font-size:9px;font-weight:800;color:var(--pink-dark);text-transform:uppercase;
-                    letter-spacing:0.07em;margin:0 0 6px">📅 Sesiones</p>
+                    letter-spacing:0.07em;margin:0 0 6px"><i data-lucide="calendar" class="w-3 h-3 inline-block" style="margin-top:-2px;margin-right:2px"></i> Sesiones</p>
                 <p style="font-size:28px;font-weight:900;color:var(--pink-dark);margin:0;
                     font-family:'Poppins',sans-serif;line-height:1">${sessionsCount}</p>
                 <p style="font-size:10px;font-weight:700;color:var(--pink-dark);margin:3px 0 0">totales</p>
@@ -1905,6 +1949,10 @@ function showExerciseStats(exName) {
             ${chartHTML}
         </div>`;
 
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+    }
+    
     modal.classList.add('show');
     if (navigator.vibrate) navigator.vibrate([15]);
 }
@@ -2064,7 +2112,14 @@ function setWheelToTime(m, s) {
 }
 
 // 4. Iniciar/Pausar (Transición Ruedas <-> Texto)
+let _timerColapseTimeout = null;
+let _timerDebounce = false;
+
 function toggleTimer() {
+    if (_timerDebounce) return;
+    _timerDebounce = true;
+    setTimeout(() => _timerDebounce = false, 300);
+
     const btn = document.getElementById('timer-btn');
     const btnBig = document.getElementById('timer-btn-big');
     const editMode = document.getElementById('timer-edit-mode');
@@ -2072,21 +2127,30 @@ function toggleTimer() {
 
     if (isRunning) {
         clearInterval(timerId); isRunning = false;
-        btn.innerText = 'REANUDAR'; btnBig.innerText = 'REANUDAR DESCANSO';
+        btn.innerText = 'Continuar sesión ➤'; btnBig.innerText = 'Continuar descanso ➤';
+        toggleFocusMode(false);
+        if (_timerColapseTimeout) { clearTimeout(_timerColapseTimeout); _timerColapseTimeout = null; }
     } else {
         if (timeLeft <= 0) timeLeft = timerDuration;
         isRunning = true;
-        btn.innerText = 'PAUSAR'; btnBig.innerText = 'PAUSAR DESCANSO';
+        btn.innerText = 'Pausar'; btnBig.innerText = 'Pausar descanso';
 
         // Ocultar ruedas, mostrar texto
         editMode.style.display = 'none';
         runMode.classList.remove('hidden');
 
+        toggleFocusMode(true);
+        _timerColapseTimeout = setTimeout(() => {
+            if (isRunning && typeof minimizeTimer === 'function') minimizeTimer();
+        }, 3000);
+
         timerId = setInterval(() => {
             if (timeLeft > 0) { timeLeft--; renderTimerDisplay(); }
             else {
                 clearInterval(timerId); isRunning = false;
-                btn.innerText = 'INICIAR'; btnBig.innerText = 'INICIAR DESCANSO';
+                btn.innerText = 'Iniciar descanso'; btnBig.innerText = 'Iniciar descanso';
+                if (typeof expandTimer === 'function') expandTimer();
+                toggleFocusMode(false);
                 resetTimer();
                 showToast('¡Descanso terminado! A darle 💪');
             }
@@ -2097,8 +2161,10 @@ function toggleTimer() {
 function resetTimer() {
     clearInterval(timerId); isRunning = false;
     timeLeft = timerDuration; renderTimerDisplay();
-    document.getElementById('timer-btn').innerText = 'INICIAR';
-    document.getElementById('timer-btn-big').innerText = 'INICIAR DESCANSO';
+    document.getElementById('timer-btn').innerText = 'Iniciar descanso';
+    document.getElementById('timer-btn-big').innerText = 'Iniciar descanso';
+    if (typeof expandTimer === 'function') expandTimer();
+    toggleFocusMode(false);
 
     // Volver a mostrar ruedas
     document.getElementById('timer-edit-mode').style.display = 'flex';
@@ -2111,8 +2177,30 @@ setTimeout(initTimerWheel, 200);
 function startTimer() { clearInterval(timerId); timeLeft = timerDuration; renderTimerDisplay(); isRunning = false; toggleTimer(); }
 
 // Nuevas funciones del Timer Expandible
-function expandTimer() { document.getElementById('bottom-timer-bar').classList.add('expanded'); }
-function minimizeTimer() { document.getElementById('bottom-timer-bar').classList.remove('expanded'); }
+function expandTimer() { 
+    if (_timerDebounce) return;
+    _timerDebounce = true;
+    setTimeout(() => _timerDebounce = false, 300);
+    const tb = document.getElementById('bottom-timer-bar');
+    if (tb) {
+        tb.classList.remove('timer-collapsed');
+        tb.classList.remove('hidden-bar');
+        tb.classList.add('expanded');
+    }
+    if (typeof toggleFocusMode === 'function') toggleFocusMode(false);
+}
+function minimizeTimer() { 
+    if (_timerDebounce) return;
+    _timerDebounce = true;
+    setTimeout(() => _timerDebounce = false, 300);
+    const tb = document.getElementById('bottom-timer-bar');
+    if (tb) {
+        tb.classList.remove('expanded'); 
+        if (isRunning) {
+            tb.classList.add('timer-collapsed');
+        }
+    }
+}
 
 
 // Para actualizar ambos textos y anillos a la vez
@@ -2151,6 +2239,9 @@ function openSaveModal() {
 }
 
 function saveToHistory() {
+    // 🛡️ Guard: ensure historyState is always a valid array (never null/corrupted)
+    if (!Array.isArray(historyState)) historyState = [];
+
     updateStreak();
     const setsCount = Object.values(sessionState).filter(s => s.done).length;
     const volume = calcSessionVolume();
@@ -2242,27 +2333,39 @@ function renderHistory() {
     renderProgressChart();
 
     if (count === 0) {
-        cont.innerHTML = `<div class="py-16 text-center"><div class="text-5xl mb-4">🌸</div><p class="text-slate-400 font-medium">Completa tu primer entrenamiento</p><p class="text-xs text-slate-300 mt-1">y aparecerá aquí</p></div>`;
+        cont.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-20 text-center">
+                <div class="w-20 h-20 rounded-full bg-slate-50 dark:bg-slate-800/60 flex items-center justify-center mb-5">
+                    <i data-lucide="folder-open" class="w-10 h-10 text-slate-300 dark:text-slate-600"></i>
+                </div>
+                <h3 class="text-base font-bold text-frost-900 dark:text-white mb-2">Sin sesiones aún</h3>
+                <p class="text-sm text-secondary max-w-xs leading-relaxed">Completa tu primer entrenamiento y verás tu progreso aquí. ¡Tú puedes, Valeria!</p>
+            </div>
+        `;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         return;
     }
 
     cont.innerHTML = historyState.map((s, idx) => `
-        <div class="history-card relative pr-12" style="animation-delay:${idx * 60}ms">
+        <div class="bg-white dark:bg-[#2C2C2E] rounded-[20px] p-5 shadow-sm border border-frost-100 dark:border-[#3A3A3C] flex items-center justify-between gap-4 relative" style="animation-delay:${idx * 60}ms">
             <div class="flex items-center gap-3 flex-1">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-100 to-pink-200 dark:from-pink-900/30 dark:to-pink-800/30 flex items-center justify-center text-xl flex-shrink-0">${s.icon || '💪'}</div>
-                <div>
-                    <p class="font-bold text-sm">${s.day || '—'}</p>
-                    <p class="text-[10px] text-muted font-bold uppercase mt-0.5">${s.date || ''}</p>
+                <div class="w-12 h-12 rounded-[14px] bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500 flex-shrink-0">${renderIcon(s.icon, 'w-6 h-6')}</div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-sm text-frost-900 dark:text-white">${s.day || '—'}</p>
+                    <p class="text-[11px] text-secondary font-600 uppercase tracking-wide mt-1">${s.date || ''}</p>
                 </div>
             </div>
             <div class="text-right flex-shrink-0">
-                <p class="text-xs font-black text-pink-500">${s.sets || 0} series</p>
-                ${s.volume != null && s.volume !== '' ? `<p class="text-[10px] font-bold text-emerald-500">${formatUnitDisplay(s.volume)} ${globalUnit.toUpperCase()} vol.</p>` : ''}
+                <p class="text-xs font-black text-rose-500">${s.sets || 0}</p>
+                <p class="text-[10px] text-secondary font-600 uppercase mt-0.5">Series</p>
+                ${s.volume != null && s.volume !== '' ? `<p class="text-[10px] font-bold text-success mt-1">${formatUnitDisplay(s.volume)} ${globalUnit.toUpperCase()}</p>` : ''}
             </div>
-            <button onclick="deleteHistoryEntry(${s.id})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-red-500 bg-red-50 dark:bg-red-900/20 rounded-full active:scale-90 transition-transform">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+            <button onclick="deleteHistoryEntry(${s.id})" class="flex-shrink-0 w-8 h-8 flex items-center justify-center text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/20 rounded-[10px] active:scale-90 transition-all" title="Eliminar sesión">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
             </button>
         </div>`).join('');
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function deleteHistoryEntry(id) {
@@ -2290,6 +2393,18 @@ function confirmReset() {
     }
 }
 
+function cancelWorkoutRoutine() {
+    if (!confirm('¿Seguro que deseas cancelar esta sesión? Perderás el progreso no guardado.')) return;
+    sessionState = {};
+    window._activePrefill = null;
+    persistSession();
+    if (typeof checkActiveSession === 'function') checkActiveSession();
+    if (typeof showActiveWorkoutZone === 'function') showActiveWorkoutZone(false);
+    if (typeof renderWorkoutSelector === 'function') renderWorkoutSelector();
+    if (typeof toggleFocusMode === 'function') toggleFocusMode(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 /* ════════════════════════════════════════════════════
    EDITOR DE RUTINA
 ════════════════════════════════════════════════════ */
@@ -2297,15 +2412,17 @@ let editingDay = null;
 let editingExDay = null;
 let editingExIdx = null;
 let emojiTargetDay = null;
-let pendingEmoji = null;
+let pendingIcon = null;
 
 let _editorSortable = null;
 
-const EMOJI_OPTIONS = [
-    '💪', '🍑', '🔥', '✨', '🦵', '🏋️', '⚡', '🌟', '🎯', '💫',
-    '🏆', '👑', '💎', '🌸', '🦋', '🐉', '🌊', '🧠', '🩷', '❤️‍🔥',
-    '🫀', '💥', '🌺', '🌻', '🎀', '🏅', '🥇', '🔑', '🚀', '🌙',
-    '☀️', '🌈', '🍓', '🌶️', '🥊', '🤸', '🧗', '🏊', '🎽'
+// 32 curated Lucide icon names for fitness & habits
+const ICON_OPTIONS = [
+    'activity', 'flame', 'heart', 'target', 'zap', 'dumbbell', 'award', 'star',
+    'sun', 'moon', 'calendar', 'clock', 'battery-charging', 'trending-up', 'bar-chart-2',
+    'shield', 'anchor', 'crosshair', 'eye', 'feather', 'gift', 'globe', 'layers',
+    'map-pin', 'maximize-2', 'music', 'navigation', 'send', 'sparkles', 'sunrise',
+    'timer', 'trophy',
 ];
 
 function renderEditor() {
@@ -2313,6 +2430,7 @@ function renderEditor() {
     cont.innerHTML = Object.keys(ROUTINE).sort((a, b) => a - b).map(d => renderEditorDay(parseInt(d))).join('');
     initRipples();
     initEditorSortable();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function initEditorSortable() {
@@ -2395,12 +2513,12 @@ function renderEditorDay(d) {
     const exList = day.exercises.map((ex, i) => `
         <div class="editor-ex-row" id="edrow-${d}-${i}">
             <div class="flex-1 min-w-0">
-                <p class="font-bold text-sm truncate">${ex.name}</p>
-                <p class="text-[10px] text-muted">${ex.sets} series · ${ex.reps} reps</p>
+                <p class="font-bold text-sm text-frost-900 dark:text-white truncate">${ex.name}</p>
+                <p class="text-[11px] text-secondary font-500 mt-1">${ex.sets}×${ex.reps}</p>
             </div>
-            <div class="flex items-center gap-1 flex-shrink-0">
-                <button onclick="moveExercise(${d},${i},-1)" class="ed-btn ed-btn-up ripple-btn" title="Subir">▲</button>
-                <button onclick="moveExercise(${d},${i},1)"  class="ed-btn ed-btn-down ripple-btn" title="Bajar">▼</button>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button onclick="moveExercise(${d},${i},-1)" class="ed-btn ed-btn-up ripple-btn" title="Subir">↑</button>
+                <button onclick="moveExercise(${d},${i},1)"  class="ed-btn ed-btn-down ripple-btn" title="Bajar">↓</button>
                 <button onclick="openEditExModal(${d},${i})" class="ed-btn ed-btn-edit ripple-btn" title="Editar">✏️</button>
                 <button onclick="deleteExercise(${d},${i})"  class="ed-btn ed-btn-del ripple-btn" title="Eliminar">🗑️</button>
             </div>
@@ -2410,16 +2528,16 @@ function renderEditorDay(d) {
     <div class="editor-day-section" id="editor-day-${d}" data-day-key="${d}">
         <div class="editor-day-header">
             <div class="drag-handle" title="Arrastrar para reordenar">⠿</div>
-            <button class="emoji-btn-sm" onclick="openEmojiModal(${d})" title="Cambiar emoji">${day.icon}</button>
-            <div class="flex-1 min-w-0 mx-2">
-                <span class="text-[9px] font-bold uppercase tracking-widest text-pink-400 day-key-label">DÍA ${d}</span>
-                <input type="text" class="day-name-input block w-full" value="${day.label}" onchange="updateDayLabel(${d}, this.value)" placeholder="Nombre del día">
+            <button class="w-10 h-10 rounded-[12px] bg-rose-50 dark:bg-rose-500/20 flex items-center justify-center text-rose-500 flex-shrink-0 active:scale-90 transition-transform ripple-btn" onclick="openEmojiModal(${d})" title="Cambiar ícóno">${renderIcon(day.icon)}</button>
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-rose-500 day-key-label">Día ${d}</p>
+                <input type="text" class="day-name-input block w-full text-base font-bold text-frost-900 dark:text-white mt-1 bg-transparent" value="${day.label}" onchange="updateDayLabel(${d}, this.value)" placeholder="Nombre del día">
             </div>
             <button onclick="toggleEditorDay(${d})" class="editor-day-toggle ripple-btn ${isOpen ? 'open' : ''}" id="editor-toggle-${d}">▼</button>
         </div>
         <div id="editor-exlist-${d}" style="${isOpen ? '' : 'display:none'}">
             ${exList}
-            <button onclick="addExercise(${d})" class="add-ex-btn ripple-btn">
+            <button onclick="addExercise(${d})" class="w-full py-3 text-rose-600 dark:text-rose-400 font-bold text-sm border-t border-frost-100 dark:border-frost-800 active:bg-rose-50 dark:active:bg-rose-500/10 transition-colors ripple-btn flex items-center justify-center gap-2">
                 <span style="font-size:18px">＋</span> Agregar Ejercicio
             </button>
         </div>
@@ -2441,30 +2559,46 @@ function updateDayLabel(d, value) {
     if (currentDay === d) document.getElementById('workout-title-disp').innerText = ROUTINE[d].label;
 }
 
-/* ─── EMOJI MODAL ─── */
 function openEmojiModal(d) {
     emojiTargetDay = d;
-    pendingEmoji = ROUTINE[d].icon;
+    pendingIcon = ROUTINE[d].icon;
     const grid = document.getElementById('emoji-grid-container');
-    grid.innerHTML = EMOJI_OPTIONS.map(em => `
-        <button class="emoji-opt ripple-btn ${em === pendingEmoji ? 'selected' : ''}" onclick="selectEmoji('${em}')">${em}</button>
-    `).join('');
+    grid.innerHTML = ICON_OPTIONS.map((iconName, idx) => {
+        const isSelected = iconName === pendingIcon;
+        return `
+            <button
+                class="w-12 h-12 rounded-[12px] bg-frost-100 dark:bg-frost-800 flex items-center justify-center text-rose-500 transition-all ripple-btn ${isSelected ? 'ring-2 ring-rose-500 bg-rose-50 dark:bg-rose-500/20 scale-105' : 'hover:bg-frost-200 dark:hover:bg-frost-700'}"
+                onclick="selectIcon(${idx})"
+                title="${iconName}">
+                <i data-lucide="${iconName}" class="w-5 h-5"></i>
+            </button>`;
+    }).join('');
     document.getElementById('modal-emoji').classList.add('show');
     initRipples();
+    if (typeof lucide !== 'undefined') lucide.createIcons();
 }
-function selectEmoji(em) {
-    pendingEmoji = em;
-    document.querySelectorAll('.emoji-opt').forEach(btn => btn.classList.toggle('selected', btn.innerText === em));
+
+function selectIcon(idx) {
+    if (idx >= 0 && idx < ICON_OPTIONS.length) {
+        pendingIcon = ICON_OPTIONS[idx];
+    }
+    document.querySelectorAll('#emoji-grid-container button').forEach((btn, i) => {
+        btn.classList.toggle('ring-2', i === idx);
+        btn.classList.toggle('ring-rose-500', i === idx);
+        btn.classList.toggle('bg-rose-50', i === idx);
+        btn.classList.toggle('scale-105', i === idx);
+    });
 }
+
 function saveEmojiModal() {
-    if (emojiTargetDay !== null && pendingEmoji) {
-        ROUTINE[emojiTargetDay].icon = pendingEmoji;
+    if (emojiTargetDay !== null && pendingIcon) {
+        ROUTINE[emojiTargetDay].icon = pendingIcon;
         saveRoutine();
         renderEditor();
-        showToast(`Emoji actualizado ${pendingEmoji} ✨`);
+        showToast('Ícono actualizado ✨');
     }
     document.getElementById('modal-emoji').classList.remove('show');
-    emojiTargetDay = null; pendingEmoji = null;
+    emojiTargetDay = null; pendingIcon = null;
 }
 
 /* ─── EDITAR EJERCICIO ─── */
@@ -2719,7 +2853,79 @@ function navTo(view) {
 
     // Pequeña vibración háptica al cambiar de pestaña
     if (navigator.vibrate) navigator.vibrate([10]);
+    toggleFocusMode(false);
 }
+
+/* ─── FOCUS MODE (PROGRESSIVE DISCLOSURE) ─── */
+let isFocusMode = false;
+let navCollapseTimeout = null;
+
+function toggleFocusMode(active) {
+    if (isFocusMode === active) return;
+    isFocusMode = active;
+
+    const navBar = document.getElementById('bottom-nav-bar');
+    
+    if (active) {
+        document.body.classList.add('focus-mode');
+        if (navBar) navBar.classList.add('nav-collapsed');
+    } else {
+        document.body.classList.remove('focus-mode');
+        if (navBar) navBar.classList.remove('nav-collapsed');
+        if (navCollapseTimeout) { clearTimeout(navCollapseTimeout); navCollapseTimeout = null; }
+    }
+}
+
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 150 && !isFocusMode && document.getElementById('view-workout') && !document.getElementById('view-workout').classList.contains('hidden')) {
+        toggleFocusMode(true);
+    }
+    const tb = document.getElementById('bottom-timer-bar');
+    if (tb && tb.classList.contains('expanded')) {
+        minimizeTimer();
+    }
+}, { passive: true });
+
+let focusSwipeStartY = 0;
+document.addEventListener('touchstart', (e) => {
+    if (e.touches[0].clientY > window.innerHeight * 0.8) {
+        focusSwipeStartY = e.touches[0].clientY;
+    } else {
+        focusSwipeStartY = 0;
+    }
+}, { passive: true });
+
+document.addEventListener('touchend', (e) => {
+    if (focusSwipeStartY && e.changedTouches[0].clientY - focusSwipeStartY < -30) {
+        if (isFocusMode) {
+            const navBar = document.getElementById('bottom-nav-bar');
+            if (navBar && navBar.classList.contains('nav-collapsed')) {
+                navBar.classList.remove('nav-collapsed');
+                if (navCollapseTimeout) clearTimeout(navCollapseTimeout);
+                navCollapseTimeout = setTimeout(() => {
+                    if (isFocusMode) navBar.classList.add('nav-collapsed');
+                }, 4000);
+            }
+        }
+    }
+}, { passive: true });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const navBar = document.getElementById('bottom-nav-bar');
+    if (navBar) {
+        navBar.addEventListener('click', (e) => {
+            if (navBar.classList.contains('nav-collapsed')) {
+                // If they clicked an empty space, expand. 
+                // If they clicked a button, navTo already handles it, but expanding visually is fine.
+                navBar.classList.remove('nav-collapsed');
+                if (navCollapseTimeout) clearTimeout(navCollapseTimeout);
+                navCollapseTimeout = setTimeout(() => {
+                    if (isFocusMode) navBar.classList.add('nav-collapsed');
+                }, 4000);
+            }
+        });
+    }
+});
 /* ─── GESTO UNIVERSAL: DESLIZAR HACIA ABAJO PARA CERRAR (VERTICAL) ─── */
 let swipeStartY = 0;
 let activeSheet = null;
@@ -2765,12 +2971,12 @@ function openReps(k, currentVal) {
     const slider = document.getElementById('reps-slider');
     const display = document.getElementById('reps-display-big');
 
-    // Si ya tenía reps, mostramos ese número; si no, por defecto 8
     const startVal = currentVal ? parseInt(currentVal) : 8;
     slider.value = startVal;
     display.innerText = startVal;
 
     document.getElementById('modal-reps').classList.add('show');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
     if (navigator.vibrate) navigator.vibrate([15]);
 }
 

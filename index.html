@@ -9,9 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
@@ -19,31 +21,26 @@
             theme: {
                 extend: {
                     colors: {
-                        /* Paleta Tierra/Minimalista de GiovaFit */
-                        pink: {
-                            50: '#FDF8F8',
-                            100: '#F8EBEB',
-                            300: '#E5989B', /* Rosa Suave */
-                            400: '#B5828C', /* Malva */
-                            500: '#7C444F', /* Rosa Profundo (Principal) */
-                            600: '#664343', /* Marrón Oscuro */
-                            800: '#3B3030', /* Carbón Cálido */
-                            900: '#272020',
+                        rose: {
+                            50: '#FFF0F3',
+                            100: '#FFE1E9',
+                            500: '#FF8FA3',
+                            600: '#FF758F'
                         },
-                        slate: {
-                            50: '#FDF8F8',
-                            100: '#F3EBEB',
-                            200: '#E5D6D6',
-                            300: '#C7B1B1',
-                            400: '#795757', /* Taupe (Textos secundarios) */
-                            500: '#664343',
-                            700: '#4A3C3C',
-                            800: '#3B3030', /* Fondos oscuros */
-                            900: '#272020',
+                        frost: {
+                            50: '#FBFBFD',
+                            100: '#F5F5F7',
+                            900: '#1D1D1F'
                         },
-                        amber: {
-                            500: '#FFB22C', /* Acento Dorado/Amarillo */
-                        }
+                        success: {
+                            50: '#E3F9E5',
+                            600: '#248A3D'
+                        },
+                        warning: {
+                            50: '#FFF4E5',
+                            600: '#B96A00'
+                        },
+                        secondary: '#86868B'
                     }
                 }
             }
@@ -73,7 +70,7 @@
         </div>
     </div>
     <nav id="bottom-nav-bar"
-        class="fixed bottom-4 left-4 right-4 z-[400] bg-white/90 dark:bg-[#3B3030]/90 backdrop-blur-xl border border-pink-border rounded-3xl shadow-lg flex justify-around items-center px-2 py-2 transition-transform duration-300">
+        class="fixed bottom-4 left-4 right-4 z-[300] bg-white/90 dark:bg-[#3B3030]/90 backdrop-blur-xl border border-pink-border rounded-3xl shadow-lg flex justify-around items-center px-2 py-2 transition-transform duration-300">
         <button onclick="navTo('home')" class="nav-item active flex flex-col items-center gap-1 p-2 w-16 ripple-btn"
             id="nav-btn-home">
             <svg class="w-6 h-6 stroke-current" fill="none" stroke-width="2.5" viewBox="0 0 24 24">
@@ -162,9 +159,14 @@
 
         <!-- ─── VISTA: INICIO ─── -->
         <div id="view-home" class="view-panel">
-            <header class="mb-6">
-                <h1 class="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight font-display">¡Hola,
-                    Valeria! ✨</h1>
+            <header class="mb-6 relative">
+                <div class="flex justify-between items-start">
+                    <h1 class="text-3xl font-bold text-slate-800 dark:text-white tracking-tight font-display">¡Hola,
+                        Valeria! ✨</h1>
+                    <button onclick="toggleDarkMode()" id="theme-toggle-btn" class="theme-toggle-btn ripple-btn flex-shrink-0" aria-label="Cambiar tema">
+                        <i data-lucide="moon" class="w-5 h-5"></i>
+                    </button>
+                </div>
                 <div class="quote-card mt-4" onclick="setRandomQuote()">
                     <p id="motivational-quote" class="text-pink-600 dark:text-pink-300 font-medium">Cargando
                         inspiración...</p>
@@ -173,25 +175,27 @@
             </header>
 
             <div class="grid grid-cols-4 gap-3 mb-8">
-                <div class="stat-card col-span-1">
-                    <div class="stat-value text-pink-500" id="stat-workouts">0</div>
-                    <div class="stat-label">Sesiones</div>
+                <div class="bg-white dark:bg-[#2C2C2E] rounded-[18px] p-4 shadow-sm relative">
+                    <i data-lucide="dumbbell" class="w-4 h-4 text-rose-500 absolute top-4 right-4 opacity-30"></i>
+                    <div class="text-2xl font-black text-rose-500" id="stat-workouts">0</div>
+                    <p class="text-[10px] font-600 text-secondary uppercase tracking-wide mt-2">Sesiones</p>
                 </div>
-                <div class="stat-card col-span-1">
-                    <div class="stat-value text-amber-500" id="stat-streak">0</div>
-                    <div class="stat-label">Racha</div>
+                <div class="bg-white dark:bg-[#2C2C2E] rounded-[18px] p-4 shadow-sm relative">
+                    <i data-lucide="flame" class="w-4 h-4 text-warning absolute top-4 right-4 opacity-30"></i>
+                    <div class="text-2xl font-black text-warning" id="stat-streak">0</div>
+                    <p class="text-[10px] font-600 text-secondary uppercase tracking-wide mt-2">Racha</p>
                 </div>
-                <div class="stat-card col-span-2">
-                    <div class="stat-value text-emerald-500 text-xl" id="stat-volume">0 kg</div>
-                    <div class="stat-label">Volumen total</div>
+                <div class="bg-white dark:bg-[#2C2C2E] rounded-[18px] col-span-2 p-4 shadow-sm relative">
+                    <i data-lucide="trending-up" class="w-5 h-5 text-success absolute top-4 right-4 opacity-30"></i>
+                    <div class="text-xl font-black text-success" id="stat-volume">0 kg</div>
+                    <p class="text-[10px] font-600 text-secondary uppercase tracking-wide mt-2">Volumen</p>
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 rounded-3xl p-5 mb-8"
-                style="border: 0.5px solid var(--pink-border); box-shadow: var(--shadow-card);">
-                <div class="flex justify-between items-center mb-3">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Esta semana</p>
-                    <span id="week-summary" class="text-xs font-bold text-pink-500">0 / 7 días</span>
+            <div class="bg-white dark:bg-frost-900/50 rounded-[20px] p-5 mb-8 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <p class="text-xs font-bold uppercase tracking-widest text-secondary">Esta semana</p>
+                    <span id="week-summary" class="text-xs font-bold text-rose-500">0 / 7 días</span>
                 </div>
                 <div class="flex gap-2 justify-between" id="heatmap-container"></div>
             </div>
@@ -201,7 +205,7 @@
                 class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-4 rounded-2xl mb-6 flex items-start gap-3 shadow-sm">
                 <span class="text-2xl mt-0.5">🛌</span>
                 <div>
-                    <p class="text-[11px] font-extrabold text-blue-800 dark:text-blue-300 uppercase tracking-widest">
+                    <p class="text-[11px] font-bold text-blue-800 dark:text-blue-300 uppercase tracking-widest">
                         Consejo de Recuperación</p>
                     <p class="text-xs text-blue-600 dark:text-blue-200 mt-1 font-medium leading-relaxed">Recuerda tomar
                         un descanso entre el Día 2 y el Día 3. ¡Tus músculos crecen mientras descansas!</p>
@@ -212,7 +216,7 @@
         <!-- ─── VISTA: ENTRENAMIENTO ─── -->
         <div id="view-workout" class="hidden view-panel">
             <header class="mb-6">
-                <h1 id="workout-title-disp" class="text-3xl font-extrabold tracking-tight">Entrenando</h1>
+                <h1 id="workout-title-disp" class="text-3xl font-bold tracking-tight">Entrenando</h1>
                 <div class="mt-4 progress-pill"
                     style="border-radius: 20px; padding: 10px 16px; box-shadow: var(--shadow-card);">
                     <div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -238,6 +242,14 @@
 
             <div id="active-workout-zone" class="hidden">
                 <div id="day-pills-container" class="flex gap-3 mb-8 overflow-x-auto pb-2"></div>
+                
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-frost-900 dark:text-white tracking-tight">Ejercicios de hoy</h2>
+                    <button onclick="cancelWorkoutRoutine()" class="text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-500/10 px-3 py-1.5 rounded-full active:scale-95 transition-transform ripple-btn">
+                        ✕ Cancelar Rutina
+                    </button>
+                </div>
+                
                 <div id="exercises-container" class="space-y-6"></div>
 
                 <div class="mt-10 space-y-4">
@@ -253,36 +265,39 @@
         <!-- ─── VISTA: LOGROS ─── -->
         <div id="view-achievements" class="hidden view-panel">
             <header class="mb-6">
-                <h1 class="text-3xl font-extrabold tracking-tight">Tus Logros</h1>
-                <p class="text-sm text-muted mt-1">Colecciona medallas y supera tus límites ✨</p>
+                <h1 class="text-3xl font-bold tracking-tight text-frost-900 dark:text-white">Tus Logros</h1>
+                <p class="text-sm text-secondary mt-1">Colecciona medallas y supera tus límites</p>
             </header>
 
-            <div class="bg-white dark:bg-slate-800 border border-pink-border rounded-2xl p-6 shadow-sm">
+            <div
+                class="bg-white dark:bg-frost-900/50 rounded-[24px] p-6 shadow-sm border border-frost-100 dark:border-frost-800">
                 <div class="flex justify-between items-center mb-6">
-                    <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Vitrina de Trofeos</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-secondary">Vitrina de Trofeos</p>
                     <span id="trophy-count"
-                        class="text-xs font-black text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-3 py-1 rounded-full">0
+                        class="text-xs font-black text-warning bg-warning-bg dark:bg-warning/20 px-3 py-1.5 rounded-full">0
                         / 0</span>
                 </div>
 
                 <div id="trophy-showcase-container" class="trophy-showcase grid grid-cols-3 gap-4"></div>
             </div>
 
-            <div class="mt-8 grid grid-cols-2 gap-4">
-                <div class="stat-card">
-                    <div class="stat-value text-blue-500" id="stat-ach-prs">0</div>
-                    <div class="stat-label">PRs Totales</div>
+            <div class="mt-8 grid grid-cols-2 gap-3">
+                <div
+                    class="bg-white dark:bg-frost-900/50 rounded-[18px] p-4 shadow-sm border border-frost-100 dark:border-frost-800">
+                    <div class="text-2xl font-black text-rose-500" id="stat-ach-prs">0</div>
+                    <p class="text-[10px] font-600 text-secondary uppercase tracking-wide mt-2">PRs</p>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value text-purple-500" id="stat-ach-workouts">0</div>
-                    <div class="stat-label">Sesiones</div>
+                <div
+                    class="bg-white dark:bg-frost-900/50 rounded-[18px] p-4 shadow-sm border border-frost-100 dark:border-frost-800">
+                    <div class="text-2xl font-black text-success" id="stat-ach-workouts">0</div>
+                    <p class="text-[10px] font-600 text-secondary uppercase tracking-wide mt-2">Sesiones</p>
                 </div>
             </div>
         </div>
 
         <!-- ─── VISTA: HISTORIAL ─── -->
         <div id="view-history" class="hidden view-panel">
-            <h1 class="text-3xl font-extrabold tracking-tight mb-2">Historial</h1>
+            <h1 class="text-3xl font-bold tracking-tight mb-2">Historial</h1>
             <p id="history-subtitle" class="text-sm text-muted mb-4">Tu progreso guardado</p>
             <div id="progress-chart-wrap" class="progress-chart-wrap hidden">
                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Volumen por Sesión</p>
@@ -295,7 +310,7 @@
         <!-- ─── VISTA: EDITOR DE RUTINA ─── -->
         <div id="view-settings" class="hidden view-panel">
             <header class="mb-6">
-                <h1 class="text-3xl font-extrabold tracking-tight">Editor de Rutina</h1>
+                <h1 class="text-3xl font-bold tracking-tight">Editor de Rutina</h1>
                 <p class="text-sm text-muted mt-1">Personaliza cada día y ejercicio ✨</p>
                 <p class="text-[10px] text-pink-400 font-bold mt-2 flex items-center gap-1">
                     <span>⠿</span> Arrastra los días para reordenarlos
@@ -311,6 +326,11 @@
                     Rutina Original 🔄</button>
             </div>
         </div>
+
+        <!-- ─── SAFE SCROLL SPACER (Task 3) ───
+             Ensures last content always clears the floating bottom nav,
+             regardless of device height or aspect ratio.         -->
+        <div class="h-36 w-full" aria-hidden="true"></div>
 
     </div> <!-- FIN DE #APP -->
 
@@ -404,13 +424,16 @@
             </div>
             <div class="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-6">
                 <button onclick="setCalcTab('barra')" id="ctab-barra"
-                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">🏋️‍♀️
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn flex flex-col items-center gap-1 justify-center">
+                    <i data-lucide="align-justify" class="w-4 h-4"></i>
                     Barra</button>
                 <button onclick="setCalcTab('mancuernas')" id="ctab-mancuernas"
-                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">💪
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn flex flex-col items-center gap-1 justify-center">
+                    <i data-lucide="dumbbell" class="w-4 h-4"></i>
                     Mancuernas</button>
                 <button onclick="setCalcTab('maquina')" id="ctab-maquina"
-                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn">⚙️ Máquina</button>
+                    class="flex-1 py-2.5 text-[11px] font-bold rounded-lg transition-all ripple-btn flex flex-col items-center gap-1 justify-center">
+                    <i data-lucide="settings" class="w-4 h-4"></i> Máquina</button>
             </div>
             <div id="cview-barra">
                 <div class="flex gap-2 justify-center mb-5" id="calc-bar-selector">
@@ -452,8 +475,7 @@
                 </div>
             </div>
             <button onclick="submitCalc()"
-                class="w-full mt-6 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-pink-200 dark:shadow-none active:scale-95 transition-all ripple-btn">Confirmar
-                y Guardar ✨</button>
+                class="w-full mt-6 bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-bold text-base shadow-xl shadow-pink-200 dark:shadow-none active:scale-95 transition-all ripple-btn">Guardar progreso ✨</button>
         </div>
     </div>
 
@@ -462,7 +484,7 @@
             <div class="modal-handle"></div>
             <h3 class="text-xs font-black text-pink-500 uppercase tracking-widest mb-4 text-center">Repeticiones</h3>
             <div class="flex flex-col items-center mb-8">
-                <span id="reps-display-big" class="text-7xl font-black font-display text-white mb-6">8</span>
+                <span id="reps-display-big" class="text-7xl font-black font-display text-frost-900 dark:text-white mb-6">8</span>
                 <input type="range" id="reps-slider" min="1" max="15" step="1" value="8"
                     oninput="updateRepsDisplay(this.value)">
                 <div class="flex justify-between w-full mt-3 text-[10px] text-slate-500 font-bold px-1">
@@ -470,8 +492,8 @@
                 </div>
             </div>
             <button onclick="submitReps()"
-                class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">Confirmar
-                Reps ✨</button>
+                class="w-full flex items-center justify-center bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">Confirmar
+                <i data-lucide="check" class="w-5 h-5 ml-2"></i></button>
         </div>
     </div>
     <!-- TIMER BAR -->
@@ -499,7 +521,7 @@
                 </div>
             </div>
             <button id="timer-btn" onclick="event.stopPropagation(); toggleTimer();"
-                class="bg-pink-500 text-white px-8 h-11 rounded-2xl font-bold text-xs shadow-lg shadow-pink-500/20 active:scale-95 transition-all flex-shrink-0">INICIAR</button>
+                class="bg-pink-500 text-white px-8 h-11 rounded-2xl font-bold text-xs shadow-lg shadow-pink-500/20 active:scale-95 transition-all flex-shrink-0">Iniciar descanso</button>
         </div>
 
         <div class="timer-big-wrap pb-6">
@@ -537,13 +559,12 @@
             </div>
             <div class="flex flex-col w-full gap-3 px-2">
                 <button id="timer-btn-big" onclick="event.stopPropagation(); toggleTimer();"
-                    class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">INICIAR
-                    DESCANSO</button>
+                    class="w-full bg-gradient-to-r from-pink-500 to-pink-600 text-white py-4 rounded-2xl font-black text-sm shadow-xl active:scale-95 transition-all">Iniciar descanso</button>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="event.stopPropagation(); resetTimer();"
-                        class="bg-white/5 text-white py-3 rounded-2xl font-bold text-xs active:bg-white/10">REINICIAR</button>
+                        class="bg-white/5 text-white py-3 rounded-2xl font-bold text-xs active:bg-white/10">Reiniciar</button>
                     <button onclick="event.stopPropagation(); minimizeTimer();"
-                        class="bg-white/5 text-slate-400 py-3 rounded-2xl font-bold text-xs active:bg-white/10">CERRAR</button>
+                        class="bg-white/5 text-slate-400 py-3 rounded-2xl font-bold text-xs active:bg-white/10">Cerrar</button>
                 </div>
             </div>
         </div>
