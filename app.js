@@ -559,6 +559,135 @@ function updateHomeStats() {
     const dispVol = globalUnit === 'lbs' ? volBase * 2.20462 : volBase;
     const txt = dispVol > 9999 ? (dispVol / 1000).toFixed(1) + 'k' : Math.round(dispVol);
     document.getElementById('stat-volume').innerText = `${txt} ${globalUnit.toUpperCase()}`;
+    
+    if (typeof updateMuscleHeatmap === 'function') {
+        updateMuscleHeatmap(historyState);
+    }
+}
+
+/* ════════════════════════════════════════════════════
+   SMART COACH RECOVERY ENGINE
+════════════════════════════════════════════════════ */
+
+const COACH_INSIGHTS = [
+    "El músculo crece en el descanso, no durante el entrenamiento. Asegura 8 horas de sueño esta noche.",
+    "Tu sistema nervioso central necesita recuperación activa. Un paseo de 20 minutos hoy es perfecto.",
+    "Hidratación es rendimiento: por cada 1% de deshidratación, tu fuerza cae hasta un 3%. Bebe agua ahora.",
+    "La proteína post-entrenamiento debe consumirse en la ventana de 30-60 minutos para maximizar la síntesis muscular.",
+    "El foam rolling reduce el DOMS (dolor muscular tardío) hasta un 40%. Rueda 60 segundos por grupo muscular.",
+    "La creatina monohidratada es el suplemento más respaldado por la ciencia. 3-5g diarios son suficientes.",
+    "El estrés crónico eleva el cortisol y frena la ganancia muscular. Dedica 10 minutos hoy a respiración profunda.",
+    "Dormir menos de 6 horas reduce los niveles de testosterona y hormona de crecimiento de forma significativa.",
+    "La sobrecarga progresiva —añadir peso, reps o series cada semana— es el principio número uno del progreso.",
+    "El estiramiento estático post-entrenamiento de 30s por músculo mejora la recuperación y la flexibilidad a largo plazo.",
+    "Las series de alta repetición (15-20 reps) son igual de efectivas para hipertrofia que las de baja repetición con más peso.",
+    "La cafeína mejora el rendimiento hasta un 12% y retrasa la fatiga. Consúmela 30-60 min antes de entrenar.",
+    "El magnesio favorece la síntesis proteica y la calidad del sueño. Considera tomarlo por la noche.",
+    "Visualizar mentalmente un ejercicio antes de ejecutarlo activa las mismas vías neurales que el movimiento real."
+];
+
+let _lastCoachIndex = -1;
+
+function rotateCoachInsight() {
+    const card = document.getElementById('coach-insight-card');
+    const textEl = document.getElementById('coach-insight-text');
+    if (!card || !textEl) return;
+
+    // Prevent selecting the same tip twice in a row
+    let idx;
+    do { idx = Math.floor(Math.random() * COACH_INSIGHTS.length); }
+    while (idx === _lastCoachIndex && COACH_INSIGHTS.length > 1);
+    _lastCoachIndex = idx;
+
+    // Fade out → swap text → fade in
+    card.classList.add('fading');
+    setTimeout(() => {
+        textEl.textContent = COACH_INSIGHTS[idx];
+        card.classList.remove('fading');
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }, 180);
+
+    if (navigator.vibrate) navigator.vibrate([12]);
+}
+
+function initCoachInsight() {
+    // Pick an initial tip on load
+    let idx = Math.floor(Math.random() * COACH_INSIGHTS.length);
+    _lastCoachIndex = idx;
+    const textEl = document.getElementById('coach-insight-text');
+    if (textEl) textEl.textContent = COACH_INSIGHTS[idx];
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+/* ════════════════════════════════════════════════════
+   TACTILE STAT WIDGETS + DEEP DIVE SHEETS
+════════════════════════════════════════════════════ */
+
+function openStatSheet(type) {
+    const sheet = document.getElementById('stat-sheet');
+    const content = document.getElementById('stat-sheet-content');
+    if (!sheet || !content) return;
+
+    if (type === 'racha') {
+        const streak = xpState.streak || 0;
+        let subtext = '';
+        if (streak <= 2) subtext = 'Iniciando el momentum. ¡No te rindas!';
+        else if (streak <= 7) subtext = 'Construyendo el hábito. ¡Excelente ritmo!';
+        else subtext = 'Imparable. Eres una máquina de disciplina.';
+
+        content.innerHTML = `
+            <div class="text-center py-6">
+                <i data-lucide="flame" class="w-12 h-12 text-pink-500 mx-auto mb-4"></i>
+                <div class="text-6xl font-bold text-slate-800 dark:text-white tabular-nums">${streak}</div>
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-2">días seguidos</p>
+                <p class="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed mt-4">${subtext}</p>
+            </div>
+        `;
+    } else if (type === 'volumen') {
+        const volBase = calcTotalVolume(); // Assuming calcTotalVolume() calculates in base unit (e.g. kg if globalUnit is kg)
+        // Wait, calcTotalVolume() already exists and calculates total volume based on historyState.
+        const kg = globalUnit === 'lbs' ? volBase * 0.453592 : volBase; // Ensure we get kg for comparison
+
+        const getVolumeComparison = (kgValue) => {
+            if (kgValue < 500) return "Equivale a levantar un oso pardo adulto.";
+            if (kgValue < 1500) return "Equivale a levantar un auto compacto.";
+            if (kgValue < 3000) return "Equivale a levantar un rinoceronte blanco.";
+            return "Equivale a levantar un elefante africano.";
+        };
+
+        const dispVol = globalUnit === 'lbs' ? volBase * 2.20462 : volBase;
+        const rounded = Math.round(dispVol);
+        const unit = globalUnit.toUpperCase();
+        const displayValue = `${rounded > 9999 ? (rounded / 1000).toFixed(1) + 'k' : rounded} ${unit}`;
+
+        content.innerHTML = `
+            <div class="text-center py-6">
+                <i data-lucide="dumbbell" class="w-12 h-12 text-slate-400 mx-auto mb-4"></i>
+                <div class="text-5xl font-bold text-slate-800 dark:text-white tabular-nums leading-tight">${displayValue}</div>
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mt-2">volumen total levantado</p>
+                <p class="text-sm text-slate-600 dark:text-slate-300 font-medium leading-relaxed mt-4">${getVolumeComparison(kg)}</p>
+            </div>
+        `;
+    }
+
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    sheet.classList.remove('hidden-bar');
+    sheet.classList.add('expanded');
+
+    const overlay = document.getElementById('stat-sheet-overlay');
+    if (overlay) overlay.classList.add('show');
+}
+
+function closeStatSheet() {
+    const sheet = document.getElementById('stat-sheet');
+    if (sheet) {
+        sheet.classList.remove('expanded');
+        sheet.classList.add('hidden-bar');
+    }
+
+    const overlay = document.getElementById('stat-sheet-overlay');
+    if (overlay) overlay.classList.remove('show');
 }
 
 /* ════════════════════════════════════════════════════
@@ -852,6 +981,7 @@ window.onload = () => {
     updateHomeStats();
     renderHeatmap();
     initRipples();
+    initCoachInsight();
 
     if (typeof lucide !== 'undefined') lucide.createIcons();
 
@@ -862,6 +992,27 @@ window.onload = () => {
         navTo('workout');
         showToast('Reanudando tu sesión... 💪');
     }
+
+    // Splash Screen Logic
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+            splash.classList.add('fade-out');
+            console.log("¡GiovaFit Aesthetic listo!");
+            
+            // Premium glow effect on the XP badge after splash screen disappears
+            const xpBadge = document.getElementById('xp-badge-header');
+            if (xpBadge) {
+                xpBadge.style.transition = "transform 0.3s ease, box-shadow 0.3s ease";
+                xpBadge.style.transform = "scale(1.05)";
+                xpBadge.style.boxShadow = "0 0 15px var(--pink-glow)";
+                setTimeout(() => {
+                    xpBadge.style.transform = "scale(1)";
+                    xpBadge.style.boxShadow = "none";
+                }, 400);
+            }
+        }
+    }, 2500);
 };
 
 function toggleDarkMode() {
@@ -2177,29 +2328,41 @@ setTimeout(initTimerWheel, 200);
 function startTimer() { clearInterval(timerId); timeLeft = timerDuration; renderTimerDisplay(); isRunning = false; toggleTimer(); }
 
 // Nuevas funciones del Timer Expandible
-function expandTimer() { 
+function expandTimer() {
     if (_timerDebounce) return;
     _timerDebounce = true;
     setTimeout(() => _timerDebounce = false, 300);
+
     const tb = document.getElementById('bottom-timer-bar');
     if (tb) {
         tb.classList.remove('timer-collapsed');
         tb.classList.remove('hidden-bar');
         tb.classList.add('expanded');
     }
+
+    // ─── Collision: displace nav bar while timer is expanded ───
+    const nav = document.getElementById('bottom-nav-bar');
+    if (nav) nav.classList.add('nav-displaced');
+
     if (typeof toggleFocusMode === 'function') toggleFocusMode(false);
 }
-function minimizeTimer() { 
+
+function minimizeTimer() {
     if (_timerDebounce) return;
     _timerDebounce = true;
     setTimeout(() => _timerDebounce = false, 300);
+
     const tb = document.getElementById('bottom-timer-bar');
     if (tb) {
-        tb.classList.remove('expanded'); 
+        tb.classList.remove('expanded');
         if (isRunning) {
             tb.classList.add('timer-collapsed');
         }
     }
+
+    // ─── Collision: restore nav bar when timer returns to circle ───
+    const nav = document.getElementById('bottom-nav-bar');
+    if (nav) nav.classList.remove('nav-displaced');
 }
 
 
@@ -3025,4 +3188,111 @@ function submitReps() {
     persistSession();
     document.getElementById('modal-reps').classList.remove('show');
     if (navigator.vibrate) navigator.vibrate([40, 30]); // Confirmación
+}
+
+// 1. MAPEO DE IDs DEL SVG A GRUPOS MUSCULARES
+const muscleGroups = {
+    pecho: ['chest'],
+    espalda: ['dorsales', 'trapecio', 'redmenor'],
+    espaldaBaja: ['espalbaja'],
+    hombros: ['deltsfr', 'deltsup1', 'deltsup2', 'hombropost'],
+    biceps: ['biceps'], 
+    triceps: ['triceplarg1', 'tricepscorta', 'tricepslarga'],
+    antebrazos: ['braquioradial1', 'braquiorradial2', 'antebrazos', 'antebrazo', 'carpext'],
+    core: ['abdomen', 'oblicuos', 'serratos'],
+    cuadriceps: ['cuadriceps', 'vastosmediales', 'vastoslaterales', 'sartorio'],
+    femorales: ['femoral'],
+    gluteos: ['gluteo'],
+    pantorrillas: ['gemelos1', 'gemelos2'],
+    aductores: ['aductores1', 'aductores2'],
+    abductores: ['abductores1', 'abductores2']
+};
+
+// 2. DICCIONARIO DE IMPACTO POR EJERCICIO (Basado en DEFAULT_ROUTINE)
+const exerciseImpact = {
+    "Press Inclinado Máquina": { primary: 'pecho', pLoad: 1.0, secondary: 'hombros', sLoad: 0.5 },
+    "Press Militar DB": { primary: 'hombros', pLoad: 1.0, secondary: 'triceps', sLoad: 0.5 },
+    "Elevaciones Laterales": { primary: 'hombros', pLoad: 1.0 },
+    "Jalón al Pecho": { primary: 'espalda', pLoad: 1.0, secondary: 'biceps', sLoad: 0.6 },
+    "Remo con Apoyo": { primary: 'espalda', pLoad: 1.0, secondary: 'biceps', sLoad: 0.5 },
+    "Pullover en Polea": { primary: 'espalda', pLoad: 1.0, secondary: 'pecho', sLoad: 0.3 },
+    "Sentadilla Búlgara": { primary: 'gluteos', pLoad: 1.0, secondary: 'cuadriceps', sLoad: 0.8 },
+    "Peso Muerto Rumano": { primary: 'femorales', pLoad: 1.0, secondary: 'gluteos', sLoad: 0.8 },
+    "Patada de Glúteo": { primary: 'gluteos', pLoad: 1.0 },
+    "Curl Isquios Sentada": { primary: 'femorales', pLoad: 1.0 },
+    "Extensión Cuádriceps": { primary: 'cuadriceps', pLoad: 1.0 },
+    "Silla Romana": { primary: 'espaldaBaja', pLoad: 1.0, secondary: 'gluteos', sLoad: 0.6 },
+    "Prensa Pies Altos": { primary: 'gluteos', pLoad: 1.0, secondary: 'femorales', sLoad: 0.7 },
+    "Sentadilla Talones": { primary: 'cuadriceps', pLoad: 1.0, secondary: 'gluteos', sLoad: 0.4 },
+    "Máquina Aductores": { primary: 'aductores', pLoad: 1.0 },
+    "Curl Martillo": { primary: 'biceps', pLoad: 1.0, secondary: 'antebrazos', sLoad: 0.8 },
+    "Curl Banco Inclinado": { primary: 'biceps', pLoad: 1.0 },
+    "Tríceps Polea": { primary: 'triceps', pLoad: 1.0 },
+    "Vuelos Posteriores": { primary: 'hombros', pLoad: 0.8, secondary: 'espalda', sLoad: 0.5 }
+};
+
+// 3. MOTOR DE CÁLCULO Y RENDERIZADO
+function updateMuscleHeatmap(historyArray) {
+    console.log("[Heatmap Debug] Iniciando renderizado. Datos recibidos:", historyArray);
+
+    // Inicializar todos los grupos en 0
+    let fatigueScores = {};
+    for (let group in muscleGroups) { fatigueScores[group] = 0; }
+
+    const dataArray = Array.isArray(historyArray) ? historyArray : Object.values(historyArray || {});
+
+    // Calcular fatiga (Simplificado: 10 puntos por set completado * Load)
+    dataArray.forEach(session => {
+        if (!session.exLog) return;
+        Object.keys(session.exLog).forEach(exName => {
+            const exData = session.exLog[exName];
+            const impact = exerciseImpact[exName];
+            
+            console.log("[Heatmap Debug] Evaluando ejercicio:", exName, "Impacto encontrado:", impact);
+
+            if (impact) {
+                const baseFatigue = (exData.completedSets || 0) * 10; // 10 puntos por serie completada
+                fatigueScores[impact.primary] += (baseFatigue * impact.pLoad);
+                if (impact.secondary) {
+                    fatigueScores[impact.secondary] += (baseFatigue * impact.sLoad);
+                }
+            }
+        });
+    });
+
+    console.log("[Heatmap Debug] Puntuaciones finales de fatiga:", fatigueScores);
+
+    // Renderizar colores en el SVG
+    for (let group in fatigueScores) {
+        const score = fatigueScores[group];
+        let fillColor = "rgba(255, 255, 255, 0.1)"; // Base Frost (Fresco)
+        
+        if (score > 80) fillColor = "var(--pink)"; // Rosa intenso (Muy fatigado)
+        else if (score > 40) fillColor = "rgba(244, 114, 182, 0.7)"; // Rosa medio
+        else if (score > 15) fillColor = "rgba(251, 207, 232, 0.5)"; // Rosa tenue
+
+        // Aplicar color a cada 'path' del SVG correspondiente a este grupo
+        muscleGroups[group].forEach(svgId => {
+            // Buscamos todas las rutas dentro del grupo con ese vectornator:layerName
+            let paths = document.querySelectorAll(`[vectornator\\:layerName="${svgId}"] path`);
+            
+            // Fallback por si en el futuro se usa el ID directamente
+            if (paths.length === 0) {
+                const singlePath = document.getElementById(svgId);
+                if (singlePath) paths = [singlePath];
+            }
+
+            if (paths.length > 0) {
+                paths.forEach(pathElement => {
+                    pathElement.style.transition = "fill 0.6s cubic-bezier(0.32, 0.72, 0, 1)";
+                    setTimeout(() => {
+                        pathElement.style.fill = fillColor;
+                        pathElement.style.setProperty('fill', fillColor, 'important');
+                    }, 50);
+                });
+            } else {
+                console.warn("[Heatmap Debug] Elemento SVG no encontrado en el DOM con el layerName/ID:", svgId);
+            }
+        });
+    }
 }

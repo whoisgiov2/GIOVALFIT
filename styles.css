@@ -226,10 +226,15 @@ h4,
     padding-top: max(0px, env(safe-area-inset-top));
 }
 
-/* ─── BODY PADDING: ensures floating nav never clips scrollable content ─── */
+/* ─── BODY PADDING: ensures floating circles never clip last exercise card ─── */
 body {
-    /* Task 1: extra bottom clearance respects iOS home indicator */
+    /* At least 100px so the last card never hides behind the floating circles */
     padding-bottom: max(120px, calc(100px + env(safe-area-inset-bottom)));
+}
+
+/* ─── MAIN CONTENT CONTAINER extra bottom padding ─── */
+#app {
+    padding-bottom: 100px;
 }
 
 /* ─── RIPPLE ─── */
@@ -471,6 +476,13 @@ body {
 .heatmap-dot.rest {
     background: var(--slate-100);
     color: var(--text-muted);
+}
+
+/* ─── MUSCLE MAP ─── */
+#muscle-map-container svg {
+    max-width: 100%;
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
 }
 
 /* ─── HOME CARDS ─── */
@@ -868,6 +880,8 @@ body {
     justify-content: flex-start !important;
     transform: none !important;
     margin: 0 !important;
+    /* Highest z among floating elements, below modals (500) */
+    z-index: 490 !important;
 }
 
 .bottom-bar.hidden-bar {
@@ -882,21 +896,24 @@ body {
     100% { opacity: 0.85; transform: scale(1); }
 }
 
+/* ─── TIMER COLLAPSED: symmetrical 52px circle, bottom-right ─── */
 .bottom-bar.timer-collapsed {
     background: rgba(8, 8, 8, 0.95) !important;
     border-radius: 50% !important;
     border: 1px solid var(--pink-border) !important;
     overflow: hidden !important;
     padding: 0 !important;
-    width: 56px !important;
-    height: 56px !important;
-    bottom: 100px !important;
+    width: 52px !important;
+    height: 52px !important;
+    bottom: 24px !important;
     right: 20px !important;
     left: auto !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     cursor: pointer;
+    /* Higher z than nav (300) but lower than expanded timer (500) */
+    z-index: 350 !important;
 }
 
 .bottom-bar.timer-collapsed .timer-mini-wrap {
@@ -1815,10 +1832,7 @@ body {
     transform: scale(0.9);
 }
 
-/* Evitar que la barra inferior estorbe al final de la página */
-body {
-    padding-bottom: 100px;
-}
+/* Redundant body padding override removed — handled above in the BODY PADDING block */
 
 /* ─── CUSTOM SLIDER (REPS) ─── */
 input[type=range] {
@@ -2051,18 +2065,32 @@ input[type=range]::-webkit-slider-runnable-track {
     box-shadow: var(--shadow-modal);
 }
 
-/* ─── BOTTOM NAV BAR (FOCUS MODE) ─── */
+/* ─── BOTTOM NAV BAR — Ultra-Refined Pill ─── */
 #bottom-nav-bar {
-    height: 64px !important;
+    height: 48px !important;
     align-items: center !important;
-    padding: 4px 12px !important;
+    padding: 4px 8px !important;
     border-radius: 32px !important;
-    border: 1.5px solid var(--pink-border) !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    box-shadow: var(--shadow-soft) !important;
-    transition: all 350ms cubic-bezier(0.32, 0.72, 0, 1) !important;
+    border: 1px solid rgba(255, 143, 163, 0.15) !important;
+    background: rgba(255, 255, 255, 0.82) !important;
+    backdrop-filter: blur(20px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 350ms cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 350ms cubic-bezier(0.32, 0.72, 0, 1) !important;
+    z-index: 300;
+}
+
+/* Scale icons to w-5 h-5 inside the slimmer bar */
+#bottom-nav-bar .nav-item svg,
+#bottom-nav-bar .nav-item i[data-lucide] {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* Shrink labels to fit the 48px bar */
+#bottom-nav-bar .nav-item span {
+    font-size: 9px !important;
 }
 
 #bottom-nav-bar .nav-item {
@@ -2072,19 +2100,30 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 
 .dark #bottom-nav-bar {
-    background: rgba(44, 44, 46, 0.85) !important;
+    background: rgba(44, 44, 46, 0.88) !important;
+    border-color: rgba(255, 143, 163, 0.12) !important;
 }
 
+/* ─── NAV DISPLACED: slides away when timer is expanded ─── */
+#bottom-nav-bar.nav-displaced {
+    transform: translateY(80px) !important;
+    opacity: 0.3 !important;
+    pointer-events: none !important;
+    transition: transform 350ms cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 350ms cubic-bezier(0.32, 0.72, 0, 1) !important;
+}
+
+/* ─── NAV COLLAPSED: symmetrical 52px circle, bottom-left ─── */
 #bottom-nav-bar.nav-collapsed {
     position: fixed !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    bottom: 100px !important;
+    bottom: 24px !important;
     left: 20px !important;
     right: auto !important;
-    width: 56px !important;
-    height: 56px !important;
+    width: 52px !important;
+    height: 52px !important;
     border-radius: 50% !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -2129,4 +2168,257 @@ input[type="range"]::-moz-range-track {
 
 .dark input[type="range"]::-moz-range-track {
     background-color: #3F3F46 !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CONTROL CENTER — HOME SCREEN INTERACTIVE COMPONENTS
+   ═══════════════════════════════════════════════════════ */
+
+/* ─── STAT WIDGET (tactile stat cards) ─── */
+.stat-widget {
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.stat-widget:active {
+    transform: scale(0.94);
+    opacity: 0.8;
+}
+
+/* ─── SMART COACH INSIGHT CARD ─── */
+.coach-insight-card {
+    background: var(--pink-light);
+    border: 1px solid var(--pink-border);
+    border-radius: 20px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 4px 20px rgba(255, 143, 163, 0.10);
+    transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1),
+                box-shadow 0.2s cubic-bezier(0.32, 0.72, 0, 1),
+                opacity 0.18s ease;
+    will-change: transform, opacity;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle shimmer layer */
+.coach-insight-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.25) 50%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.coach-insight-card:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(255, 143, 163, 0.20);
+}
+
+.coach-insight-card:active::before {
+    opacity: 1;
+}
+
+.dark .coach-insight-card {
+    background: rgba(255, 143, 163, 0.08);
+    border-color: rgba(255, 143, 163, 0.18);
+}
+
+.coach-insight-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px var(--pink-glow);
+}
+
+.coach-insight-refresh {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.coach-insight-card:active .coach-insight-refresh {
+    transform: rotate(180deg);
+}
+
+/* Fade transition state applied by JS */
+.coach-insight-card.fading {
+    opacity: 0;
+}
+
+/* ─── STAT DETAIL SHEET — watermark icon ─── */
+.stat-sheet-watermark {
+    position: absolute;
+    width: 140px !important;
+    height: 140px !important;
+    opacity: 0.05;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    color: var(--text-main);
+}
+
+/* ─── STREAK MOTIVATION BAR (mini milestone track) ─── */
+.streak-motivation-bar {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+
+.streak-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    border: 2px solid var(--pink-border);
+    color: var(--text-muted);
+    background: var(--card);
+    transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.streak-dot.earned {
+    background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 3px 10px var(--pink-glow);
+    transform: scale(1.08);
+}
+
+.streak-dot.next {
+    border-color: var(--pink);
+    color: var(--pink-dark);
+    background: var(--pink-light);
+}
+
+/* ─── STAT SHEET BOTTOM SHEET FIX ─── */
+#stat-sheet {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 600 !important;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1) !important;
+    border-radius: 28px 28px 0 0;
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 20px 24px;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.1);
+}
+
+#stat-sheet.expanded {
+    transform: translateY(0);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 550;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ─── PWA OPTIMIZATIONS ─── */
+body {
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── SPLASH SCREEN ─── */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#splash-screen.fade-out {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.splash-logo {
+    width: 140px !important;
+    height: auto !important;
+    object-fit: contain;
+    animation: splashFadeIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    filter: drop-shadow(0 4px 12px rgba(236, 72, 153, 0.3));
+}
+
+#main-global-header img {
+    height: 40px !important;
+    width: auto !important;
+    object-fit: contain;
+}
+
+@keyframes splashFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ─── MUSCLE HEATMAP ANIMATIONS ─── */
+@keyframes muscle-pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.fatigued-pulse {
+    animation: muscle-pulse 2s infinite ease-in-out;
+}
+
+#muscle-map-container path {
+    cursor: pointer;
+    transition: fill 0.3s ease, filter 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#muscle-map-container path:active {
+    filter: brightness(1.2);
 }
